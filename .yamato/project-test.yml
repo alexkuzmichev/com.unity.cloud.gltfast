@@ -21,6 +21,14 @@
 {% for platform_id in platform_ids -%}
 {% assign platform = platforms[platform_id] -%}
 
+{% if editor == "2020" and platform_id == "android" -%}
+{% comment -%}
+TODO: Remove hack condition once we moved on from Unity 2020
+Build Android on 2020 LTS failed consistently, so leaving it out
+{% endcomment -%}
+{% continue -%}
+{% endif -%}
+
 {% assign is_coverage_set = false -%}
 {% for coverage_set in test_setup.coverage_subset -%}
   {% if coverage_set.platform == platform_id and coverage_set.editor == editor -%}
@@ -634,6 +642,13 @@ build_and_run_{{ test_setup.project_setup }}_all:
   dependencies:
 {% for editor in editor_versions -%}
 {% for platform_id in platform_ids -%}
+{% if editor == "2020" and platform_id == "android" -%}
+{% comment -%}
+TODO: Remove hack condition once we moved on from Unity 2020
+Build Android on 2020 LTS failed consistently, so leaving it out
+{% endcomment -%}
+{% continue -%}
+{% endif -%}
 {% if platforms[platform_id].build_and_run -%}
     - .yamato/project-test.yml#build_and_run_{{ test_setup.project_setup }}_{{ platform_id }}_{{ editor }}
 {% elsif platforms[platform_id].run -%}

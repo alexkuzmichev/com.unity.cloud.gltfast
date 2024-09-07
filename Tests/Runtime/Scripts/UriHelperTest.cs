@@ -74,6 +74,15 @@ namespace GLTFast.Tests
         }
 
         [Test]
+        public void GetBaseUriAndroidTest()
+        {
+            Assert.AreEqual(
+                "jar:file:///data/Unicode❤♻Test/glTF/",
+                UriHelper.GetBaseUri(new Uri("jar:file:///data/Unicode❤♻Test/glTF/Unicode❤♻Test.gltf")).OriginalString
+                );
+        }
+
+        [Test]
         public void GetBaseUriNonWindowsTest()
         {
             switch (Application.platform)
@@ -152,6 +161,22 @@ namespace GLTFast.Tests
                 new Uri($"Assets{sep}Some{sep}Path", UriKind.Relative),
                 relBaseUri
                 );
+        }
+
+        [Test]
+        public void GetUriStringAndroidTest()
+        {
+            // var baseUri = new Uri("jar:file:///🤡");
+            // var uri = new Uri(Path.Join( baseUri.OriginalString, "file.bin"));
+            // Assert.AreEqual("jar:file:///🤡/file.bin", uri.OriginalString);
+
+            // var uri = UriHelper.GetUriString("file.bin", baseUri);
+
+            var baseUri = new Uri("jar:file:///data/Unicode❤♻Test/glTF");
+            Assert.AreEqual(
+                "jar:file:///data/Unicode❤♻Test/glTF/Unicode❤♻Test.bin",
+                UriHelper.GetUriString("Unicode❤♻Test.bin", baseUri).OriginalString
+            );
         }
 
         [Test]
@@ -242,6 +267,38 @@ namespace GLTFast.Tests
             Assert.AreEqual(ImageFormat.Ktx, UriHelper.GetImageFormatFromUri("file:///Some/Path/file.ktx2"));
             Assert.AreEqual(ImageFormat.Ktx, UriHelper.GetImageFormatFromUri("http://server.com/some.Path/file.ktx2"));
             Assert.AreEqual(ImageFormat.Ktx, UriHelper.GetImageFormatFromUri("https://server.com/some.Path/file.ktx2?key=value.with.dots&otherkey=val&arrval[]=x"));
+        }
+
+        [Test]
+        public void CombineTest()
+        {
+            Assert.AreEqual("base/file", UriHelper.Combine("base", "file"));
+            Assert.AreEqual("base/file", UriHelper.Combine("base", "/file"));
+            Assert.AreEqual("base/file", UriHelper.Combine("base", "\\file"));
+
+            Assert.AreEqual("base/file", UriHelper.Combine("base/", "file"));
+            Assert.AreEqual("base/file", UriHelper.Combine("base/", "/file"));
+            Assert.AreEqual("base/file", UriHelper.Combine("base/", "\\file"));
+
+            Assert.AreEqual("base\\file", UriHelper.Combine("base\\", "file"));
+            Assert.AreEqual("base\\file", UriHelper.Combine("base\\", "/file"));
+            Assert.AreEqual("base\\file", UriHelper.Combine("base\\", "\\file"));
+
+            Assert.AreEqual("/base/file", UriHelper.Combine("/base", "file"));
+            Assert.AreEqual("/base/file", UriHelper.Combine("/base", "/file"));
+            Assert.AreEqual("/base/file", UriHelper.Combine("/base", "\\file"));
+
+            Assert.AreEqual(@"c:\base\file", UriHelper.Combine("c:\\base", "file"));
+            Assert.AreEqual(@"c:\base\file", UriHelper.Combine("c:\\base", "/file"));
+            Assert.AreEqual(@"c:\base\file", UriHelper.Combine("c:\\base", "\\file"));
+
+            Assert.AreEqual(@"file://c:\base\file", UriHelper.Combine("file://c:\\base", "file"));
+            Assert.AreEqual(@"file://c:\base\file", UriHelper.Combine("file://c:\\base", "/file"));
+            Assert.AreEqual(@"file://c:\base\file", UriHelper.Combine("file://c:\\base", "\\file"));
+
+            Assert.AreEqual("file://base/file", UriHelper.Combine("file://base", "file"));
+            Assert.AreEqual("file://base/file", UriHelper.Combine("file://base", "/file"));
+            Assert.AreEqual("file://base/file", UriHelper.Combine("file://base", "\\file"));
         }
     }
 }

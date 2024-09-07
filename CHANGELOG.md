@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased] -
 
+### Fixed
+- (Test) LoadTests on Android now succeed by using `UnityWebRequest` to retrieve data from the compressed JAR file.
+- Loading glTFs from `StreamingAssets` with relative URIs containing Unicode characters on Android. UriHelper.GetBaseUri and UriHelper.GetUriString handle Android `jar:file://` schema URIs with unicode characters correctly (fixes [#667](https://github.com/atteneder/glTFast/issues/667)).
+
 ## [6.8.0] - 2024-09-05
 
 ### Added
