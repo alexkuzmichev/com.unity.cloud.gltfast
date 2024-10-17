@@ -8,6 +8,10 @@ using System.IO;
 using System.Threading.Tasks;
 using GLTFast.Logging;
 using NUnit.Framework;
+#if UNITY_ENTITIES_GRAPHICS || UNITY_DOTS_HYBRID
+using Unity.Entities;
+using Unity.Transforms;
+#endif
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -133,7 +137,7 @@ namespace GLTFast.Tests.Import
                 return;
             }
             var instantiateLogger = new CollectingLogger();
-            var instantiator = new GameObjectInstantiator(gltf, go.transform, instantiateLogger);
+            var instantiator = CreateInstantiator(gltf, instantiateLogger, go.transform);
             success = await gltf.InstantiateMainSceneAsync(instantiator);
             if (!success)
             {
@@ -160,6 +164,32 @@ namespace GLTFast.Tests.Import
                     }
                 }
             }
+        }
+
+        internal static IInstantiator CreateInstantiator(
+            IGltfReadable gltf,
+            ICodeLogger logger,
+            Transform transform
+            )
+        {
+#if UNITY_ENTITIES_GRAPHICS || UNITY_DOTS_HYBRID
+            var entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
+            var sceneArchetype = entityManager.CreateArchetype(
+#if UNITY_ENTITIES_GRAPHICS
+                typeof(LocalTransform),
+                typeof(LocalToWorld)
+#else
+                typeof(Translation),
+                typeof(Rotation),
+                typeof(Scale),
+                typeof(LocalToWorld)
+#endif
+            );
+            var sceneRoot = entityManager.CreateEntity(sceneArchetype);
+            return new EntityInstantiator(gltf, sceneRoot, logger);
+#else
+            return new GameObjectInstantiator(gltf, transform, logger);
+#endif
         }
 
         internal static void AssertLogItems(IEnumerable<LogItem> logItems, GltfTestCase testCase)

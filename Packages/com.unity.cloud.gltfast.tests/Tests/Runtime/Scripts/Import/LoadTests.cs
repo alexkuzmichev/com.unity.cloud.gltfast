@@ -196,7 +196,7 @@ namespace GLTFast.Tests.Import
                     throw new ArgumentOutOfRangeException(nameof(loadType), loadType, null);
             }
             Assert.IsTrue(success);
-            var instantiator = new GameObjectInstantiator(gltf, go.transform, logger);
+            var instantiator = AssetsTests.CreateInstantiator(gltf, logger, go.transform);
             switch (instantiationType)
             {
                 case InstantiationType.Main:

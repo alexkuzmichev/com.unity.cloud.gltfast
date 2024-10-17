@@ -61,6 +61,34 @@ test_setups:
       # default for coverage: windows + current LTS
       - platform: win
         editor: 2022
+  - project_setup: entities
+    project: glTFast-Test-entities
+    setup: urp
+    render_pipeline: URP-ForwardPlus
+    test_categories: "!Performance;!Export"
+    utr_timeout: 1200
+    editor_versions: [2022,6000]
+    platforms: [win]
+    pr_test_subset:
+      - platform: win
+        editor: 2022
+      - platform: win
+        editor: 6000
+    pr_build_subset:
+      - platform: win
+        editor: 6000
+    coverage_subset:
+      # default for coverage: windows + current LTS
+      - platform: win
+        editor: 2022
+  - project_setup: entities-legacy
+    project: glTFast-Test-entities-legacy
+    setup: urp
+    render_pipeline: URP-Forward
+    test_categories: "!Performance;!Export"
+    utr_timeout: 1200
+    editor_versions: [2020]
+    platforms: [win]
   - project_setup: hdrp
     project: glTFast-Test
     setup: hdrp

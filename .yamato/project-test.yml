@@ -122,7 +122,7 @@ test_{{ test_setup.project_setup }}_{{ platform_id }}_{{ editor }}:
       --extra-editor-arg="-upmNoDefaultPackages"
       --suite=editor
       --suite=playmode
-      --category="{{ test_categories }}"
+      --category="{% if test_setup.test_categories %}{{ test_setup.test_categories }}{% else %}{{ test_categories }}{% endif %}"
 {% if is_coverage_set -%}
       --enable-code-coverage
       --coverage-results-path={{ results_path }}/CoverageResults
@@ -214,7 +214,7 @@ build_{{ test_setup.project_setup }}_{{ platform_id }}_{{ editor }}:
       --verbose
       --extra-editor-arg="-upmNoDefaultPackages"
       --suite=playmode
-      --category="{{ test_categories }}"
+      --category="{% if test_setup.test_categories %}{{ test_setup.test_categories }}{% else %}{{ test_categories }}{% endif %}"
       --scripting-backend=Il2Cpp
       --platform={% if platform.platform -%}{{ platform.platform }}{% else -%}{{ platform_id }}{% endif %}
       --build-only
@@ -317,7 +317,7 @@ run_{{ test_setup.project_setup }}_{{ platform_id }}_{{ editor }}:
       --verbose
       --extra-editor-arg="-upmNoDefaultPackages"
       --suite=playmode
-      --category="{{ test_categories }}"
+      --category="{% if test_setup.test_categories %}{{ test_setup.test_categories }}{% else %}{{ test_categories }}{% endif %}"
       --scripting-backend=Il2Cpp
       --platform={% if platform.platform -%}{{ platform.platform }}{% else -%}{{ platform_id }}{% endif %}
 {% if platform.build -%}
@@ -356,13 +356,14 @@ tests_{{ test_setup.project_setup }}_all:
 {% endfor -%} # platform_id
 {% endfor -%} # editor
 
-
+{% if test_setup.pr_test_subset -%}
 tests_{{ test_setup.project_setup }}_pr:
   name: Test PR subset {{ test_setup.project_setup }}
   dependencies:
 {% for pr_set in test_setup.pr_test_subset -%}
     - .yamato/project-test.yml#test_{{ test_setup.project_setup }}_{{ pr_set.platform }}_{{ pr_set.editor }}
 {% endfor -%}
+{% endif -%}
 
 run_{{ test_setup.project_setup }}_all:
   name: Build and run all {{ test_setup.project_setup }}
@@ -406,7 +407,9 @@ tests_pr:
   name: Test PR subsets
   dependencies:
 {% for test_setup in test_setups -%}
+{% if test_setup.pr_test_subset -%}
     - .yamato/project-test.yml#tests_{{ test_setup.project_setup }}_pr
+{% endif -%}
 {% endfor -%}
 
 run_all:
