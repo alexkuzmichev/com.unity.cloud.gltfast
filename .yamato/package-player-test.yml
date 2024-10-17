@@ -15,6 +15,14 @@ build_{{ platform.name }}_{{ editor.version }}:
   commands:
     - unity-downloader-cli --fast --wait --unity-version "{{ editor.version }}" --components editor{% if platform.platform %} --components {{ platform.platform }}{% endif %}
     - upm-pvp create-test-project Projects/TestProject --packages "upm-ci~/packages/*.tgz" --unity .Editor
+
+    # Install glTF-Validator for Unity package
+    - |
+      pushd Packages
+      git clone --depth 1 --single-branch --branch={{ gltf_validator.git_branch }} {{ gltf_validator.git_uri }}
+      popd
+      unity-config project add dependency {{ gltf_validator.id }}@file:./../../../Packages/{{ gltf_validator.git_name }}/Packages/{{ gltf_validator.id }} -p Projects/{{ test_setup.project }}
+
     - >
       UnifiedTestRunner
       --platform={{ platform.platform }} {% if platform.upm_ci_params %}{{ platform.upm_ci_params }}{% endif %}
@@ -55,6 +63,14 @@ run_{{ platform.name }}_{{ editor.version }}:
   commands:
     - unity-downloader-cli --fast --wait --unity-version "{{ editor.version }}" --components editor{% if platform.platform %} --components {{ platform.platform }}{% endif %}
     - upm-pvp create-test-project Projects/TestProject --packages "upm-ci~/packages/*.tgz" --unity .Editor
+
+    # Install glTF-Validator for Unity package
+    - |
+      pushd Packages
+      git clone --depth 1 --single-branch --branch={{ gltf_validator.git_branch }} {{ gltf_validator.git_uri }}
+      popd
+      unity-config project add dependency {{ gltf_validator.id }}@file:./../../../Packages/{{ gltf_validator.git_name }}/Packages/{{ gltf_validator.id }} -p Projects/{{ test_setup.project }}
+
     - >
       UnifiedTestRunner
       --platform={{ platform.id }}

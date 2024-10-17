@@ -23,6 +23,14 @@ test_{{ platform.name }}_{{ editor }}:
       --exemptions "pvp-results/new-exemptions.json"
 
     - upm-pvp create-test-project Projects/TestProject --packages "upm-ci~/packages/*.tgz" --unity .Editor
+
+    # Install glTF-Validator for Unity package
+    - |
+      pushd Packages
+      git clone --depth 1 --single-branch --branch={{ gltf_validator.git_branch }} {{ gltf_validator.git_uri }}
+      popd
+      unity-config project add dependency {{ gltf_validator.id }}@file:./../../../Packages/{{ gltf_validator.git_name }}/Packages/{{ gltf_validator.id }} -p Projects/TestProject
+
     - >
       UnifiedTestRunner
       --suite=editor

@@ -165,6 +165,12 @@ player_test_platforms:
   #   run: mac-iphone
   #   platform: iOS
 
+gltf_validator:
+  id: com.unity.formats.gltf.validator
+  git_name: com.unity.cloud.gltf-validator
+  git_uri: https://github.cds.internal.unity3d.com/unity/com.unity.cloud.gltf-validator.git
+  git_branch: develop
+
 agents:
   win:
     os: win
@@ -218,14 +224,6 @@ agents:
     flavor_xlarge: b1.xlarge
 
 test_framework: com.unity.test-framework@1.4.3
-
-# Note: Newtonsoft JSON and UnityWebRequestTexture are dependencies of the package tests (not the package itself)
-# TODO: Auto-add test dependencies (Tests/.tests.json) in project setups for tests
-test_dependencies:
-  - id: com.unity.nuget.newtonsoft-json
-    version: 3.2.1
-  - id: com.unity.modules.unitywebrequesttexture
-    version: 1.0.0
 
 registry:
   npm: https://artifactory.prd.it.unity3d.com/artifactory/api/npm/upm-npm

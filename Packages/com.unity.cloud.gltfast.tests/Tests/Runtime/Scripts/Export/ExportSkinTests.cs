@@ -8,7 +8,7 @@ using GLTFast.Export;
 using GLTFast.Logging;
 using NUnit.Framework;
 #if GLTF_VALIDATOR && UNITY_EDITOR
-using Unity.glTF.Validator;
+using UnityEditor.Formats.Gltf.Validation;
 #endif // GLTF_VALIDATOR
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -101,9 +101,7 @@ namespace GLTFast.Tests.Export
             var success = await export.SaveToFileAndDispose(path); ;
             ExportTests.AssertLogger(logger);
             Assert.IsTrue(success);
-#if GLTF_VALIDATOR && UNITY_EDITOR
-            ExportTests.ValidateGltf(path,MessageCode.NODE_SKINNED_MESH_NON_ROOT);
-#endif
+            ExportTests.ValidateGltf(path, "NODE_SKINNED_MESH_NON_ROOT");
         }
     }
 }

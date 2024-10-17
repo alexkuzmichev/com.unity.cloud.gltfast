@@ -26,8 +26,10 @@ sonar:
       "%YAMATO_WORK_DIR%/.Editor/Unity.exe"
       -projectPath "{{ project }}"
       -batchmode
+      -acceptsoftwareterms
       -quit
       -nographics
+      -upmNoDefaultPackages
       -logFile %YAMATO_SOURCE_DIR%/test-results~/Editor-SyncSolution.log
       -executeMethod "Packages.Rider.Editor.RiderScriptEditor.SyncSolution"
 

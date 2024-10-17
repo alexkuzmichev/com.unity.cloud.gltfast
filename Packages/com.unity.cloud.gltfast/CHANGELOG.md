@@ -27,6 +27,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `MeshPrimitiveComparer` is now used for clustering mesh primitives (instead of `GetHashCode`/`Equals` on `MeshPrimitive` and sub-types).
 - Set minimum required Unity version to 2020.3.48f1 in the documentation.
 - (Export) Avoid potential loss of data by allocating output streams persistently.
+- (Test) Render export test inconclusive if the result has not been validated.
+- (Test) More explicit error message by throwing innermost exception while preserving the stack trace during async tests.
 
 ### Removed
 - Outdated and unused code coverage badge.

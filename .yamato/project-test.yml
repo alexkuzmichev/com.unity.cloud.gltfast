@@ -41,12 +41,7 @@ Build Android on 2020 LTS failed consistently, so leaving it out
   artifacts:
     logs:
       paths:
-        - "test-results~/**/*"
-    Project:
-      paths:
-        - "Projects/{{ test_setup.project }}/Packages/*.json"
-        - "Projects/{{ test_setup.project }}/ProjectSettings/*.asset"
-        - "Projects/{{ test_setup.project }}/Logs/*"{% endcapture -%}
+        - "test-results~/**/*"{% endcapture -%}
 
 {% if platform.test -%}
 {% assign agent = agents[platform.test] -%}
@@ -73,6 +68,13 @@ test_{{ test_setup.project_setup }}_{{ platform_id }}_{{ editor }}:
   commands:
     # Install Unity Editor and required components
     - unity-downloader-cli -u {{ editor }} -c Editor -c {{ platform.component }} -w --fast
+
+    # Install glTF-Validator for Unity package
+    - |
+      pushd Packages
+      git clone --depth 1 --single-branch --branch={{ gltf_validator.git_branch }} {{ gltf_validator.git_uri }}
+      popd
+      unity-config project add dependency {{ gltf_validator.id }}@file:./../../../Packages/{{ gltf_validator.git_name }}/Packages/{{ gltf_validator.id }} -p Projects/{{ test_setup.project }}
 
 {% capture results_path -%}{{ os.yamato_source_dir }}/test-results~/com.unity.cloud.gltfast/{{ platform_id }}/{{ editor }}/{{ test_setup.project_setup }}{% endcapture -%}
 
@@ -126,7 +128,7 @@ test_{{ test_setup.project_setup }}_{{ platform_id }}_{{ editor }}:
 {% if is_coverage_set -%}
       --enable-code-coverage
       --coverage-results-path={{ results_path }}/CoverageResults
-      --coverage-options='generateAdditionalMetrics;generateHtmlReport;assemblyFilters:{{ codecov_assemblies }};pathReplacePatterns:**/PackageCache/com.unity.cloud.gltfast@*/,;sourcePaths:{{ os.yamato_source_dir }}/Packages/com.unity.cloud.gltfast'
+      --coverage-options='generateAdditionalMetrics;assemblyFilters:{{ codecov_assemblies }};pathReplacePatterns:**/PackageCache/com.unity.cloud.gltfast@*/,;sourcePaths:{{ os.yamato_source_dir }}/Packages/com.unity.cloud.gltfast'
       --coverage-upload-options="reportsDir:{{ results_path }}/CoverageResults;reports:*.xml;sourceDir:Packages/com.unity.cloud.gltfast;repo:unity/com.unity.cloud.gltfast.src;changeset:{{ os.git_revision }};name:{{ test_setup.project_setup }}_{{ platform_id }}_{{ editor }};flags:{{ test_setup.project_setup }};verbose"
 {% endif -%}
 {% if agent.os == "win" and editor == "2020" -%}

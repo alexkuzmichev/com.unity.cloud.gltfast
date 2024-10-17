@@ -36,7 +36,7 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 #if GLTF_VALIDATOR
-using Unity.glTF.Validator;
+using UnityEditor.Formats.Gltf.Validation;
 #endif // GLTF_VALIDATOR
 #endif // UNITY_EDITOR
 
@@ -269,9 +269,7 @@ namespace GLTFast.Tests.Export
             var success = task.Result;
             Assert.IsTrue(success);
             AssertLogger(logger);
-#if GLTF_VALIDATOR && UNITY_EDITOR
-            ValidateGltf(path, MessageCode.UNUSED_OBJECT);
-#endif
+            ValidateGltf(path);
         }
 
         [UnityTest, SceneRootObjectTestCase(k_SceneNameBuiltIn, "gltf")]
@@ -421,9 +419,7 @@ namespace GLTFast.Tests.Export
             var success = task.Result;
             Assert.IsTrue(success);
             AssertLogger(logger);
-#if GLTF_VALIDATOR && UNITY_EDITOR
-            ValidateGltf(path, MessageCode.UNUSED_OBJECT);
-#endif
+            ValidateGltf(path);
         }
 
         [UnityTest]
@@ -438,9 +434,7 @@ namespace GLTFast.Tests.Export
             var success = task.Result;
             Assert.IsTrue(success);
             AssertLogger(logger);
-#if GLTF_VALIDATOR && UNITY_EDITOR
-            ValidateGltf(path, MessageCode.UNUSED_OBJECT);
-#endif
+            ValidateGltf(path);
         }
 
         [UnityTest]
@@ -595,9 +589,7 @@ namespace GLTFast.Tests.Export
             var success = task.Result;
             Assert.IsTrue(success);
             AssertLogger(logger);
-#if GLTF_VALIDATOR && UNITY_EDITOR
-            ValidateGltf(path, MessageCode.UNUSED_OBJECT);
-#endif
+            ValidateGltf(path);
             Assert.Throws<InvalidOperationException>(delegate
             {
                 export.AddScene(new[] { childA });
@@ -624,9 +616,7 @@ namespace GLTFast.Tests.Export
             var success = await export.SaveToFileAndDispose(resultPath);
             Assert.IsTrue(success);
             AssertLogger(logger);
-#if GLTF_VALIDATOR && UNITY_EDITOR
-            ValidateGltf(resultPath, MessageCode.UNUSED_OBJECT);
-#endif
+            ValidateGltf(resultPath);
             // #if UNITY_EDITOR
             //             AssertGltfJson($"{testName}.gltf", resultPath);
             // #endif
@@ -696,14 +686,12 @@ namespace GLTFast.Tests.Export
                 AssertGltfJson(fileName, path);
             }
 
-#if GLTF_VALIDATOR && UNITY_EDITOR
-            ValidateGltf(path, new [] {
-                MessageCode.ACCESSOR_MAX_MISMATCH,
-                MessageCode.ACCESSOR_MIN_MISMATCH,
-                MessageCode.NODE_EMPTY,
-                MessageCode.UNUSED_OBJECT,
-            });
-#endif
+            ValidateGltf(
+                path,
+                "ACCESSOR_MAX_MISMATCH",
+                "ACCESSOR_MIN_MISMATCH",
+                "NODE_EMPTY"
+                );
         }
 
 #if LOAD_REFERENCE_SYNC
@@ -898,15 +886,13 @@ namespace GLTFast.Tests.Export
             }
             Assert.IsTrue(success);
             LoggerTest.AssertLogger(logger, new LogCode[] { });
-#if GLTF_VALIDATOR && UNITY_EDITOR
-            ValidateGltf(path, new [] {
-                MessageCode.ACCESSOR_ELEMENT_OUT_OF_MAX_BOUND,
-                MessageCode.ACCESSOR_MAX_MISMATCH,
-                MessageCode.ACCESSOR_MIN_MISMATCH,
-                MessageCode.NODE_EMPTY,
-                MessageCode.UNUSED_OBJECT,
-            });
-#endif
+            ValidateGltf(
+                path,
+                "ACCESSOR_ELEMENT_OUT_OF_MAX_BOUND",
+                "ACCESSOR_MAX_MISMATCH",
+                "ACCESSOR_MIN_MISMATCH",
+                "NODE_EMPTY"
+                );
         }
 
         internal static void AssertLogger(CollectingLogger logger)
@@ -958,15 +944,34 @@ namespace GLTFast.Tests.Export
 
         delegate Task AsyncTestDelegate();
 
+        internal static void ValidateGltf(string path, params string[] expectedMessageCodes)
+        {
+#if GLTF_VALIDATOR && UNITY_EDITOR
+            MessageCode[] expectedMessages = null;
+            if (expectedMessageCodes != null && expectedMessageCodes.Length > 0)
+            {
+                expectedMessages = new MessageCode[expectedMessageCodes.Length];
+                for (var i = 0; i < expectedMessageCodes.Length; i++)
+                {
+                    expectedMessages[i] = (MessageCode) Enum.Parse(typeof(MessageCode), expectedMessageCodes[i]);
+                }
+            }
+            ValidateGltfInternal(path, expectedMessages);
+#elif !UNITY_EDITOR
+            Debug.Log("glTF validation not performed in builds.");
+#else
+            Assert.Inconclusive("glTF-Validator for Unity is not installed. Cannot validate exported glTF.");
+#endif
+        }
 
 #if GLTF_VALIDATOR && UNITY_EDITOR
-        internal static void ValidateGltf(string path, params MessageCode[] expectedMessages) {
+        static void ValidateGltfInternal(string path, params MessageCode[] expectedMessages) {
             var report = Validator.Validate(path);
             Assert.NotNull(report, $"Report null for {path}");
             // report.Log();
             if (report.issues != null) {
                 foreach (var message in report.issues.messages) {
-                    if (((IList)expectedMessages).Contains(message.codeEnum)) {
+                    if (expectedMessages!=null && ((IList)expectedMessages).Contains(message.codeEnum)) {
                         continue;
                     }
                     Assert.Greater(message.severity, 0, $"Error {message} (path {Path.GetFileName(path)})");

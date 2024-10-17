@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections;
+using System.Runtime.ExceptionServices;
 using System.Threading.Tasks;
 using UnityEngine;
 
@@ -33,13 +34,14 @@ namespace GLTFast.Tests
 
             void CheckExceptionAndTimeout()
             {
-                if (task.Exception != null)
+                Exception exception = task.Exception;
+                if (exception != null)
                 {
-                    if (task.Exception is AggregateException aggregateException)
+                    if (exception is AggregateException aggregateException)
                     {
-                        if (aggregateException.InnerException != null) throw aggregateException.InnerException;
+                        ExceptionDispatchInfo.Capture(aggregateException.GetBaseException()).Throw();
                     }
-                    throw task.Exception;
+                    throw exception;
                 }
                 if (timeout > 0 && Time.realtimeSinceStartup - startTime > timeout)
                 {

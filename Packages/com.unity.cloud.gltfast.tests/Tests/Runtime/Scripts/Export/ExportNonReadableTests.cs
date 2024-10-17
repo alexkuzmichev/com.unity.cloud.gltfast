@@ -9,7 +9,7 @@ using GLTFast.Export;
 using GLTFast.Logging;
 using NUnit.Framework;
 #if GLTF_VALIDATOR && UNITY_EDITOR
-using Unity.glTF.Validator;
+using UnityEditor.Formats.Gltf.Validation;
 #endif // GLTF_VALIDATOR
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -115,9 +115,7 @@ namespace GLTFast.Tests.Export
             var success = await export.SaveToFileAndDispose(path);
             Assert.IsTrue(success);
             LoggerTest.AssertLogger(logger, expectedLogCodes);
-#if GLTF_VALIDATOR && UNITY_EDITOR
-            ExportTests.ValidateGltf(path, MessageCode.UNUSED_OBJECT);
-#endif
+            ExportTests.ValidateGltf(path);
         }
 
         [OneTimeSetUp]

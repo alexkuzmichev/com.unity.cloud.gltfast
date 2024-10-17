@@ -9,7 +9,7 @@
         "Unity.Mathematics",
         "Unity.PerformanceTesting",
         "Unity.Transforms",
-        "com.unity.formats.gltf.validator.Editor",
+        "UnityEditor.Formats.Gltf.Validation",
         "glTFast",
         "glTFast.dots",
         "glTFast.Export",
