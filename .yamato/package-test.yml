@@ -11,117 +11,58 @@ test_{{ platform.name }}_{{ editor }}:
     type: {{ agent.type }}
     image: {{ agent.image }}
     flavor: {{ agent.flavor}}
-  source:
-    skip_checkout: true
   variables:
-    UPMCI_PKG: "upm-ci-utils@stable"
+    PVP_PROFILE: "supported .yamato/dev-exemptions.json"
   commands:
-    - |
-      mkdir Packages
-      pushd Packages
-      git clone {{ os.git_url }} --no-checkout gltfast
-      cd gltfast
-      git fetch origin {{ os.git_revision }}
-      git checkout -f --detach {{ os.git_revision }}
-      popd
+    - unity-downloader-cli --fast --wait -u {{ editor }} -c editor
 
-    - mkdir Assets
-{% for asset_set in asset_sets -%}
-    - |
-      pushd Assets
-      git clone {{ asset_set.git_uri }} --no-checkout {{ asset_set.name }}
-      cd {{ asset_set.name }}
-      git fetch origin {{ asset_set.git_revision }}
-      git checkout -f --detach {{ asset_set.git_revision }}
-      popd
-{% endfor -%}
-
-    - npm install {% if agent.os == "win" %}"%UPMCI_PKG%"{% else %}"$UPMCI_PKG"{% endif %} -g --registry {{ registry.npm }}
+    - upm-pvp test --unity .Editor --packages "upm-ci~/packages/*.tgz" --results pvp-results
     - >
-{% if agent.os == "win" -%}
-      set GLTF_TEST_ASSET_DIR={{ os.yamato_source_dir }}\Assets
-{% else -%}
-      export GLTF_TEST_ASSET_DIR="{{ os.yamato_source_dir }}/Assets"
-{% endif -%}
+      upm-pvp require {% if platform.name == "win" %}"%PVP_PROFILE%"{% else %}"$PVP_PROFILE"{% endif %}
+      --results pvp-results
+      --exemptions "pvp-results/new-exemptions.json"
 
-      upm-ci package test
-      -u {{ editor }}
-      --package-path Packages/gltfast
-      --type package-tests
-      --extra-create-project-arg=-upmNoDefaultPackages
-      --extra-utr-arg='--category="{{ test_categories }}"'
-
-  artifacts:
-    logs:
-      paths:
-        - "upm-ci~/test-results/**/*"
-        - "upm-ci~/upm-ci.log"
-  dependencies:
-    - .yamato/package-pack.yml#pack
-
-{% endfor -%}
-{% endfor -%}
-
-# Validate the package on each editor version and each platform
-# Validation only occurs in editmode.
-{% for editor in editor_versions -%}
-{% for platform in test_platforms -%}
-{% assign agent = agents[platform.agent] -%}
-{% if agent.os == "win" -%}{% assign os = os_variables.win -%}{% else -%}{% assign os = os_variables.unix -%}{% endif -%}
-validate_{{ platform.name }}_{{ editor }}:
-  name : Validate {{ editor }} on {{ platform.name }}
-  agent:
-    type: {{ agent.type }}
-    image: {{ agent.image }}
-    flavor: {{ agent.flavor}}
-  source:
-    skip_checkout: true
-  variables:
-    UPMCI_PKG: "upm-ci-utils@stable"
-  commands:
-    - |
-      mkdir Packages
-      pushd Packages
-      git clone {{ os.git_url }} --no-checkout gltfast
-      cd gltfast
-      git fetch origin {{ os.git_revision }}
-      git checkout -f --detach {{ os.git_revision }}
-      popd
-
-    - mkdir Assets
-{% for asset_set in asset_sets -%}
-    - |
-      pushd Assets
-      git clone {{ asset_set.git_uri }} --no-checkout {{ asset_set.name }}
-      cd {{ asset_set.name }}
-      git fetch origin {{ asset_set.git_revision }}
-      git checkout -f --detach {{ asset_set.git_revision }}
-      popd
-{% endfor -%}
-
-    - npm install {% if agent.os == "win" %}"%UPMCI_PKG%"{% else %}"$UPMCI_PKG"{% endif %} -g --registry {{ registry.npm }}
+    - upm-pvp create-test-project Projects/TestProject --packages "upm-ci~/packages/*.tgz" --unity .Editor
     - >
-{% if agent.os == "win" -%}
-      set GLTF_TEST_ASSET_DIR={{ os.yamato_source_dir }}\Assets
-{% else -%}
-      export GLTF_TEST_ASSET_DIR="{{ os.yamato_source_dir }}/Assets"
-{% endif -%}
+      UnifiedTestRunner
+      --suite=editor
+      --suite=playmode
+      --editor-location=.Editor
+      --testproject=Projects/TestProject
+      --artifacts-path=test-results
+      --reruncount=2
+      "--ff={ops.upmpvpevidence.enable=true}"
+      --category="{{ test_categories }}"
 
-      upm-ci package test
-      -u {{ editor }}
-      --package-path Packages/gltfast
+{% if agent.os == "win" -%}
+    # Run the vetting test via legacy upm-ci to ensure the API validation is run.
+    # TODO: Remove this (along with UPMPVP_ACK_UPMPVP_DOES_NO_API_VALIDATION: 1) once upm-pvp/UnifiedTestRunner support API validation.
+    - npm install "upm-ci-utils@stable" -g --registry {{ registry.npm }}
+    - upm-ci package test
+      -u .Editor
+      --package-path Packages/com.unity.cloud.gltfast
       --type vetting-tests
       --platform editmode
       --extra-create-project-arg=-upmNoDefaultPackages
       --extra-utr-arg='--category="{{ test_categories }}"'
-
+{% if editor == "2020" -%}
+  after:
+    # To prevent random artifacts zip failures, ensure Unity.Licensing.Client.exe is no longer running. See this slack thread for more information (https://unity.slack.com/archives/C998PJJDD/p1683307400228169)
+    # "ver > nul" ensures the ERRORLEVEL is reset to 0 in case Unity.Licensing.Client.exe is already closed
+    - |
+      taskkill /f /t /im Unity.Licensing.Client.exe
+      ver > nul
+{% endif -%}
+{% endif -%}
   artifacts:
     logs:
       paths:
-        - "upm-ci~/test-results/**/*"
-        - "upm-ci~/upm-ci.log"
+        - pvp-results/*
+        - test-results/**
+        - upm-ci~/test-results/**
+        - upm-ci~/upm-ci.log
   dependencies:
-    - .yamato/package-pack.yml#pack
+    - .yamato/pack.yml#pack
 {% endfor -%}
 {% endfor -%}
 
@@ -132,7 +73,6 @@ tests_all:
 {% for editor in editor_versions -%}
 {% for platform in test_platforms -%}
     - .yamato/package-test.yml#test_{{platform.name}}_{{editor}}
-    - .yamato/package-test.yml#validate_{{platform.name}}_{{editor}}
 {% endfor -%}
 {% endfor -%}
 
@@ -143,18 +83,15 @@ tests_pr:
 {% for platform in test_platforms limit: 1 -%}
     # First(oldest) editor, first(most important) platform
     - .yamato/package-test.yml#test_{{platform.name}}_{{editor}}
-    - .yamato/package-test.yml#validate_{{platform.name}}_{{editor}}
 {% endfor -%}
 {% endfor -%}
 {% for platform in test_platforms limit: 1 offset: continue -%}
     # Newest editor, next(second) platform
     - .yamato/package-test.yml#test_{{platform.name}}_{{editor_versions[-1]}}
-    - .yamato/package-test.yml#validate_{{platform.name}}_{{editor_versions[-1]}}
 {% endfor -%}
 {% for editor in editor_versions limit: 1 offset: continue -%}
 {% for platform in test_platforms limit: 1 offset: continue -%}
     # Next(second) editor, next(third) platform
     - .yamato/package-test.yml#test_{{platform.name}}_{{editor}}
-    - .yamato/package-test.yml#validate_{{platform.name}}_{{editor}}
 {% endfor -%}
 {% endfor -%}

@@ -12,4 +12,10 @@ code_format_check:
       GIT_CLONE_PROTECTION_ACTIVE=false
       git clone --depth 1 --branch stable https://github.cds.internal.unity3d.com/unity/unity-meta.git
     - mv unity-meta ~
-    - perl ~/unity-meta/Tools/Format/format.pl --showfiles --dry-run .
+    - perl ~/unity-meta/Tools/Format/format.pl --showfiles --dry-run Packages/com.unity.cloud.gltfast
+    - |
+      for i in $(find Packages/com.unity.cloud.gltfast.tests ! -iname "*~" ! -iname ".DS_Store" ! -iname "*.meta" -maxdepth 1 -mindepth 1)
+      do
+        echo "Formatting $i"
+        perl ~/unity-meta/Tools/Format/format.pl --showfiles --dry-run "$i"
+      done

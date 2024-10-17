@@ -1,7 +1,7 @@
 {% metadata_file .yamato/package.metafile -%}
----
-{% assign job_project_path = generic_project_path -%}
 
+codecov_assemblies: +glTFast*,-glTFast*Tests*,-glTFast.Documentation.*
+---
 {% for test_setup in test_setups -%}
 {% if test_setup.editor_versions -%}
   {% assign editor_versions = test_setup.editor_versions -%}
@@ -44,9 +44,9 @@ Build Android on 2020 LTS failed consistently, so leaving it out
         - "test-results~/**/*"
     Project:
       paths:
-        - "{{ job_project_path }}/Packages/*.json"
-        - "{{ job_project_path }}/ProjectSettings/*.asset"
-        - "{{ job_project_path }}/Logs/*"{% endcapture -%}
+        - "Projects/{{ test_setup.project }}/Packages/*.json"
+        - "Projects/{{ test_setup.project }}/ProjectSettings/*.asset"
+        - "Projects/{{ test_setup.project }}/Logs/*"{% endcapture -%}
 
 {% if platform.test -%}
 {% assign agent = agents[platform.test] -%}
@@ -70,88 +70,34 @@ test_{{ test_setup.project_setup }}_{{ platform_id }}_{{ editor }}:
     type: {% if test_setup.gpu_required %}{{ agent.gpu_type}}{% else %}{{ agent.type}}{% endif %}
     image: {{ agent.image }}
     flavor: {% if test_setup.agent_xlarge_required %}{{ agent.flavor_xlarge}}{% else %}{{ agent.flavor}}{% endif %}
-  source:
-    skip_checkout: true
   commands:
-    # Clone package into sub-folder `Packages/gltf`
-    - |
-      mkdir Packages
-      pushd Packages
-      git clone {{ os.git_url }} --no-checkout gltfast
-      cd gltfast
-      git fetch origin {{ os.git_revision }}
-      git checkout -f --detach {{ os.git_revision }}
-      popd
-
-    # Clone all test asset repositories into `Assets`
-    - mkdir Assets
-{% for asset_set in asset_sets -%}
-    - |
-      pushd Assets
-      git clone {{ asset_set.git_uri }} --no-checkout {{ asset_set.name }}
-      cd {{ asset_set.name }}
-      git fetch origin {{ asset_set.git_revision }}
-      git checkout -f --detach {{ asset_set.git_revision }}
-      popd
-{% endfor -%}
-
-    # Install unity-downloader-cli and unity-config
-{% if agent.os == "win" -%}
-    - |
-      where /q gsudo.exe && set CMD_ADMIN=gsudo.exe
-      %CMD_ADMIN% choco source add --priority 1 -n Unity -s {{ registry.artifactory }}/api/nuget/unity-choco-local
-      %CMD_ADMIN% choco install unity-config -y
-      %CMD_ADMIN% choco install unity-downloader-cli -y
-{% elsif agent.os == "mac" -%}
-    - brew tap --force-auto-update unity/unity git@github.cds.internal.unity3d.com:unity/homebrew-unity.git
-    - brew install unity-config
-{% endif -%}
-
-    # Install UnifiedTestRunner
-{% if agent.os == "win" -%}
-    - curl -s --show-error --retry 15 {{ registry.artifactory }}/unity-tools-local/utr-standalone/utr.bat --output {{ os.tool_utr }}
-{% else -%}
-    - curl -s --show-error --retry 15 {{ registry.artifactory }}/unity-tools-local/utr-standalone/utr --output {{ os.tool_utr }}
-    - chmod +x {{ os.tool_utr }}
-{% endif -%}
-
     # Install Unity Editor and required components
     - unity-downloader-cli -u {{ editor }} -c Editor -c {{ platform.component }} -w --fast
 
-    # Create test project
-    - |
-      unity-config project create {{ job_project_path }}
-      unity-config project add testable com.unity.cloud.gltfast
-      unity-config project add dependency com.unity.cloud.gltfast@file:./../../../Packages/gltfast
-      unity-config project add dependency {{ test_framework }} -p {{ job_project_path }}
-{% for dep in test_dependencies -%}
-      unity-config project add dependency {{ dep.id }}@{{ dep.version }} -p {{ job_project_path }}
-{% endfor -%}
-
 {% capture results_path -%}{{ os.yamato_source_dir }}/test-results~/com.unity.cloud.gltfast/{{ platform_id }}/{{ editor }}/{{ test_setup.project_setup }}{% endcapture -%}
 
+{% if test_setup.setup -%}
     # Apply project setup
     - >
       {{ editor_exe }}
-      -projectPath {{ job_project_path }}
-      -executeMethod GLTFast.Editor.Tests.SetupProject.ApplySetup glTFastSetup:{{ test_setup.project_setup }}
+      -projectPath Projects/{{ test_setup.project }}
+      -executeMethod GLTFast.Editor.Tests.SetupProject.ApplySetup glTFastSetup:{{ test_setup.setup }}
       -upmNoDefaultPackages
       -enablePackageManagerTraces
       -batchmode
       -quit
       -logFile {{ results_path }}/UnityProjectSetup.log
-
+{% endif -%}
 {% if test_setup.render_pipeline -%}
     # Apply render pipeline asset
     - >
       {{ editor_exe }}
-      -projectPath {{ job_project_path }}
+      -projectPath Projects/{{ test_setup.project }}
       -executeMethod GLTFast.Editor.Tests.SetupProject.SetRenderPipeline SRP:{{ test_setup.render_pipeline }}
       -upmNoDefaultPackages
-      -enablePackageManagerTraces
       -batchmode
       -quit
-      -logFile {{ results_path }}/UnityProjectSetup.log
+      -logFile {{ results_path }}/UnityRenderPipelineSetup.log
 {% endif -%}
 
     # Run Tests
@@ -159,17 +105,13 @@ test_{{ test_setup.project_setup }}_{{ platform_id }}_{{ editor }}:
     # TODO: DISABLE_SUB_PACKAGE_LOAD is required for 2020 only. Eventually remove all occurrences.
     - >
 {% if agent.os == "win" -%}
-      set GLTF_TEST_ASSET_DIR={{ os.yamato_source_dir }}\Assets
-
       set DISABLE_SUB_PACKAGE_LOAD=TRUE
 {% else -%}
-      export GLTF_TEST_ASSET_DIR="{{ os.yamato_source_dir }}/Assets"
-
       export DISABLE_SUB_PACKAGE_LOAD=TRUE
 {% endif -%}
 
-      {{ os.tool_utr }} 
-      --testproject={{ job_project_path }}
+      UnifiedTestRunner
+      --testproject=Projects/{{ test_setup.project }}
       --editor-location=.Editor
       --artifacts_path={{ results_path }}
       --reruncount=2
@@ -177,154 +119,24 @@ test_{{ test_setup.project_setup }}_{{ platform_id }}_{{ editor }}:
       --timeout={{ test_setup.utr_timeout }}
 {% endif -%}
       --verbose
-      --extra-editor-arg="-enablePackageManagerTraces -upmNoDefaultPackages"
+      --extra-editor-arg="-upmNoDefaultPackages"
       --suite=editor
       --suite=playmode
       --category="{{ test_categories }}"
 {% if is_coverage_set -%}
       --enable-code-coverage
       --coverage-results-path={{ results_path }}/CoverageResults
-      --coverage-options='generateAdditionalMetrics;generateHtmlReport;assemblyFilters:+glTFast*,-glTFast*Tests*;pathReplacePatterns:**/PackageCache/com.unity.cloud.gltfast@*/,;sourcePaths:{{ os.yamato_source_dir }}/Packages/gltfast'
-      --coverage-upload-options="reportsDir:{{ results_path }}/CoverageResults;reports:*.xml;sourceDir:Packages/gltfast;repo:unity/com.unity.cloud.gltfast.src;changeset:{{ os.git_revision }};name:{{ test_setup.project_setup }}_{{ platform_id }}_{{ editor }};flags:{{ test_setup.project_setup }};verbose"
+      --coverage-options='generateAdditionalMetrics;generateHtmlReport;assemblyFilters:{{ codecov_assemblies }};pathReplacePatterns:**/PackageCache/com.unity.cloud.gltfast@*/,;sourcePaths:{{ os.yamato_source_dir }}/Packages/com.unity.cloud.gltfast'
+      --coverage-upload-options="reportsDir:{{ results_path }}/CoverageResults;reports:*.xml;sourceDir:Packages/com.unity.cloud.gltfast;repo:unity/com.unity.cloud.gltfast.src;changeset:{{ os.git_revision }};name:{{ test_setup.project_setup }}_{{ platform_id }}_{{ editor }};flags:{{ test_setup.project_setup }};verbose"
 {% endif -%}
-{{ job_artifacts }}
-{% endif -%}
-
-{% if platform.build_and_run -%}
-{% assign agent = agents[platform.build_and_run] -%}
-{% case agent.os -%}
-  {% when "win" -%}
-    {% assign os = os_variables.win -%}
-    {% assign editor_exe = os.yamato_source_dir | append: editor_location.win -%}
-  {% when "mac" -%}
-    {% assign os = os_variables.unix -%}
-    {% assign editor_exe = os.yamato_source_dir | append: editor_location.mac -%}
-  {% when "linux" -%}
-    {% assign os = os_variables.unix -%}
-    {% assign editor_exe = os.yamato_source_dir | append: editor_location.ubuntu -%}
-  {% else -%}
-    Platform {{ platform.test }} has unknown OS!
-{% endcase -%}
-
-build_and_run_{{ test_setup.project_setup }}_{{ platform_id }}_{{ editor }}:
-  name : Build and run {{ test_setup.project_setup }} with {{ editor }} on {{ platform_id }}
-  agent:
-{% assign agent = agents[platform.build_and_run] -%}
-    type: {% if test_setup.gpu_required %}{{ agent.gpu_type}}{% else %}{{ agent.type}}{% endif %}
-    image: {{ agent.image }}
-    flavor: {% if test_setup.agent_xlarge_required %}{{ agent.flavor_xlarge}}{% else %}{{ agent.flavor}}{% endif %}
-  source:
-    skip_checkout: true
-  commands:
-    # Clone package into sub-folder `Packages/gltf`
+{% if agent.os == "win" and editor == "2020" -%}
+  after:
+    # To prevent random artifacts zip failures, ensure Unity.Licensing.Client.exe is no longer running. See this slack thread for more information (https://unity.slack.com/archives/C998PJJDD/p1683307400228169)
+    # "ver > nul" ensures the ERRORLEVEL is reset to 0 in case Unity.Licensing.Client.exe is already closed
     - |
-      mkdir Packages
-      pushd Packages
-      git clone {{ os.git_url }} --no-checkout gltfast
-      cd gltfast
-      git fetch origin {{ os.git_revision }}
-      git checkout -f --detach {{ os.git_revision }}
-      popd
-
-    # Clone all test asset repositories into `Assets`
-    - mkdir Assets
-{% for asset_set in asset_sets -%}
-    - |
-      pushd Assets
-      git clone {{ asset_set.git_uri }} --no-checkout {{ asset_set.name }}
-      cd {{ asset_set.name }}
-      git fetch origin {{ asset_set.git_revision }}
-      git checkout -f --detach {{ asset_set.git_revision }}
-      popd
-{% endfor -%}
-
-    # Install unity-downloader-cli and unity-config
-{% if agent.os == "win" -%}
-    - |
-      where /q gsudo.exe && set CMD_ADMIN=gsudo.exe
-      %CMD_ADMIN% choco source add --priority 1 -n Unity -s {{ registry.artifactory }}/api/nuget/unity-choco-local
-      %CMD_ADMIN% choco install unity-config -y
-      %CMD_ADMIN% choco install unity-downloader-cli -y
-{% elsif agent.os == "mac" -%}
-    - brew tap --force-auto-update unity/unity git@github.cds.internal.unity3d.com:unity/homebrew-unity.git
-    - brew install unity-config
+      taskkill /f /t /im Unity.Licensing.Client.exe
+      ver > nul
 {% endif -%}
-
-    # Install UnifiedTestRunner
-{% if agent.os == "win" -%}
-    - curl -s --show-error --retry 15 {{ registry.artifactory }}/unity-tools-local/utr-standalone/utr.bat --output {{ os.tool_utr }}
-{% else -%}
-    - curl -s --show-error --retry 15 {{ registry.artifactory }}/unity-tools-local/utr-standalone/utr --output {{ os.tool_utr }}
-    - chmod +x {{ os.tool_utr }}
-{% endif -%}
-
-    # Install Unity Editor and required components
-    - unity-downloader-cli -u {{ editor }} -c Editor -c {{ platform.component }} -w --fast
-
-    # Create test project
-    - |
-      unity-config project create {{ job_project_path }}
-      unity-config project add testable com.unity.cloud.gltfast
-      unity-config project add dependency com.unity.cloud.gltfast@file:./../../../Packages/gltfast
-      unity-config project add dependency {{ test_framework }} -p {{ job_project_path }}
-{% for dep in test_dependencies -%}
-      unity-config project add dependency {{ dep.id }}@{{ dep.version }} -p {{ job_project_path }}
-{% endfor -%}
-
-{% capture results_path -%}{{ os.yamato_source_dir }}/test-results~/com.unity.cloud.gltfast/{{ platform_id }}/{{ editor }}/{{ test_setup.project_setup }}{% endcapture -%}
-
-    # Apply project setup
-    - >
-      {{ editor_exe }}
-      -projectPath {{ job_project_path }}
-      -executeMethod GLTFast.Editor.Tests.SetupProject.ApplySetup glTFastSetup:{{ test_setup.project_setup }}
-      -upmNoDefaultPackages
-      -enablePackageManagerTraces
-      -batchmode
-      -quit
-      -logFile {{ results_path }}/UnityProjectSetup.log
-
-{% if test_setup.render_pipeline -%}
-    # Apply render pipeline asset
-    - >
-      {{ editor_exe }}
-      -projectPath {{ job_project_path }}
-      -executeMethod GLTFast.Editor.Tests.SetupProject.SetRenderPipeline SRP:{{ test_setup.render_pipeline }}
-      -upmNoDefaultPackages
-      -enablePackageManagerTraces
-      -batchmode
-      -quit
-      -logFile {{ results_path }}/UnityProjectSetup.log
-{% endif -%}
-
-    # Run Tests
-    # TODO: upm-ci rocks UPM and other cache directories. Maybe we can speed things up this way as well.
-    # TODO: DISABLE_SUB_PACKAGE_LOAD is required for 2020 only. Eventually remove all occurrences.
-    - >
-{% if agent.os == "win" -%}
-      set GLTF_TEST_ASSET_DIR={{ os.yamato_source_dir }}\Assets
-
-      set DISABLE_SUB_PACKAGE_LOAD=TRUE
-{% else -%}
-      export GLTF_TEST_ASSET_DIR="{{ os.yamato_source_dir }}/Assets"
-
-      export DISABLE_SUB_PACKAGE_LOAD=TRUE
-{% endif -%}
-
-      {{ os.tool_utr }} 
-      --testproject={{ job_project_path }}
-      --editor-location=.Editor
-      --artifacts_path={{ results_path }}
-      --reruncount=2
-{% if test_setup.utr_timeout -%}
-      --timeout={{ test_setup.utr_timeout }}
-{% endif -%}
-      --verbose
-      --extra-editor-arg="-enablePackageManagerTraces -upmNoDefaultPackages"
-      --suite=playmode
-      --category="{{ test_categories }}"
-      --scripting-backend=Il2Cpp
-      --platform={% if platform.platform -%}{{ platform.platform }}{% else -%}{{ platform_id }}{% endif %}
 {{ job_artifacts }}
 {% endif -%}
 
@@ -351,85 +163,31 @@ build_{{ test_setup.project_setup }}_{{ platform_id }}_{{ editor }}:
     type: {% if test_setup.gpu_required %}{{ agent.gpu_type}}{% else %}{{ agent.type}}{% endif %}
     image: {{ agent.image }}
     flavor: {% if test_setup.agent_xlarge_required %}{{ agent.flavor_xlarge}}{% else %}{{ agent.flavor}}{% endif %}
-  source:
-    skip_checkout: true
   commands:
-    # Clone package into sub-folder `Packages/gltf`
-    - |
-      mkdir Packages
-      pushd Packages
-      git clone {{ os.git_url }} --no-checkout gltfast
-      cd gltfast
-      git fetch origin {{ os.git_revision }}
-      git checkout -f --detach {{ os.git_revision }}
-      popd
-
-    # Clone all test asset repositories into `Assets`
-    - mkdir Assets
-{% for asset_set in asset_sets -%}
-    - |
-      pushd Assets
-      git clone {{ asset_set.git_uri }} --no-checkout {{ asset_set.name }}
-      cd {{ asset_set.name }}
-      git fetch origin {{ asset_set.git_revision }}
-      git checkout -f --detach {{ asset_set.git_revision }}
-      popd
-{% endfor -%}
-
-    # Install unity-downloader-cli and unity-config
-{% if agent.os == "win" -%}
-    - |
-      where /q gsudo.exe && set CMD_ADMIN=gsudo.exe
-      %CMD_ADMIN% choco source add --priority 1 -n Unity -s {{ registry.artifactory }}/api/nuget/unity-choco-local
-      %CMD_ADMIN% choco install unity-config -y
-      %CMD_ADMIN% choco install unity-downloader-cli -y
-{% elsif agent.os == "mac" -%}
-    - brew tap --force-auto-update unity/unity git@github.cds.internal.unity3d.com:unity/homebrew-unity.git
-    - brew install unity-config
-{% endif -%}
-
-    # Install UnifiedTestRunner
-{% if agent.os == "win" -%}
-    - curl -s --show-error --retry 15 {{ registry.artifactory }}/unity-tools-local/utr-standalone/utr.bat --output {{ os.tool_utr }}
-{% else -%}
-    - curl -s --show-error --retry 15 {{ registry.artifactory }}/unity-tools-local/utr-standalone/utr --output {{ os.tool_utr }}
-    - chmod +x {{ os.tool_utr }}
-{% endif -%}
-
     # Install Unity Editor and required components
     - unity-downloader-cli -u {{ editor }} -c Editor -c {{ platform.component }} -w --fast
 
-    # Create test project
-    - |
-      unity-config project create {{ job_project_path }}
-      unity-config project add testable com.unity.cloud.gltfast
-      unity-config project add dependency com.unity.cloud.gltfast@file:./../../../Packages/gltfast
-      unity-config project add dependency {{ test_framework }} -p {{ job_project_path }}
-{% for dep in test_dependencies -%}
-      unity-config project add dependency {{ dep.id }}@{{ dep.version }} -p {{ job_project_path }}
-{% endfor -%}
-
 {% capture results_path -%}{{ os.yamato_source_dir }}/test-results~/com.unity.cloud.gltfast/{{ platform_id }}/{{ editor }}/{{ test_setup.project_setup }}{% endcapture -%}
 
+{% if test_setup.setup -%}
     # Apply project setup
     - >
       {{ editor_exe }}
-      -projectPath {{ job_project_path }}
-      -executeMethod GLTFast.Editor.Tests.SetupProject.ApplySetup glTFastSetup:{{ test_setup.project_setup }}
+      -projectPath Projects/{{ test_setup.project }}
+      -executeMethod GLTFast.Editor.Tests.SetupProject.ApplySetup glTFastSetup:{{ test_setup.setup }}
       -upmNoDefaultPackages
       -enablePackageManagerTraces
       -batchmode
       -quit
       -logFile {{ results_path }}/UnityProjectSetup.log
-
+{% endif -%}
 {% if test_setup.render_pipeline -%}
     # Apply render pipeline asset
     - >
       {{ editor_exe }}
-      -projectPath {{ job_project_path }}
+      -projectPath Projects/{{ test_setup.project }}
       -executeMethod GLTFast.Editor.Tests.SetupProject.SetRenderPipeline SRP:{{ test_setup.render_pipeline }}
       -upmNoDefaultPackages
-      -enablePackageManagerTraces
       -batchmode
       -quit
       -logFile {{ results_path }}/UnityProjectSetup.log
@@ -440,17 +198,13 @@ build_{{ test_setup.project_setup }}_{{ platform_id }}_{{ editor }}:
     # TODO: DISABLE_SUB_PACKAGE_LOAD is required for 2020 only. Eventually remove all occurrences.
     - >
 {% if agent.os == "win" -%}
-      set GLTF_TEST_ASSET_DIR={{ os.yamato_source_dir }}\Assets
-
       set DISABLE_SUB_PACKAGE_LOAD=TRUE
 {% else -%}
-      export GLTF_TEST_ASSET_DIR="{{ os.yamato_source_dir }}/Assets"
-
       export DISABLE_SUB_PACKAGE_LOAD=TRUE
 {% endif -%}
 
-      {{ os.tool_utr }} 
-      --testproject={{ job_project_path }}
+      UnifiedTestRunner
+      --testproject=Projects/{{ test_setup.project }}
       --editor-location=.Editor
       --artifacts_path={{ results_path }}
       --reruncount=2
@@ -458,13 +212,21 @@ build_{{ test_setup.project_setup }}_{{ platform_id }}_{{ editor }}:
       --timeout={{ test_setup.utr_timeout }}
 {% endif -%}
       --verbose
-      --extra-editor-arg="-enablePackageManagerTraces -upmNoDefaultPackages"
+      --extra-editor-arg="-upmNoDefaultPackages"
       --suite=playmode
       --category="{{ test_categories }}"
       --scripting-backend=Il2Cpp
       --platform={% if platform.platform -%}{{ platform.platform }}{% else -%}{{ platform_id }}{% endif %}
       --build-only
       --player-save-path={{ results_path }}/player
+{% if agent.os == "win" and editor == "2020" -%}
+  after:
+    # To prevent random artifacts zip failures, ensure Unity.Licensing.Client.exe is no longer running. See this slack thread for more information (https://unity.slack.com/archives/C998PJJDD/p1683307400228169)
+    # "ver > nul" ensures the ERRORLEVEL is reset to 0 in case Unity.Licensing.Client.exe is already closed
+    - |
+      taskkill /f /t /im Unity.Licensing.Client.exe
+      ver > nul
+{% endif -%}
   artifacts:
     logs:
       paths:
@@ -494,73 +256,31 @@ run_{{ test_setup.project_setup }}_{{ platform_id }}_{{ editor }}:
     type: {% if test_setup.gpu_required %}{{ agent.gpu_type}}{% else %}{{ agent.type}}{% endif %}
     image: {{ agent.image }}
     flavor: {% if test_setup.agent_xlarge_required %}{{ agent.flavor_xlarge}}{% else %}{{ agent.flavor}}{% endif %}
-  source:
-    skip_checkout: true
   commands:
-    # Clone package into sub-folder `Packages/gltf`
-    - |
-      mkdir Packages
-      pushd Packages
-      git clone {{ os.git_url }} --no-checkout gltfast
-      cd gltfast
-      git fetch origin {{ os.git_revision }}
-      git checkout -f --detach {{ os.git_revision }}
-      popd
-
-    # Install unity-downloader-cli and unity-config
-{% if agent.os == "win" -%}
-    - |
-      where /q gsudo.exe && set CMD_ADMIN=gsudo.exe
-      %CMD_ADMIN% choco source add --priority 1 -n Unity -s {{ registry.artifactory }}/api/nuget/unity-choco-local
-      %CMD_ADMIN% choco install unity-config -y
-      %CMD_ADMIN% choco install unity-downloader-cli -y
-{% elsif agent.os == "mac" -%}
-    - brew tap --force-auto-update unity/unity git@github.cds.internal.unity3d.com:unity/homebrew-unity.git
-    - brew install unity-config
-{% endif -%}
-
-    # Install UnifiedTestRunner
-{% if agent.os == "win" -%}
-    - curl -s --show-error --retry 15 {{ registry.artifactory }}/unity-tools-local/utr-standalone/utr.bat --output {{ os.tool_utr }}
-{% else -%}
-    - curl -s --show-error --retry 15 {{ registry.artifactory }}/unity-tools-local/utr-standalone/utr --output {{ os.tool_utr }}
-    - chmod +x {{ os.tool_utr }}
-{% endif -%}
-
     # Install Unity Editor and required components
     - unity-downloader-cli -u {{ editor }} -c Editor -c {{ platform.component }} -w --fast
 
-    # Create test project
-    - |
-      unity-config project create {{ job_project_path }}
-      unity-config project add testable com.unity.cloud.gltfast
-      unity-config project add dependency com.unity.cloud.gltfast@file:./../../../Packages/gltfast
-      unity-config project add dependency {{ test_framework }} -p {{ job_project_path }}
-{% for dep in test_dependencies -%}
-      unity-config project add dependency {{ dep.id }}@{{ dep.version }} -p {{ job_project_path }}
-{% endfor -%}
-
 {% capture results_path -%}{{ os.yamato_source_dir }}/test-results~/com.unity.cloud.gltfast/{{ platform_id }}/{{ editor }}/{{ test_setup.project_setup }}{% endcapture -%}
 
+{% if test_setup.setup -%}
     # Apply project setup
     - >
       {{ editor_exe }}
-      -projectPath {{ job_project_path }}
-      -executeMethod GLTFast.Editor.Tests.SetupProject.ApplySetup glTFastSetup:{{ test_setup.project_setup }}
+      -projectPath Projects/{{ test_setup.project }}
+      -executeMethod GLTFast.Editor.Tests.SetupProject.ApplySetup glTFastSetup:{{ test_setup.setup }}
       -upmNoDefaultPackages
       -enablePackageManagerTraces
       -batchmode
       -quit
       -logFile {{ results_path }}/UnityProjectSetup.log
-
+{% endif -%}
 {% if test_setup.render_pipeline -%}
     # Apply render pipeline asset
     - >
       {{ editor_exe }}
-      -projectPath {{ job_project_path }}
+      -projectPath Projects/{{ test_setup.project }}
       -executeMethod GLTFast.Editor.Tests.SetupProject.SetRenderPipeline SRP:{{ test_setup.render_pipeline }}
       -upmNoDefaultPackages
-      -enablePackageManagerTraces
       -batchmode
       -quit
       -logFile {{ results_path }}/UnityProjectSetup.log
@@ -581,17 +301,13 @@ run_{{ test_setup.project_setup }}_{{ platform_id }}_{{ editor }}:
     # TODO: DISABLE_SUB_PACKAGE_LOAD is required for 2020 only. Eventually remove all occurrences.
     - >
 {% if agent.os == "win" -%}
-      set GLTF_TEST_ASSET_DIR={{ os.yamato_source_dir }}\Assets
-
       set DISABLE_SUB_PACKAGE_LOAD=TRUE
 {% else -%}
-      export GLTF_TEST_ASSET_DIR="{{ os.yamato_source_dir }}/Assets"
-
       export DISABLE_SUB_PACKAGE_LOAD=TRUE
 {% endif -%}
 
-      {{ os.tool_utr }} 
-      --testproject={{ job_project_path }}
+      UnifiedTestRunner
+      --testproject=Projects/{{ test_setup.project }}
       --editor-location=.Editor
       --artifacts_path={{ results_path }}
       --reruncount=2
@@ -599,14 +315,24 @@ run_{{ test_setup.project_setup }}_{{ platform_id }}_{{ editor }}:
       --timeout={{ test_setup.utr_timeout }}
 {% endif -%}
       --verbose
-      --extra-editor-arg="-enablePackageManagerTraces -upmNoDefaultPackages"
+      --extra-editor-arg="-upmNoDefaultPackages"
       --suite=playmode
       --category="{{ test_categories }}"
       --scripting-backend=Il2Cpp
       --platform={% if platform.platform -%}{{ platform.platform }}{% else -%}{{ platform_id }}{% endif %}
+{% if platform.build -%}
       --player-load-path={{ results_path }}/player
+{% endif -%}
 {% if platform_id == "android" and platform.run == "shield" -%}
       --player-connection-ip={{ os.bokken_host_ip }}
+{% endif -%}
+{% if agent.os == "win" and editor == "2020" -%}
+  after:
+    # To prevent random artifacts zip failures, ensure Unity.Licensing.Client.exe is no longer running. See this slack thread for more information (https://unity.slack.com/archives/C998PJJDD/p1683307400228169)
+    # "ver > nul" ensures the ERRORLEVEL is reset to 0 in case Unity.Licensing.Client.exe is already closed
+    - |
+      taskkill /f /t /im Unity.Licensing.Client.exe
+      ver > nul
 {% endif -%}
 {% if platform.build -%}
   dependencies:
@@ -627,8 +353,9 @@ tests_{{ test_setup.project_setup }}_all:
 {% if platforms[platform_id].test -%}
     - .yamato/project-test.yml#test_{{ test_setup.project_setup }}_{{ platform_id }}_{{ editor }}
 {% endif -%}
-{% endfor -%}
-{% endfor -%}
+{% endfor -%} # platform_id
+{% endfor -%} # editor
+
 
 tests_{{ test_setup.project_setup }}_pr:
   name: Test PR subset {{ test_setup.project_setup }}
@@ -637,7 +364,7 @@ tests_{{ test_setup.project_setup }}_pr:
     - .yamato/project-test.yml#test_{{ test_setup.project_setup }}_{{ pr_set.platform }}_{{ pr_set.editor }}
 {% endfor -%}
 
-build_and_run_{{ test_setup.project_setup }}_all:
+run_{{ test_setup.project_setup }}_all:
   name: Build and run all {{ test_setup.project_setup }}
   dependencies:
 {% for editor in editor_versions -%}
@@ -649,22 +376,18 @@ Build Android on 2020 LTS failed consistently, so leaving it out
 {% endcomment -%}
 {% continue -%}
 {% endif -%}
-{% if platforms[platform_id].build_and_run -%}
-    - .yamato/project-test.yml#build_and_run_{{ test_setup.project_setup }}_{{ platform_id }}_{{ editor }}
-{% elsif platforms[platform_id].run -%}
+{% if platforms[platform_id].run -%}
     - .yamato/project-test.yml#run_{{ test_setup.project_setup }}_{{ platform_id }}_{{ editor }}
 {% endif -%}
 {% endfor -%}
 {% endfor -%}
 
 {% if test_setup.pr_build_subset -%}
-build_and_run_{{ test_setup.project_setup }}_pr:
+run_{{ test_setup.project_setup }}_pr:
   name: Build and run PR subset {{ test_setup.project_setup }}
   dependencies:
 {% for pr_set in test_setup.pr_build_subset -%}
-{% if platforms[pr_set.platform].build_and_run -%}
-    - .yamato/project-test.yml#build_and_run_{{ test_setup.project_setup }}_{{ pr_set.platform }}_{{ pr_set.editor }}
-{% elsif platforms[pr_set.platform].run -%}
+{% if platforms[pr_set.platform].run -%}
     - .yamato/project-test.yml#run_{{ test_setup.project_setup }}_{{ pr_set.platform }}_{{ pr_set.editor }}
 {% endif -%}
 {% endfor -%}
@@ -686,19 +409,19 @@ tests_pr:
     - .yamato/project-test.yml#tests_{{ test_setup.project_setup }}_pr
 {% endfor -%}
 
-build_and_run_all:
-  name: Build and run all
+run_all:
+  name: Run all
   dependencies:
 {% for test_setup in test_setups -%}
-    - .yamato/project-test.yml#build_and_run_{{ test_setup.project_setup }}_all
+    - .yamato/project-test.yml#run_{{ test_setup.project_setup }}_all
 {% endfor -%}
 
-build_and_run_pr:
-  name: Build and run PR subsets
+run_pr:
+  name: Run PR subsets
   dependencies:
 {% for test_setup in test_setups -%}
 {% if test_setup.pr_build_subset -%}
-    - .yamato/project-test.yml#build_and_run_{{ test_setup.project_setup }}_pr
+    - .yamato/project-test.yml#run_{{ test_setup.project_setup }}_pr
 {% endif -%}
 {% endfor -%}
 

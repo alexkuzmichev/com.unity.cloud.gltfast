@@ -1,0 +1,11 @@
+{
+  "name": "com.unity.cloud.gltfast.tests",
+  "version": "0.0.0",
+  "displayName": "Unity glTFast Tests",
+  "dependencies": {
+    "com.unity.nuget.newtonsoft-json": "3.2.1",
+    "com.unity.modules.unitywebrequesttexture": "1.0.0",
+    "com.unity.test-framework": "1.4.5"
+  },
+  "type": "tests"
+}

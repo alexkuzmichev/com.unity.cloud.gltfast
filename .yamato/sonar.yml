@@ -1,0 +1,78 @@
+{% metadata_file .yamato/package.metafile -%}
+---
+{% assign project = "%YAMATO_SOURCE_DIR%/Projects/%PROJECT%" -%}
+sonar:
+  name: Sonar Scanner
+  agent:
+    type: Unity::VM
+    flavor: b1.large
+    image: package-ci/win10-sonar:stable
+  variables:
+    EDITOR_VERSION: "2022"
+    SONAR_HOST_URL: "https://sonarqube.internal.unity3d.com"
+    PACKAGE_NAME: "com.unity.cloud.gltfast"
+    PACKAGE_SCM: "https://github.cds.internal.unity3d.com/unity/com.unity.cloud.gltfast.src"
+    PROJECT: "glTFast-Test"
+    SONARQUBE_PROJECT_KEY: "unity-cloud:com.unity.cloud.gltfast"
+    RIDER_VERSION: "3.0.31"
+  commands:
+    - unity-downloader-cli -u %EDITOR_VERSION% -p %YAMATO_WORK_DIR%/.Editor -c Editor --fast
+
+    - |
+      unity-config settings project-path {{ project }}
+      unity-config project add dependency com.unity.ide.rider@%RIDER_VERSION%
+
+    - >
+      "%YAMATO_WORK_DIR%/.Editor/Unity.exe"
+      -projectPath "{{ project }}"
+      -batchmode
+      -quit
+      -nographics
+      -logFile %YAMATO_SOURCE_DIR%/test-results~/Editor-SyncSolution.log
+      -executeMethod "Packages.Rider.Editor.RiderScriptEditor.SyncSolution"
+
+    - >
+      IF NOT "%GIT_BRANCH%" == "develop"
+      ( set SONAR_NEW_CODE_BRANCH=/d:sonar.newCode.referenceBranch=develop )
+
+      IF "%YAMATO_PR_ID%" == ""
+      (
+      set SONAR_ANALYSIS_TYPE_PARAM=/d:sonar.branch.name=%GIT_BRANCH%
+      ) ELSE (
+      set SONAR_ANALYSIS_TYPE_PARAM=/d:sonar.pullrequest.key=%YAMATO_PR_ID% /d:sonar.pullrequest.branch=%GIT_BRANCH% /d:sonar.pullrequest.base=%YAMATO_PR_TARGET_BRANCH% 
+      )
+
+      cmd /v /c "dotnet sonarscanner begin
+      /k:%SONARQUBE_PROJECT_KEY%
+      /v:%GIT_BRANCH%
+      /d:sonar.host.url=%SONAR_HOST_URL%
+      /d:sonar.buildString=%GIT_REVISION%
+      /d:sonar.projectBaseDir=%YAMATO_SOURCE_DIR%/Packages/%PACKAGE_NAME%
+      /d:sonar.sourceEncoding="UTF-8"
+      /d:sonar.scm.provider=git
+      /d:sonar.links.scm=%PACKAGE_SCM%
+      /d:sonar.log.level=DEBUG
+      /d:sonar.verbose=true
+      %SONAR_NEW_CODE_BRANCH%
+      %SONAR_ANALYSIS_TYPE_PARAM%
+      /d:sonar.qualitygate.wait=true
+      /d:sonar.login=%SONARQUBE_PROD_ACCESS_TOKEN%
+      /d:sonar.cs.nunit.reportsPaths=test-results~/%PACKAGE_NAME%/**/TestResults.xml
+      /d:sonar.cs.opencover.reportsPaths=test-results~/%PACKAGE_NAME%/**/TestCoverageResults_*.xml
+      /d:sonar.coverage.exclusions=DocExamples/**/*"
+
+    - >
+      dotnet build {{ project }}/%PROJECT%.sln
+      /t:Rebuild
+      /p:SonarQubeTestProject=false
+
+    - >
+      cmd /v /c "dotnet sonarscanner end
+      /d:sonar.login=%SONARQUBE_PROD_ACCESS_TOKEN%
+
+  dependencies:
+    - .yamato/project-test.yml#coverage_all
+  artifacts:
+    logs:
+      paths:
+        - "test-results~/**/*"

@@ -5,58 +5,45 @@
 {% if platform.build -%}
 {% assign agent = agents[platform.build] -%}
 {% if agent.os == "win" -%}{% assign os = os_variables.win -%}{% else -%}{% assign os = os_variables.unix -%}{% endif -%}
+
 build_{{ platform.name }}_{{ editor.version }}:
   name : Build {{ editor.version }} {{ platform.name }} Player
   agent:
     type: {{ agent.type }}
     image: {{ agent.image }}
     flavor: {{ agent.flavor}}
-  source:
-    skip_checkout: true
   commands:
+    - unity-downloader-cli --fast --wait --unity-version "{{ editor.version }}" --components editor{% if platform.platform %} --components {{ platform.platform }}{% endif %}
+    - upm-pvp create-test-project Projects/TestProject --packages "upm-ci~/packages/*.tgz" --unity .Editor
+    - >
+      UnifiedTestRunner
+      --platform={{ platform.platform }} {% if platform.upm_ci_params %}{{ platform.upm_ci_params }}{% endif %}
+      --suite=playmode
+      --editor-location=.Editor
+      --testproject=Projects/TestProject
+      --artifacts-path=test-results
+      --reruncount=2
+      --player-save-path=player/{{ platform.id }}
+      --build-only
+{% if agent.os == "win" and editor.version == "2020" -%}
+  after:
+    # To prevent random artifacts zip failures, ensure Unity.Licensing.Client.exe is no longer running. See this slack thread for more information (https://unity.slack.com/archives/C998PJJDD/p1683307400228169)
+    # "ver > nul" ensures the ERRORLEVEL is reset to 0 in case Unity.Licensing.Client.exe is already closed
     - |
-      mkdir Packages
-      pushd Packages
-      git clone {{ os.git_url }} --no-checkout gltfast
-      cd gltfast
-      git fetch origin {{ os.git_revision }}
-      git checkout -f --detach {{ os.git_revision }}
-      popd
-
-    - mkdir Assets
-{% for asset_set in asset_sets -%}
-    - |
-      pushd Assets
-      git clone {{ asset_set.git_uri }} --no-checkout {{ asset_set.name }}
-      cd {{ asset_set.name }}
-      git fetch origin {{ asset_set.git_revision }}
-      git checkout -f --detach {{ asset_set.git_revision }}
-      popd
-{% endfor -%}
-
-    - npm install upm-ci-utils@stable -g --registry {{ registry.npm }}
-    - |
-{% if agent.os == "win" -%}
-      set GLTF_TEST_ASSET_DIR={{ os.yamato_source_dir }}\Assets
-{% else -%}
-      export GLTF_TEST_ASSET_DIR="{{ os.yamato_source_dir }}/Assets"
+      taskkill /f /t /im Unity.Licensing.Client.exe
+      ver > nul
 {% endif -%}
-      upm-ci package test -u {{ editor.version }} --platform {{ platform.id }} {% if platform.upm_ci_params %}{{ platform.upm_ci_params }}{% endif %} --package-path Packages/gltfast --extra-create-project-arg=-upmNoDefaultPackages --player-build-path upm-ci~/player/{{ platform.id }} --build-only
   artifacts:
     logs:
       paths:
-        - "**/*.log"
+        - "test-results/**"
     player:
       paths:
-        - "upm-ci~/player/{{ platform.id }}/**"
-    test-results:
-      paths:
-        - "**/test-results/**"
+        - "player/{{ platform.id }}/**"
   dependencies:
-    - .yamato/package-pack.yml#pack
+    - .yamato/pack.yml#pack
 {% endif -%}
 
-{% if platform.run -%}
 {% assign agent = agents[platform.run] -%}
 {% if agent.os == "win" -%}{% assign os = os_variables.win -%}{% else -%}{% assign os = os_variables.unix -%}{% endif -%}
 run_{{ platform.name }}_{{ editor.version }}:
@@ -65,97 +52,35 @@ run_{{ platform.name }}_{{ editor.version }}:
     type: {{ agent.type }}
     image: {{ agent.image }}
     flavor: {{ agent.flavor}}
-  source:
-    skip_checkout: true
   commands:
-    - |
-      mkdir Packages
-      pushd Packages
-      git clone {{ os.git_url }} --no-checkout gltfast
-      cd gltfast
-      git fetch origin {{ os.git_revision }}
-      git checkout -f --detach {{ os.git_revision }}
-      popd
+    - unity-downloader-cli --fast --wait --unity-version "{{ editor.version }}" --components editor{% if platform.platform %} --components {{ platform.platform }}{% endif %}
+    - upm-pvp create-test-project Projects/TestProject --packages "upm-ci~/packages/*.tgz" --unity .Editor
+    - >
+      UnifiedTestRunner
+      --platform={{ platform.id }}
+      --suite=playmode
+      --editor-location=.Editor
+      --testproject=Projects/TestProject
+      --artifacts-path=test-results
+      --reruncount=2
+      {% if platform.build -%}--player-load-path=player/{{ platform.id }}{% endif -%}
 
-    - mkdir Assets
-{% for asset_set in asset_sets -%}
+{% if agent.os == "win" and editor.version == "2020" -%}
+  after:
+    # To prevent random artifacts zip failures, ensure Unity.Licensing.Client.exe is no longer running. See this slack thread for more information (https://unity.slack.com/archives/C998PJJDD/p1683307400228169)
+    # "ver > nul" ensures the ERRORLEVEL is reset to 0 in case Unity.Licensing.Client.exe is already closed
     - |
-      pushd Assets
-      git clone {{ asset_set.git_uri }} --no-checkout {{ asset_set.name }}
-      cd {{ asset_set.name }}
-      git fetch origin {{ asset_set.git_revision }}
-      git checkout -f --detach {{ asset_set.git_revision }}
-      popd
-{% endfor -%}
-    - npm install upm-ci-utils@stable -g --registry {{ registry.npm }}
-    - |
-{% if agent.os == "win" -%}
-      set GLTF_TEST_ASSET_DIR={{ os.yamato_source_dir }}\Assets
-{% else -%}
-      export GLTF_TEST_ASSET_DIR="{{ os.yamato_source_dir }}/Assets"
+      taskkill /f /t /im Unity.Licensing.Client.exe
+      ver > nul
 {% endif -%}
-      upm-ci package test -u {{ editor.version }} --platform {{ platform.id }} --player-build-path upm-ci~/player/{{ platform.id }} --package-path Packages/gltfast --extra-create-project-arg=-upmNoDefaultPackages
   artifacts:
     logs:
       paths:
-        - "**/*.log"
-    test-results:
-      paths:
-        - "**/test-results/**"
+        - "test-results/**"
   dependencies:
-    - .yamato/package-pack.yml#pack
+    - .yamato/pack.yml#pack
+{% if platform.build -%}
     - .yamato/package-player-test.yml#build_{{ platform.name }}_{{ editor.version }}
-{% endif -%}
-
-{% if platform.build_and_run -%}
-{% assign agent = agents[platform.build_and_run] -%}
-{% if agent.os == "win" -%}{% assign os = os_variables.win -%}{% else -%}{% assign os = os_variables.unix -%}{% endif -%}
-build_and_run_{{ platform.name }}_{{ editor.version }}:
-  name : Build and run {{ editor.version }} {{ platform.name }} Player Tests
-  agent:
-    type: {{ agent.type }}
-    image: {{ agent.image }}
-    flavor: {{ agent.flavor}}
-  source:
-    skip_checkout: true
-  commands:
-    - |
-      mkdir Packages
-      pushd Packages
-      git clone {{ os.git_url }} --no-checkout gltfast
-      cd gltfast
-      git fetch origin {{ os.git_revision }}
-      git checkout -f --detach {{ os.git_revision }}
-      popd
-
-    - mkdir Assets
-{% for asset_set in asset_sets -%}
-    - |
-      pushd Assets
-      git clone {{ asset_set.git_uri }} --no-checkout {{ asset_set.name }}
-      cd {{ asset_set.name }}
-      git fetch origin {{ asset_set.git_revision }}
-      git checkout -f --detach {{ asset_set.git_revision }}
-      popd
-{% endfor -%}
-
-    - npm install upm-ci-utils@stable -g --registry {{ registry.npm }}
-    - |
-{% if agent.os == "win" -%}
-      set GLTF_TEST_ASSET_DIR={{ os.yamato_source_dir }}\Assets
-{% else -%}
-      export GLTF_TEST_ASSET_DIR="{{ os.yamato_source_dir }}/Assets"
-{% endif -%}
-      upm-ci package test -u {{ editor.version }} --platform {{ platform.id }} --package-path Packages/gltfast --extra-create-project-arg=-upmNoDefaultPackages
-  artifacts:
-    logs:
-      paths:
-        - "**/*.log"
-    test-results:
-      paths:
-        - "**/test-results/**"
-  dependencies:
-    - .yamato/package-pack.yml#pack
 {% endif -%}
 {% endfor -%}
 {% endfor -%}
@@ -165,11 +90,7 @@ player_test_all:
   dependencies:
 {% for editor in player_test_editors -%}
 {% for platform in player_test_platforms -%}
-{% if platform.run -%}
     - .yamato/package-player-test.yml#run_{{ platform.name }}_{{ editor.version }}
-{% elsif platform.build_and_run -%}
-    - .yamato/package-player-test.yml#build_and_run_{{ platform.name }}_{{ editor.version }}
-{% endif -%}
 {% endfor -%}
 {% endfor -%}
 
@@ -179,9 +100,5 @@ player_test_pr:
 {% for platform in player_test_platforms -%}
 {% assign editor_index = forloop.index0 | modulo: player_test_editors.size -%}
 {% assign editor = player_test_editors[editor_index] -%}
-{% if platform.run -%}
     - .yamato/package-player-test.yml#run_{{ platform.name }}_{{ editor.version }}
-{% elsif platform.build_and_run -%}
-    - .yamato/package-player-test.yml#build_and_run_{{ platform.name }}_{{ editor.version }}
-{% endif -%}
 {% endfor -%}
