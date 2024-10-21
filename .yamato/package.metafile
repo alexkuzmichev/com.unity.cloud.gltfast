@@ -1,3 +1,6 @@
+package:
+  id: com.unity.cloud.gltfast
+
 test_setups:
   # Project profile name
   # see GLTFast.Editor.Tests.SetupProject.ApplySetup (Tests/Editor/SetupProject.cs) for details
