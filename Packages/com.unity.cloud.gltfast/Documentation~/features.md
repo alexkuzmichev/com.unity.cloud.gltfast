@@ -89,6 +89,8 @@ The glTF 2.0 specification is fully supported, with only a few minor remarks.
 
 ## Extensions
 
+glTF defines an [extension mechanism][gltf-ext] that allows the base format to be extended with new capabilities. Here's a list of extensions and their current state of support.
+
 ### Official Khronos&reg; extensions
 
 | | Import | Export
@@ -334,6 +336,7 @@ Possibly incomplete list of things that are known to not work with Entities yet:
 [Entities]: https://docs.unity3d.com/Packages/com.unity.entities@latest
 [EntitiesGraphics]: https://docs.unity3d.com/Packages/com.unity.entities.graphics@latest
 [GoogleLLC]: https://about.google/
+[gltf-ext]: https://registry.khronos.org/glTF/specs/2.0/glTF-2.0.html#specifying-extensions
 [HDRP]: https://unity.com/srp/High-Definition-Render-Pipeline
 [IBL]: https://github.com/atteneder/glTFast/issues/108
 [IOR]: https://github.com/atteneder/glTFast/issues/207

@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Package coherence tests that make sure package versions match across exported generator string and documentation.
 
 ### Changed
-- Moved code examples that are referenced by the documentation into a different folder (`DocumentationExamples`).
+- Moved code examples that are referenced by the documentation into a different folder (`DocExamples`).
 - Renamed code example assembly/namespace to `GLTFast.Documentation.Examples` for consistency.
 
 ### Fixed
@@ -29,6 +29,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - (Export) Avoid potential loss of data by allocating output streams persistently.
 - (Test) Render export test inconclusive if the result has not been validated.
 - (Test) More explicit error message by throwing innermost exception while preserving the stack trace during async tests.
+- (Documentation) Various clarifications, improvements and fixes, based on user feedback.
 
 ### Removed
 - Outdated and unused code coverage badge.

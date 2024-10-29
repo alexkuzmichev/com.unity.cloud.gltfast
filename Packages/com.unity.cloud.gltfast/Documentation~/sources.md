@@ -2,18 +2,22 @@
 
 ## Download Sources
 
-*glTFast*'s sources are hosted in a [GitHub repository][UnityGltfastGitHub].
+*glTFast*'s sources are hosted in a [GitHub repository][UnityGltfastGitHub] that needs to be cloned (i.e. downloaded) first.
 
-Download a local copy by [cloning][GitHubCloning]:
+> [!TIP]
+> See [Cloning a repository][GitHubCloning] for detailed instructions how to download a repository.
+> [Git LFS](https://git-lfs.com/) is used for binary files, so make sure your Git client handles it correctly.
+
+Clone via command line interface:
 
 ```sh
-# Call this command in the directory you want the repository to be cloned into.
 git clone git@github.com:Unity-Technologies/com.unity.cloud.gltfast.git
 ```
 
-> **NOTE:** This particular method of cloning assumes you have a valid GitHub account and configured authentication properly. See [Cloning a repository][GitHubCloning] for detailed instructions and troubleshooting.
->
-> **NOTE:** The repository uses [Git LFS](https://git-lfs.com/), so make sure to have it installed and initialized.
+This will download the repository into a sub-folder named `com.unity.cloud.gltfast`.
+
+> [!NOTE]
+> Cloning requires authentication configured properly.
 
 ## Repository Structure
 
@@ -44,7 +48,7 @@ Here's an overview of the repository structure.
 
 *Khronos&reg;* is a registered trademark and [glTF&trade;][gltf] is a trademark of [The Khronos Group Inc][khronos].
 
-[GitHubCloning]: https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repositor
+[GitHubCloning]: https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository
 [gltf]: https://www.khronos.org/gltf
 [khronos]: https://www.khronos.org
 [Monorepo]: https://en.wikipedia.org/wiki/Monorepo
