@@ -98,7 +98,7 @@ namespace GLTFast.Tests.Import
 
         public string RootPath =>
 #if LOAD_FROM_STREAMING_ASSETS
-            Path.Combine(Application.streamingAssetsPath, streamingAssetsPath);
+            Path.Combine(Application.streamingAssetsPath, StreamingAssetsPath);
 #else
 #if UNITY_EDITOR
             SourcePath;
