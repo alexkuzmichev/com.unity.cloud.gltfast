@@ -12,7 +12,7 @@ Use *glTFast* to import and export [glTF&trade;][gltf] 3D files efficiently at r
 
 Speed, memory efficiency and a small build footprint are focus points of *Unity glTFast*.
 
-The [glTF 2.0 specification][gltf-spec] and a large and growing number of [glTF extensions][gltf-ext] are supported. 
+The [glTF 2.0 specification][gltf-spec] and a large and growing number of [glTF extensions][gltf-ext] are supported.
 
 All platforms as well as Universal, High Definition and Built-In Render Pipelines are supported.
 
