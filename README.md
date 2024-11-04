@@ -1,6 +1,6 @@
 # Unity glTFast
 
-[![codecov](https://codecov.unity3d.com/ghe/unity/com.unity.cloud.gltfast.src/graph/badge.svg?token=QZYEFH0SDC)](https://codecov.unity3d.com/ghe/unity/com.unity.cloud.gltfast.src)
+[![codecov](https://codecov.unity3d.com/ghe/unity/com.unity.cloud.gltfast.src/graph/badge.svg?token=Y571U2ZD7N)](https://codecov.unity3d.com/ghe/unity/com.unity.cloud.gltfast.src)
 
 <p align="center">
 <img src="./Packages/com.unity.cloud.gltfast/Documentation~/Images/unity-gltf-logos.png" alt="Unity and glTF logos side by side" />

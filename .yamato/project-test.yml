@@ -129,7 +129,7 @@ test_{{ test_setup.project_setup }}_{{ platform_id }}_{{ editor }}:
       --enable-code-coverage
       --coverage-results-path={{ results_path }}/CoverageResults
       --coverage-options='generateAdditionalMetrics;assemblyFilters:{{ codecov_assemblies }};pathReplacePatterns:**/bokken,c:;sourcePaths:{{ os.yamato_source_dir }}/Packages/com.unity.cloud.gltfast'
-      --coverage-upload-options="reportsDir:{{ results_path }}/CoverageResults;reports:*.xml;sourceDir:Packages/com.unity.cloud.gltfast;repo:unity/com.unity.cloud.gltfast.src;changeset:{{ os.git_revision }};name:{{ test_setup.project_setup }}_{{ platform_id }}_{{ editor }};flags:{{ test_setup.project_setup }};verbose"
+      --coverage-upload-options="reportsDir:{{ results_path }}/CoverageResults;name:{{ test_setup.project_setup }}_{{ platform_id }}_{{ editor }};flags:{{ test_setup.project_setup }};verbose"
 {% endif -%}
 {% if agent.os == "win" and editor == "2020" -%}
   after:
