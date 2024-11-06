@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- (Test) `OpenGltfScene` with open glTF file dialog for convenient testing.
+
 ### Changed
 - (Test) Updated test project dependencies.
 
