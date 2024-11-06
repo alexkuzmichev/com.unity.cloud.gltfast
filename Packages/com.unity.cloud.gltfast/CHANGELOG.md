@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - (Test) `OpenGltfScene` with open glTF file dialog for convenient testing.
 
 ### Changed
+- Node name is assigned earlier during instantiation, enabling easier node identification by name (partially fixes [#724](https://github.com/atteneder/glTFast/issues/724)).
 - (Test) Updated test project dependencies.
 
 ## [6.9.0] - 2024-10-30

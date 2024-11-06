@@ -2587,6 +2587,24 @@ namespace GLTFast
                 var node = Root.Nodes[(int)nodeIndex];
                 node.GetTransform(out var position, out var rotation, out var scale);
                 instantiator.CreateNode(nodeIndex, parentIndex, position, rotation, scale);
+
+                var nodeName = m_NodeNames == null ? node.name : m_NodeNames[nodeIndex];
+                if (nodeName == null && node.mesh >= 0)
+                {
+                    // Fallback name for Node is first valid Mesh name
+                    var end = m_MeshPrimitiveIndex[node.mesh + 1];
+                    for (var i = m_MeshPrimitiveIndex[node.mesh]; i < end; i++)
+                    {
+                        var mesh = m_Primitives[i].mesh;
+                        if (!string.IsNullOrEmpty(mesh.name))
+                        {
+                            nodeName = mesh.name;
+                            break;
+                        }
+                    }
+                }
+
+                instantiator.SetNodeName(nodeIndex, nodeName);
                 Profiler.EndSample();
             }
 
@@ -2595,7 +2613,6 @@ namespace GLTFast
 
                 Profiler.BeginSample("PopulateHierarchy");
                 var node = Root.Nodes[(int)nodeIndex];
-                var goName = m_NodeNames == null ? node.name : m_NodeNames[nodeIndex];
 
                 if (node.mesh >= 0)
                 {
@@ -2606,8 +2623,6 @@ namespace GLTFast
                         var primitive = m_Primitives[i];
                         var mesh = primitive.mesh;
                         var meshName = string.IsNullOrEmpty(mesh.name) ? null : mesh.name;
-                        // Fallback name for Node is first valid Mesh name
-                        goName = goName ?? meshName;
                         uint[] joints = null;
                         uint? rootJoint = null;
 
@@ -2694,8 +2709,6 @@ namespace GLTFast
                         primitiveCount++;
                     }
                 }
-
-                instantiator.SetNodeName(nodeIndex, goName);
 
                 if (node.camera >= 0
                     && gltf.Cameras != null
