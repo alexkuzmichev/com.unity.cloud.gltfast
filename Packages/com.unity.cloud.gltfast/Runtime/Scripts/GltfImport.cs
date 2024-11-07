@@ -2063,156 +2063,28 @@ namespace GLTFast
 
             if (m_ImageCreateContexts != null)
             {
-                var imageCreateContextsLeft = true;
-                while (imageCreateContextsLeft)
-                {
-                    var loadedAny = false;
-                    for (int i = m_ImageCreateContexts.Count - 1; i >= 0; i--)
-                    {
-                        var jh = m_ImageCreateContexts[i];
-                        if (jh.jobHandle.IsCompleted)
-                        {
-                            jh.jobHandle.Complete();
-#if UNITY_IMAGECONVERSION
-                            m_Images[jh.imageIndex].LoadImage(
-                                jh.buffer,
-#if UNITY_VISIONOS
-                                false
-#else
-                                !m_Settings.TexturesReadable && !m_ImageReadable[jh.imageIndex]
-#endif
-                                );
-#endif
-                            jh.gcHandle.Free();
-                            m_ImageCreateContexts.RemoveAt(i);
-                            loadedAny = true;
-                            await m_DeferAgent.BreakPoint();
-                        }
-                    }
-                    imageCreateContextsLeft = m_ImageCreateContexts.Count > 0;
-                    if (!loadedAny && imageCreateContextsLeft)
-                    {
-                        await Task.Yield();
-                    }
-                }
-                m_ImageCreateContexts = null;
+                await WaitForImageCreateContexts();
             }
 
             if (m_Images != null && Root.Textures != null)
             {
-                SamplerKey defaultKey = new SamplerKey(new Sampler());
-                m_Textures = new Texture2D[Root.Textures.Count];
-                var imageVariants = new Dictionary<SamplerKey, Texture2D>[m_Images.Length];
-                for (int textureIndex = 0; textureIndex < Root.Textures.Count; textureIndex++)
-                {
-                    var txt = Root.Textures[textureIndex];
-                    SamplerKey key;
-                    Sampler sampler = null;
-                    if (txt.sampler >= 0)
-                    {
-                        sampler = Root.Samplers[txt.sampler];
-                        key = new SamplerKey(sampler);
-                    }
-                    else
-                    {
-                        key = defaultKey;
-                    }
-
-                    var imageIndex = txt.GetImageIndex();
-                    if (imageIndex < 0 || imageIndex >= Root.Images.Count) continue;
-                    var img = m_Images[imageIndex];
-                    if (imageVariants[imageIndex] == null)
-                    {
-                        if (txt.sampler >= 0)
-                        {
-                            sampler.Apply(img, m_Settings.DefaultMinFilterMode, m_Settings.DefaultMagFilterMode);
-                        }
-                        imageVariants[imageIndex] = new Dictionary<SamplerKey, Texture2D>();
-                        imageVariants[imageIndex][key] = img;
-                        m_Textures[textureIndex] = img;
-                    }
-                    else
-                    {
-                        if (imageVariants[imageIndex].TryGetValue(key, out var imgVariant))
-                        {
-                            m_Textures[textureIndex] = imgVariant;
-                        }
-                        else
-                        {
-                            var newImg = UnityEngine.Object.Instantiate(img);
-                            m_Resources.Add(newImg);
-#if DEBUG
-                            newImg.name = $"{img.name}_sampler{txt.sampler}";
-                            m_Logger?.Warning(LogCode.ImageMultipleSamplers,imageIndex.ToString());
-#endif
-                            sampler?.Apply(newImg, m_Settings.DefaultMinFilterMode, m_Settings.DefaultMagFilterMode);
-                            imageVariants[imageIndex][key] = newImg;
-                            m_Textures[textureIndex] = newImg;
-                        }
-                    }
-                }
+                PopulateTexturesAndImageVariants();
             }
 
             if (Root.Materials != null)
             {
-                m_Materials = new UnityEngine.Material[Root.Materials.Count];
-                for (var i = 0; i < m_Materials.Length; i++)
-                {
-                    await m_DeferAgent.BreakPoint(.0001f);
-                    Profiler.BeginSample("GenerateMaterial");
-                    m_MaterialGenerator.SetLogger(m_Logger);
-                    var pointsSupport = GetMaterialPointsSupport(i);
-                    var material = m_MaterialGenerator.GenerateMaterial(
-                        Root.Materials[i],
-                        this,
-                        pointsSupport
-                    );
-                    m_Materials[i] = material;
-                    m_MaterialGenerator.SetLogger(null);
-                    Profiler.EndSample();
-                }
+                await GenerateMaterials();
             }
             await m_DeferAgent.BreakPoint();
 
             if (m_PrimitiveContexts != null)
             {
-                for (int i = 0; i < m_PrimitiveContexts.Length; i++)
-                {
-                    var primitiveContext = m_PrimitiveContexts[i];
-                    if (primitiveContext == null) continue;
-                    while (!primitiveContext.IsCompleted)
-                    {
-                        await Task.Yield();
-                    }
-                }
+                await WaitForAllPrimitiveContexts();
                 await m_DeferAgent.BreakPoint();
 
                 await AssignAllAccessorData(Root);
 
-                for (int i = 0; i < m_PrimitiveContexts.Length; i++)
-                {
-                    var primitiveContext = m_PrimitiveContexts[i];
-                    while (!primitiveContext.IsCompleted)
-                    {
-                        await Task.Yield();
-                    }
-                    var primitive = await primitiveContext.CreatePrimitive();
-                    // The import failed :\
-                    // await defaultDeferAgent.BreakPoint();
-
-                    if (primitive.HasValue)
-                    {
-                        m_Primitives[primitiveContext.PrimitiveIndex] = primitive.Value;
-                        m_Resources.Add(primitive.Value.mesh);
-                    }
-                    else
-                    {
-                        success = false;
-                        break;
-                    }
-
-                    await m_DeferAgent.BreakPoint();
-                }
+                success = await CreateAllPrimitives();
             }
 
 #if UNITY_ANIMATION
@@ -2240,125 +2112,147 @@ namespace GLTFast
                 }
                 if (skeletonMissing)
                 {
-                    for (int skinId = 0; skinId < Root.Skins.Count; skinId++)
-                    {
-                        var skin = Root.Skins[skinId];
-                        if (skin.skeleton < 0)
-                        {
-                            skin.skeleton = GetLowestCommonAncestorNode(skin.joints, parentIndex);
-                        }
-                    }
+                    CalculateSkinSkeletons(parentIndex);
                 }
             }
 
 #if UNITY_ANIMATION
-            if (Root.HasAnimation && m_Settings.AnimationMethod != AnimationMethod.None) {
+            if (Root.HasAnimation && m_Settings.AnimationMethod != AnimationMethod.None)
+            {
+                CreateAnimationClips(parentIndex);
+            }
+#endif
 
-                m_AnimationClips = new AnimationClip[Root.Animations.Count];
-                for (var i = 0; i < Root.Animations.Count; i++) {
-                    var animation = Root.Animations[i];
-                    m_AnimationClips[i] = new AnimationClip();
-                    m_AnimationClips[i].name = animation.name ?? $"Clip_{i}";
+            DisposeVolatileAccessorData();
+            return success;
+        }
+
+#if UNITY_ANIMATION
+        void CreateAnimationClips(int[] parentIndex)
+        {
+            m_AnimationClips = new AnimationClip[Root.Animations.Count];
+            for (var i = 0; i < Root.Animations.Count; i++) {
+                var animation = Root.Animations[i];
+                m_AnimationClips[i] = new AnimationClip
+                {
+                    name = animation.name ?? $"Clip_{i}",
 
                     // Legacy Animation requirement
-                    m_AnimationClips[i].legacy = m_Settings.AnimationMethod == AnimationMethod.Legacy;
-                    m_AnimationClips[i].wrapMode = WrapMode.Loop;
+                    legacy = m_Settings.AnimationMethod == AnimationMethod.Legacy,
+                    wrapMode = WrapMode.Loop
+                };
 
-                    for (int j = 0; j < animation.Channels.Count; j++) {
-                        var channel = animation.Channels[j];
-                        if (channel.sampler < 0 || channel.sampler >= animation.Samplers.Count) {
-                            m_Logger?.Error(LogCode.AnimationChannelSamplerInvalid, j.ToString());
-                            continue;
+                for (var j = 0; j < animation.Channels.Count; j++) {
+                    var channel = animation.Channels[j];
+                    if (channel.sampler < 0 || channel.sampler >= animation.Samplers.Count) {
+                        m_Logger?.Error(LogCode.AnimationChannelSamplerInvalid, j.ToString());
+                        continue;
+                    }
+                    var sampler = animation.Samplers[channel.sampler];
+                    if (sampler == null || sampler.output < 0 || sampler.output >= Root.Accessors.Count)
+                    {
+                        m_Logger?.Error(LogCode.AnimationChannelSamplerInvalid, j.ToString());
+                        continue;
+                    }
+                    if (channel.Target.node < 0 || channel.Target.node >= Root.Nodes.Count) {
+                        m_Logger?.Error(LogCode.AnimationChannelNodeInvalid, j.ToString());
+                        continue;
+                    }
+
+                    var path = AnimationUtils.CreateAnimationPath(channel.Target.node,m_NodeNames,parentIndex);
+
+                    var times = ((AccessorNativeData<float>) m_AccessorData[sampler.input]).data;
+
+                    var outputData = m_AccessorData[sampler.output];
+                    Assert.IsNotNull(outputData);
+
+                    switch (channel.Target.GetPath()) {
+                        case AnimationChannelBase.Path.Translation: {
+                            Assert.IsTrue(outputData is AccessorNativeData<Vector3>);
+                            var values = ((AccessorNativeData<Vector3>) outputData).data;
+                            AnimationUtils.AddTranslationCurves(m_AnimationClips[i], path, times, values, sampler.GetInterpolationType());
+                            break;
                         }
-                        var sampler = animation.Samplers[channel.sampler];
-                        if (sampler == null || sampler.output < 0 || sampler.output >= Root.Accessors.Count)
-                        {
-                            m_Logger?.Error(LogCode.AnimationChannelSamplerInvalid, j.ToString());
-                            continue;
+                        case AnimationChannelBase.Path.Rotation: {
+                            Assert.IsTrue(outputData is AccessorNativeData<Quaternion>);
+                            var values = ((AccessorNativeData<Quaternion>) outputData).data;
+                            AnimationUtils.AddRotationCurves(m_AnimationClips[i], path, times, values, sampler.GetInterpolationType());
+                            break;
                         }
-                        if (channel.Target.node < 0 || channel.Target.node >= Root.Nodes.Count) {
-                            m_Logger?.Error(LogCode.AnimationChannelNodeInvalid, j.ToString());
-                            continue;
+                        case AnimationChannelBase.Path.Scale: {
+                            Assert.IsTrue(outputData is AccessorNativeData<Vector3>);
+                            var values = ((AccessorNativeData<Vector3>) outputData).data;
+                            AnimationUtils.AddScaleCurves(m_AnimationClips[i], path, times, values, sampler.GetInterpolationType());
+                            break;
                         }
-
-                        var path = AnimationUtils.CreateAnimationPath(channel.Target.node,m_NodeNames,parentIndex);
-
-                        var times = ((AccessorNativeData<float>) m_AccessorData[sampler.input]).data;
-
-                        var outputData = m_AccessorData[sampler.output];
-                        Assert.IsNotNull(outputData);
-
-                        switch (channel.Target.GetPath()) {
-                            case AnimationChannel.Path.Translation: {
-                                Assert.IsTrue(outputData is AccessorNativeData<Vector3>);
-                                var values = ((AccessorNativeData<Vector3>) outputData).data;
-                                AnimationUtils.AddTranslationCurves(m_AnimationClips[i], path, times, values, sampler.GetInterpolationType());
+                        case AnimationChannelBase.Path.Weights: {
+                            Assert.IsTrue(outputData is AccessorNativeData<float>);
+                            var values = ((AccessorNativeData<float>) outputData).data;
+                            var node = Root.Nodes[channel.Target.node];
+                            if (node.mesh < 0 || node.mesh >= Root.Meshes.Count) {
                                 break;
                             }
-                            case AnimationChannel.Path.Rotation: {
-                                Assert.IsTrue(outputData is AccessorNativeData<Quaternion>);
-                                var values = ((AccessorNativeData<Quaternion>) outputData).data;
-                                AnimationUtils.AddRotationCurves(m_AnimationClips[i], path, times, values, sampler.GetInterpolationType());
-                                break;
-                            }
-                            case AnimationChannel.Path.Scale: {
-                                Assert.IsTrue(outputData is AccessorNativeData<Vector3>);
-                                var values = ((AccessorNativeData<Vector3>) outputData).data;
-                                AnimationUtils.AddScaleCurves(m_AnimationClips[i], path, times, values, sampler.GetInterpolationType());
-                                break;
-                            }
-                            case AnimationChannel.Path.Weights: {
-                                Assert.IsTrue(outputData is AccessorNativeData<float>);
-                                var values = ((AccessorNativeData<float>) outputData).data;
-                                var node = Root.Nodes[channel.Target.node];
-                                if (node.mesh < 0 || node.mesh >= Root.Meshes.Count) {
-                                    break;
-                                }
-                                var mesh = Root.Meshes[node.mesh];
+                            var mesh = Root.Meshes[node.mesh];
+                            AnimationUtils.AddMorphTargetWeightCurves(
+                                m_AnimationClips[i],
+                                path,
+                                times,
+                                values,
+                                sampler.GetInterpolationType(),
+                                mesh.Extras?.targetNames
+                            );
+
+                            // HACK BEGIN:
+                            // Since meshes with multiple primitives that are not using
+                            // identical vertex buffers are split up into separate Unity
+                            // Meshes. Because of this, we have to duplicate the animation
+                            // curves, so that all primitives are animated.
+                            // TODO: Refactor primitive sub-meshing and remove this hack
+                            // https://github.com/atteneder/glTFast/issues/153
+                            var meshName = string.IsNullOrEmpty(mesh.name) ? k_PrimitiveName : mesh.name;
+                            var primitiveCount = m_MeshPrimitiveIndex[node.mesh + 1] - m_MeshPrimitiveIndex[node.mesh];
+                            for (var k = 1; k < primitiveCount; k++) {
+                                var primitiveName = $"{meshName}_{k}";
                                 AnimationUtils.AddMorphTargetWeightCurves(
                                     m_AnimationClips[i],
-                                    path,
+                                    $"{path}/{primitiveName}",
                                     times,
                                     values,
                                     sampler.GetInterpolationType(),
                                     mesh.Extras?.targetNames
-                                    );
-
-                                // HACK BEGIN:
-                                // Since meshes with multiple primitives that are not using
-                                // identical vertex buffers are split up into separate Unity
-                                // Meshes. Because of this, we have to duplicate the animation
-                                // curves, so that all primitives are animated.
-                                // TODO: Refactor primitive sub-meshing and remove this hack
-                                // https://github.com/atteneder/glTFast/issues/153
-                                var meshName = string.IsNullOrEmpty(mesh.name) ? k_PrimitiveName : mesh.name;
-                                var primitiveCount = m_MeshPrimitiveIndex[node.mesh + 1] - m_MeshPrimitiveIndex[node.mesh];
-                                for (var k = 1; k < primitiveCount; k++) {
-                                    var primitiveName = $"{meshName}_{k}";
-                                    AnimationUtils.AddMorphTargetWeightCurves(
-                                        m_AnimationClips[i],
-                                        $"{path}/{primitiveName}",
-                                        times,
-                                        values,
-                                        sampler.GetInterpolationType(),
-                                        mesh.Extras?.targetNames
-                                    );
-                                }
-                                // HACK END
-                                break;
+                                );
                             }
-                            case AnimationChannel.Path.Pointer:
-                                m_Logger?.Warning(LogCode.AnimationTargetPathUnsupported,channel.Target.GetPath().ToString());
-                                break;
-                            default:
-                                m_Logger?.Error(LogCode.AnimationTargetPathUnsupported,channel.Target.GetPath().ToString());
-                                break;
+                            // HACK END
+                            break;
                         }
+                        case AnimationChannelBase.Path.Pointer:
+                            m_Logger?.Warning(LogCode.AnimationTargetPathUnsupported,channel.Target.GetPath().ToString());
+                            break;
+                        case AnimationChannelBase.Path.Unknown:
+                        case AnimationChannelBase.Path.Invalid:
+                        default:
+                            m_Logger?.Error(LogCode.AnimationTargetPathUnsupported,channel.Target.GetPath().ToString());
+                            break;
                     }
                 }
             }
-#endif
+        }
 
+#endif // UNITY_ANIMATION
+
+        void CalculateSkinSkeletons(int[] parentIndex)
+        {
+            foreach (var skin in Root.Skins)
+            {
+                if (skin.skeleton < 0)
+                {
+                    skin.skeleton = GetLowestCommonAncestorNode(skin.joints, parentIndex);
+                }
+            }
+        }
+
+        void DisposeVolatileAccessorData()
+        {
             // Dispose all accessor data buffers, except the ones needed for instantiation
             if (m_AccessorData != null)
             {
@@ -2371,7 +2265,153 @@ namespace GLTFast
                     }
                 }
             }
-            return success;
+        }
+
+        async Task<bool> CreateAllPrimitives()
+        {
+            foreach (var primitiveContext in m_PrimitiveContexts)
+            {
+                var primitive = await primitiveContext.CreatePrimitive();
+                // The import failed :\
+                // await defaultDeferAgent.BreakPoint();
+
+                if (primitive.HasValue)
+                {
+                    m_Primitives[primitiveContext.PrimitiveIndex] = primitive.Value;
+                    m_Resources.Add(primitive.Value.mesh);
+                }
+                else
+                {
+                    return false;
+                }
+
+                await m_DeferAgent.BreakPoint();
+            }
+
+            return true;
+        }
+
+        async Task WaitForAllPrimitiveContexts()
+        {
+            foreach (var primitiveContext in m_PrimitiveContexts)
+            {
+                if (primitiveContext == null) continue;
+                while (!primitiveContext.IsCompleted)
+                {
+                    await Task.Yield();
+                }
+            }
+        }
+
+        async Task GenerateMaterials()
+        {
+            m_Materials = new UnityEngine.Material[Root.Materials.Count];
+            for (var i = 0; i < m_Materials.Length; i++)
+            {
+                await m_DeferAgent.BreakPoint(.0001f);
+                Profiler.BeginSample("GenerateMaterial");
+                m_MaterialGenerator.SetLogger(m_Logger);
+                var pointsSupport = GetMaterialPointsSupport(i);
+                var material = m_MaterialGenerator.GenerateMaterial(
+                    Root.Materials[i],
+                    this,
+                    pointsSupport
+                );
+                m_Materials[i] = material;
+                m_MaterialGenerator.SetLogger(null);
+                Profiler.EndSample();
+            }
+        }
+
+        void PopulateTexturesAndImageVariants()
+        {
+            var defaultKey = new SamplerKey(new Sampler());
+            m_Textures = new Texture2D[Root.Textures.Count];
+            var imageVariants = new Dictionary<SamplerKey, Texture2D>[m_Images.Length];
+            for (var textureIndex = 0; textureIndex < Root.Textures.Count; textureIndex++)
+            {
+                var txt = Root.Textures[textureIndex];
+                SamplerKey key;
+                Sampler sampler = null;
+                if (txt.sampler >= 0)
+                {
+                    sampler = Root.Samplers[txt.sampler];
+                    key = new SamplerKey(sampler);
+                }
+                else
+                {
+                    key = defaultKey;
+                }
+
+                var imageIndex = txt.GetImageIndex();
+                if (imageIndex < 0 || imageIndex >= Root.Images.Count) continue;
+                var img = m_Images[imageIndex];
+                if (imageVariants[imageIndex] == null)
+                {
+                    sampler?.Apply(img, m_Settings.DefaultMinFilterMode, m_Settings.DefaultMagFilterMode);
+                    imageVariants[imageIndex] = new Dictionary<SamplerKey, Texture2D>
+                    {
+                        [key] = img
+                    };
+                    m_Textures[textureIndex] = img;
+                }
+                else
+                {
+                    if (imageVariants[imageIndex].TryGetValue(key, out var imgVariant))
+                    {
+                        m_Textures[textureIndex] = imgVariant;
+                    }
+                    else
+                    {
+                        var newImg = UnityEngine.Object.Instantiate(img);
+                        m_Resources.Add(newImg);
+#if DEBUG
+                        newImg.name = $"{img.name}_sampler{txt.sampler}";
+                        m_Logger?.Warning(LogCode.ImageMultipleSamplers,imageIndex.ToString());
+#endif
+                        sampler?.Apply(newImg, m_Settings.DefaultMinFilterMode, m_Settings.DefaultMagFilterMode);
+                        imageVariants[imageIndex][key] = newImg;
+                        m_Textures[textureIndex] = newImg;
+                    }
+                }
+            }
+        }
+
+        async Task WaitForImageCreateContexts()
+        {
+            var imageCreateContextsLeft = true;
+            while (imageCreateContextsLeft)
+            {
+                var loadedAny = false;
+                for (var i = m_ImageCreateContexts.Count - 1; i >= 0; i--)
+                {
+                    var jh = m_ImageCreateContexts[i];
+                    if (jh.jobHandle.IsCompleted)
+                    {
+                        jh.jobHandle.Complete();
+#if UNITY_IMAGECONVERSION
+                        m_Images[jh.imageIndex].LoadImage(
+                            jh.buffer,
+#if UNITY_VISIONOS
+                                false
+#else
+                            !m_Settings.TexturesReadable && !m_ImageReadable[jh.imageIndex]
+#endif
+                        );
+#endif
+                        jh.gcHandle.Free();
+                        m_ImageCreateContexts.RemoveAt(i);
+                        loadedAny = true;
+                        await m_DeferAgent.BreakPoint();
+                    }
+                }
+                imageCreateContextsLeft = m_ImageCreateContexts.Count > 0;
+                if (!loadedAny && imageCreateContextsLeft)
+                {
+                    await Task.Yield();
+                }
+            }
+            m_ImageCreateContexts = null;
         }
 
         void SetMaterialPointsSupport(int materialIndex)
