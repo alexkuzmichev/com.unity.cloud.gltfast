@@ -12,10 +12,10 @@ using UnityEngine;
 namespace GLTFast
 {
 
-    class PrimitiveCreateContext : PrimitiveCreateContextBase
+    class MeshResultGenerator : MeshResultGeneratorBase
     {
 
-        public VertexBufferConfigBase vertexData;
+        public VertexBufferGeneratorBase vertexData;
 
         public JobHandle jobHandle;
         int[][] m_Indices;
@@ -25,7 +25,7 @@ namespace GLTFast
 
         public MeshTopology topology;
 
-        public PrimitiveCreateContext(
+        public MeshResultGenerator(
             int meshIndex,
             int primitiveIndex,
             int subMeshCount,
@@ -144,9 +144,9 @@ namespace GLTFast
             // Profiler.EndSample();
 #endif
 
-            if (morphTargetsContext != null)
+            if (morphTargetsGenerator != null)
             {
-                await morphTargetsContext.ApplyOnMeshAndDispose(msh);
+                await morphTargetsGenerator.ApplyOnMeshAndDispose(msh);
             }
 
             Profiler.BeginSample("Dispose");

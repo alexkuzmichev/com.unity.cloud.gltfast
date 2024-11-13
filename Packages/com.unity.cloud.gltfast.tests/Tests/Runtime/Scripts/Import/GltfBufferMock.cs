@@ -10,9 +10,9 @@ namespace GLTFast.Tests
     {
         public const int sparseAccessorIndex = 42;
 
-        public void GetAccessor(int index, out AccessorBase accessor, out void* data, out int byteStride)
+        public AccessorBase GetAccessor(int index)
         {
-            accessor = new Accessor
+            return new Accessor
             {
                 bufferView = index,
                 componentType = GltfComponentType.Float,
@@ -22,6 +22,11 @@ namespace GLTFast.Tests
                 min = new float[] { -1, -1, -1 },
                 max = new float[] { 1, 1, 1 }
             };
+        }
+
+        public void GetAccessorAndData(int index, out AccessorBase accessor, out void* data, out int byteStride)
+        {
+            accessor = GetAccessor(index);
             accessor.SetAttributeType(GltfAccessorAttributeType.VEC3);
             data = null;
             byteStride = 1;
