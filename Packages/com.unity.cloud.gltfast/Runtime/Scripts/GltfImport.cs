@@ -197,7 +197,7 @@ namespace GLTFast
 #endif
         Dictionary<int, TextureDownloadBase> m_TextureDownloadTasks;
 
-        AccessorDataBase[] m_AccessorData;
+        IDisposable[] m_AccessorData;
         AccessorUsage[] m_AccessorUsage;
         JobHandle m_AccessorJobsHandle;
         MeshResultGeneratorBase[] m_MeshResultGenerators;
@@ -2043,10 +2043,6 @@ namespace GLTFast
                     await Task.Yield();
                 }
                 m_AccessorJobsHandle.Complete();
-                foreach (var ad in m_AccessorData)
-                {
-                    ad?.Unpin();
-                }
             }
             if (!success) return success;
 
@@ -2161,33 +2157,33 @@ namespace GLTFast
 
                     var path = AnimationUtils.CreateAnimationPath(channel.Target.node,m_NodeNames,parentIndex);
 
-                    var times = ((AccessorNativeData<float>) m_AccessorData[sampler.input]).data;
+                    var times = (NativeArray<float>) m_AccessorData[sampler.input];
 
                     var outputData = m_AccessorData[sampler.output];
                     Assert.IsNotNull(outputData);
 
                     switch (channel.Target.GetPath()) {
                         case AnimationChannelBase.Path.Translation: {
-                            Assert.IsTrue(outputData is AccessorNativeData<Vector3>);
-                            var values = ((AccessorNativeData<Vector3>) outputData).data;
+                            Assert.IsTrue(outputData is NativeArray<Vector3>);
+                            var values = (NativeArray<Vector3>) outputData;
                             AnimationUtils.AddTranslationCurves(m_AnimationClips[i], path, times, values, sampler.GetInterpolationType());
                             break;
                         }
                         case AnimationChannelBase.Path.Rotation: {
-                            Assert.IsTrue(outputData is AccessorNativeData<Quaternion>);
-                            var values = ((AccessorNativeData<Quaternion>) outputData).data;
+                            Assert.IsTrue(outputData is NativeArray<Quaternion>);
+                            var values = (NativeArray<Quaternion>) outputData;
                             AnimationUtils.AddRotationCurves(m_AnimationClips[i], path, times, values, sampler.GetInterpolationType());
                             break;
                         }
                         case AnimationChannelBase.Path.Scale: {
-                            Assert.IsTrue(outputData is AccessorNativeData<Vector3>);
-                            var values = ((AccessorNativeData<Vector3>) outputData).data;
+                            Assert.IsTrue(outputData is NativeArray<Vector3>);
+                            var values = (NativeArray<Vector3>) outputData;
                             AnimationUtils.AddScaleCurves(m_AnimationClips[i], path, times, values, sampler.GetInterpolationType());
                             break;
                         }
                         case AnimationChannelBase.Path.Weights: {
-                            Assert.IsTrue(outputData is AccessorNativeData<float>);
-                            var values = ((AccessorNativeData<float>) outputData).data;
+                            Assert.IsTrue(outputData is NativeArray<float>);
+                            var values = (NativeArray<float>) outputData;
                             var node = Root.Nodes[channel.Target.node];
                             if (node.mesh < 0 || node.mesh >= Root.Meshes.Count) {
                                 break;
@@ -2718,19 +2714,19 @@ namespace GLTFast
 
                             if (hasTranslations)
                             {
-                                positions = ((AccessorNativeData<Vector3>)m_AccessorData[meshInstancing.attributes.TRANSLATION]).data;
+                                positions = (NativeArray<Vector3>)m_AccessorData[meshInstancing.attributes.TRANSLATION];
                                 instanceCount = (uint)positions.Value.Length;
                             }
 
                             if (hasRotations)
                             {
-                                rotations = ((AccessorNativeData<Quaternion>)m_AccessorData[meshInstancing.attributes.ROTATION]).data;
+                                rotations = (NativeArray<Quaternion>)m_AccessorData[meshInstancing.attributes.ROTATION];
                                 instanceCount = (uint)rotations.Value.Length;
                             }
 
                             if (hasScales)
                             {
-                                scales = ((AccessorNativeData<Vector3>)m_AccessorData[meshInstancing.attributes.SCALE]).data;
+                                scales = (NativeArray<Vector3>)m_AccessorData[meshInstancing.attributes.SCALE];
                                 instanceCount = (uint)scales.Value.Length;
                             }
 
@@ -3390,7 +3386,7 @@ namespace GLTFast
 #endif
 
             // Retrieve indices data jobified
-            m_AccessorData = new AccessorDataBase[gltf.Accessors.Count];
+            m_AccessorData = new IDisposable[gltf.Accessors.Count];
 
             for (int i = 0; i < m_AccessorData.Length; i++)
             {
@@ -3408,58 +3404,50 @@ namespace GLTFast
                     case GltfAccessorAttributeType.SCALAR when m_AccessorUsage[i] == AccessorUsage.IndexFlipped ||
                         m_AccessorUsage[i] == AccessorUsage.Index:
                         {
-                            var ads = new AccessorData<int>();
-                            GetIndicesJob(gltf, i, out ads.data, out var jh, out ads.gcHandle, m_AccessorUsage[i] == AccessorUsage.IndexFlipped);
+                            GetIndicesJob(gltf, i, out var indices, out var jh, m_AccessorUsage[i] == AccessorUsage.IndexFlipped);
                             tmpList.Add(jh.Value);
-                            m_AccessorData[i] = ads;
+                            m_AccessorData[i] = indices;
                             break;
                         }
                     case GltfAccessorAttributeType.MAT4 when m_AccessorUsage[i] == AccessorUsage.InverseBindMatrix:
                         {
-                            // TODO: Maybe use AccessorData, since Mesh.bindposes only accepts C# arrays.
-                            var ads = new AccessorNativeData<Matrix4x4>();
-                            GetMatricesJob(gltf, i, out ads.data, out var jh);
+                            // TODO: Maybe use Matrix4x4[], since Mesh.bindposes only accepts C# arrays.
+                            GetMatricesJob(gltf, i, out var matrices, out var jh);
                             tmpList.Add(jh.Value);
-                            m_AccessorData[i] = ads;
+                            m_AccessorData[i] = matrices;
                             break;
                         }
                     case GltfAccessorAttributeType.VEC3 when (m_AccessorUsage[i] & AccessorUsage.Translation) != 0:
                         {
-                            var ads = new AccessorNativeData<Vector3>();
-                            GetVector3Job(gltf, i, out ads.data, out var jh, true);
+                            GetVector3Job(gltf, i, out var data, out var jh, true);
                             tmpList.Add(jh.Value);
-                            m_AccessorData[i] = ads;
+                            m_AccessorData[i] = data;
                             break;
                         }
                     case GltfAccessorAttributeType.VEC4 when (m_AccessorUsage[i] & AccessorUsage.Rotation) != 0:
                         {
-                            var ads = new AccessorNativeData<Quaternion>();
-                            GetVector4Job(gltf, i, out ads.data, out var jh);
+                            GetVector4Job(gltf, i, out var data, out var jh);
                             tmpList.Add(jh.Value);
-                            m_AccessorData[i] = ads;
+                            m_AccessorData[i] = data;
                             break;
                         }
                     case GltfAccessorAttributeType.VEC3 when (m_AccessorUsage[i] & AccessorUsage.Scale) != 0:
                         {
-                            var ads = new AccessorNativeData<Vector3>();
-                            GetVector3Job(gltf, i, out ads.data, out var jh, false);
+                            GetVector3Job(gltf, i, out var data, out var jh, false);
                             tmpList.Add(jh.Value);
-                            m_AccessorData[i] = ads;
+                            m_AccessorData[i] = data;
                             break;
                         }
 #if UNITY_ANIMATION
                     case GltfAccessorAttributeType.SCALAR when m_AccessorUsage[i]==AccessorUsage.AnimationTimes || m_AccessorUsage[i]==AccessorUsage.Weight:
                     {
-                        // JobHandle? jh;
-                        var ads = new  AccessorNativeData<float>();
                         GetScalarJob(gltf, i, out var times, out var jh);
                         if (times.HasValue) {
-                            ads.data = times.Value;
+                            m_AccessorData[i] = times.Value;
                         }
                         if (jh.HasValue) {
                             tmpList.Add(jh.Value);
                         }
-                        m_AccessorData[i] = ads;
                         break;
                     }
 #endif
@@ -3650,7 +3638,7 @@ namespace GLTFast
                     var skin = gltf.Skins[s];
                     if (skin.inverseBindMatrices >= 0)
                     {
-                        m_SkinsInverseBindMatrices[s] = ((AccessorNativeData<Matrix4x4>)m_AccessorData[skin.inverseBindMatrices]).data.ToArray();
+                        m_SkinsInverseBindMatrices[s] = ((NativeArray<Matrix4x4>)m_AccessorData[skin.inverseBindMatrices]).ToArray();
                     }
                     Profiler.EndSample();
                     await m_DeferAgent.BreakPoint();
@@ -3691,16 +3679,16 @@ namespace GLTFast
                     break;
             }
 
-            int[] indices;
+            NativeArray<int> indices;
             if (primitive.indices >= 0)
             {
-                indices = ((AccessorData<int>)m_AccessorData[primitive.indices]).data;
-                RecalculateIndicesJob(primitive, indices, out indices, out meshResultGenerator.jobHandle, out meshResultGenerator.calculatedIndicesHandle);
+                indices = (NativeArray<int>)m_AccessorData[primitive.indices];
+                RecalculateIndicesJob(primitive, ref indices, out meshResultGenerator.jobHandle);
             }
             else
             {
                 var vertexCount = gltf.Accessors[primitive.attributes.POSITION].count;
-                CalculateIndicesJob(primitive, vertexCount, out indices, out meshResultGenerator.jobHandle, out meshResultGenerator.calculatedIndicesHandle);
+                CalculateIndicesJob(primitive, vertexCount, out indices, out meshResultGenerator.jobHandle);
             }
 
             meshResultGenerator.SetIndices(subMesh, indices);
@@ -3722,55 +3710,46 @@ namespace GLTFast
 
         static unsafe void RecalculateIndicesJob(
             MeshPrimitiveBase primitive,
-            int[] oldIndices,
-            out int[] indices,
-            out JobHandle jobHandle,
-            out GCHandle resultHandle
+            ref NativeArray<int> indices,
+            out JobHandle jobHandle
             )
         {
             switch (primitive.mode)
             {
                 case DrawMode.LineLoop:
-                    indices = new int[oldIndices.Length + 1];
-                    Array.Copy(oldIndices, indices, oldIndices.Length);
-                    indices[oldIndices.Length] = oldIndices[0];
-                    jobHandle = default;
-                    resultHandle = default;
-                    break;
+                    {
+                        var newIndices = new NativeArray<int>(indices.Length + 1, Allocator.Persistent);
+                        NativeArray<int>.Copy(indices, newIndices, indices.Length);
+                        newIndices[indices.Length] = indices[0];
+                        jobHandle = default;
+                        break;
+                    }
                 case DrawMode.TriangleStrip:
-                    var triangleStripTriangleCount = oldIndices.Length - 2;
-                    indices = new int[triangleStripTriangleCount * 3];
-                    resultHandle = GCHandle.Alloc(indices, GCHandleType.Pinned);
-                    var triangleStripJob = new RecalculateIndicesForTriangleStripJob();
-                    fixed (void* dst = &(indices[0]))
                     {
-                        triangleStripJob.result = (int*)dst;
+                        var triangleStripTriangleCount = indices.Length - 2;
+                        var newIndices = new NativeArray<int>(triangleStripTriangleCount * 3, Allocator.Persistent);
+                        var triangleStripJob = new RecalculateIndicesForTriangleStripJob
+                        {
+                            input = (int*)indices.GetUnsafeReadOnlyPtr(),
+                            result = (int*)newIndices.GetUnsafePtr()
+                        };
+                        jobHandle = triangleStripJob.Schedule(triangleStripTriangleCount, DefaultBatchCount);
+                        break;
                     }
-                    fixed (void* inp = &(oldIndices[0]))
-                    {
-                        triangleStripJob.input = (int*)inp;
-                    }
-                    jobHandle = triangleStripJob.Schedule(triangleStripTriangleCount, DefaultBatchCount);
-                    break;
                 case DrawMode.TriangleFan:
-                    var triangleFanTriangleCount = oldIndices.Length - 2;
-                    indices = new int[triangleFanTriangleCount * 3];
-                    resultHandle = GCHandle.Alloc(indices, GCHandleType.Pinned);
-                    var triangleFanJob = new RecalculateIndicesForTriangleFanJob();
-                    fixed (void* dst = &(indices[0]))
                     {
-                        triangleFanJob.result = (int*)dst;
+                        var triangleFanTriangleCount = indices.Length - 2;
+                        var newIndices = new NativeArray<int>(triangleFanTriangleCount * 3, Allocator.Persistent);
+                        var triangleFanJob = new RecalculateIndicesForTriangleFanJob
+                        {
+                            input = (int*)indices.GetUnsafeReadOnlyPtr(),
+                            result = (int*)newIndices.GetUnsafePtr()
+                        };
+                        jobHandle = triangleFanJob.Schedule(triangleFanTriangleCount, DefaultBatchCount);
+                        break;
                     }
-                    fixed (void* inp = &(oldIndices[0]))
-                    {
-                        triangleFanJob.input = (int*)inp;
-                    }
-                    jobHandle = triangleFanJob.Schedule(triangleFanTriangleCount, DefaultBatchCount);
-                    break;
                 default:
-                    indices = oldIndices;
                     jobHandle = default;
-                    resultHandle = default;
                     break;
             }
         }
@@ -3778,63 +3757,70 @@ namespace GLTFast
         static unsafe void CalculateIndicesJob(
             MeshPrimitiveBase primitive,
             int vertexCount,
-            out int[] indices,
-            out JobHandle jobHandle,
-            out GCHandle resultHandle
+            out NativeArray<int> indices,
+            out JobHandle jobHandle
             )
         {
             Profiler.BeginSample("CalculateIndicesJob");
             // No indices: calculate them
-            var lineLoop = primitive.mode == DrawMode.LineLoop;
-            // extra index (first vertex again) for closing line loop
-            indices = new int[vertexCount + (lineLoop ? 1 : 0)];
-            resultHandle = GCHandle.Alloc(indices, GCHandleType.Pinned);
             switch (primitive.mode)
             {
+                case DrawMode.LineLoop:
+                    {
+                        // extra index (first vertex again) for closing line loop
+                        indices = new NativeArray<int>(vertexCount + 1, Allocator.Persistent);
+                        // Set the last index to the first vertex
+                        indices[vertexCount] = 0;
+                        var job = new CreateIndicesInt32Job()
+                        {
+                            result = (int*)indices.GetUnsafePtr()
+                        };
+                        jobHandle = job.Schedule(vertexCount, DefaultBatchCount);
+                        break;
+                    }
                 case DrawMode.Triangles:
-                    var flippedJob8 = new CreateIndicesInt32FlippedJob();
-                    fixed (void* dst = &(indices[0]))
                     {
-                        flippedJob8.result = (int*)dst;
+                        indices = new NativeArray<int>(vertexCount, Allocator.Persistent);
+                        var job = new CreateIndicesInt32FlippedJob
+                        {
+                            result = (int*)indices.GetUnsafePtr()
+                        };
+                        jobHandle = job.Schedule(indices.Length, DefaultBatchCount);
+                        break;
                     }
-                    jobHandle = flippedJob8.Schedule(indices.Length, DefaultBatchCount);
-                    break;
                 case DrawMode.TriangleStrip:
-                    indices = new int[(indices.Length - 2) * 3];
-                    var triangleStripJob = new CreateIndicesForTriangleStripJob();
-                    fixed (void* dst = &(indices[0]))
                     {
-                        triangleStripJob.result = (int*)dst;
+                        indices = new NativeArray<int>((vertexCount - 2) * 3, Allocator.Persistent);
+                        var job = new CreateIndicesForTriangleStripJob
+                        {
+                            result = (int*)indices.GetUnsafePtr()
+                        };
+                        jobHandle = job.Schedule(indices.Length, DefaultBatchCount);
+                        break;
                     }
-                    jobHandle = triangleStripJob.Schedule(indices.Length, DefaultBatchCount);
-                    break;
                 case DrawMode.TriangleFan:
-                    indices = new int[(indices.Length - 2) * 3];
-                    var triangleFanJob = new CreateIndicesForTriangleFanJob();
-                    fixed (void* dst = &(indices[0]))
+                    indices = new NativeArray<int>((vertexCount - 2) * 3, Allocator.Persistent);
+                    var triangleFanJob = new CreateIndicesForTriangleFanJob
                     {
-                        triangleFanJob.result = (int*)dst;
-                    }
+                        result = (int*)indices.GetUnsafePtr()
+                    };
                     jobHandle = triangleFanJob.Schedule(indices.Length, DefaultBatchCount);
                     break;
                 default:
-                    var job8 = new CreateIndicesInt32Job();
-                    if (lineLoop)
                     {
-                        // Set the last index to the first vertex
-                        indices[vertexCount] = 0;
+                        indices = new NativeArray<int>(vertexCount, Allocator.Persistent);
+                        var job = new CreateIndicesInt32Job()
+                        {
+                            result = (int*)indices.GetUnsafePtr()
+                        };
+                        jobHandle = job.Schedule(vertexCount, DefaultBatchCount);
+                        break;
                     }
-                    fixed (void* dst = &(indices[0]))
-                    {
-                        job8.result = (int*)dst;
-                    }
-                    jobHandle = job8.Schedule(vertexCount, DefaultBatchCount);
-                    break;
             }
             Profiler.EndSample();
         }
 
-        unsafe void GetIndicesJob(RootBase gltf, int accessorIndex, out int[] indices, out JobHandle? jobHandle, out GCHandle resultHandle, bool flip)
+        unsafe void GetIndicesJob(RootBase gltf, int accessorIndex, out NativeArray<int> indices, out JobHandle? jobHandle, bool flip)
         {
             Profiler.BeginSample("PrepareGetIndicesJob");
             // index
@@ -3842,10 +3828,7 @@ namespace GLTFast
             var bufferView = GetBufferView(accessor.bufferView, accessor.byteOffset);
 
             Profiler.BeginSample("Alloc");
-            indices = new int[accessor.count];
-            Profiler.EndSample();
-            Profiler.BeginSample("Pin");
-            resultHandle = GCHandle.Alloc(indices, GCHandleType.Pinned);
+            indices = new NativeArray<int>(accessor.count, Allocator.Persistent);
             Profiler.EndSample();
 
             Assert.AreEqual(accessor.GetAttributeType(), GltfAccessorAttributeType.SCALAR);
@@ -3861,66 +3844,60 @@ namespace GLTFast
                 case GltfComponentType.UnsignedByte:
                     if (flip)
                     {
-                        var job8 = new ConvertIndicesUInt8ToInt32FlippedJob();
-                        fixed (void* dst = &(indices[0]))
+                        var job8 = new ConvertIndicesUInt8ToInt32FlippedJob
                         {
-                            job8.input = (byte*)bufferView.GetUnsafeReadOnlyPtr();
-                            job8.result = (int3*)dst;
-                        }
+                            input = (byte*)bufferView.GetUnsafeReadOnlyPtr(),
+                            result = (int3*)indices.GetUnsafePtr()
+                        };
                         jobHandle = job8.Schedule(accessor.count / 3, DefaultBatchCount);
                     }
                     else
                     {
-                        var job8 = new ConvertIndicesUInt8ToInt32Job();
-                        fixed (void* dst = &(indices[0]))
+                        var job8 = new ConvertIndicesUInt8ToInt32Job
                         {
-                            job8.input = (byte*)bufferView.GetUnsafeReadOnlyPtr();
-                            job8.result = (int*)dst;
-                        }
+                            input = (byte*)bufferView.GetUnsafeReadOnlyPtr(),
+                            result = (int*)indices.GetUnsafePtr()
+                        };
                         jobHandle = job8.Schedule(accessor.count, DefaultBatchCount);
                     }
                     break;
                 case GltfComponentType.UnsignedShort:
                     if (flip)
                     {
-                        var job16 = new ConvertIndicesUInt16ToInt32FlippedJob();
-                        fixed (void* dst = &(indices[0]))
+                        var job16 = new ConvertIndicesUInt16ToInt32FlippedJob
                         {
-                            job16.input = (ushort*)bufferView.GetUnsafeReadOnlyPtr();
-                            job16.result = (int3*)dst;
-                        }
+                            input = (ushort*)bufferView.GetUnsafeReadOnlyPtr(),
+                            result = (int3*)indices.GetUnsafePtr()
+                        };
                         jobHandle = job16.Schedule(accessor.count / 3, DefaultBatchCount);
                     }
                     else
                     {
-                        var job16 = new ConvertIndicesUInt16ToInt32Job();
-                        fixed (void* dst = &(indices[0]))
+                        var job16 = new ConvertIndicesUInt16ToInt32Job
                         {
-                            job16.input = (ushort*)bufferView.GetUnsafeReadOnlyPtr();
-                            job16.result = (int*)dst;
-                        }
+                            input = (ushort*)bufferView.GetUnsafeReadOnlyPtr(),
+                            result = (int*)indices.GetUnsafePtr()
+                        };
                         jobHandle = job16.Schedule(accessor.count, DefaultBatchCount);
                     }
                     break;
                 case GltfComponentType.UnsignedInt:
                     if (flip)
                     {
-                        var job32 = new ConvertIndicesUInt32ToInt32FlippedJob();
-                        fixed (void* dst = &(indices[0]))
+                        var job32 = new ConvertIndicesUInt32ToInt32FlippedJob
                         {
-                            job32.input = (uint*)bufferView.GetUnsafeReadOnlyPtr();
-                            job32.result = (int3*)dst;
-                        }
+                            input = (uint*)bufferView.GetUnsafeReadOnlyPtr(),
+                            result = (int3*)indices.GetUnsafePtr()
+                        };
                         jobHandle = job32.Schedule(accessor.count / 3, DefaultBatchCount);
                     }
                     else
                     {
-                        var job32 = new ConvertIndicesUInt32ToInt32Job();
-                        fixed (void* dst = &(indices[0]))
+                        var job32 = new ConvertIndicesUInt32ToInt32Job
                         {
-                            job32.input = (uint*)bufferView.GetUnsafeReadOnlyPtr();
-                            job32.result = (int*)dst;
-                        }
+                            input = (uint*)bufferView.GetUnsafeReadOnlyPtr(),
+                            result = (int*)indices.GetUnsafePtr()
+                        };
                         jobHandle = job32.Schedule(accessor.count, DefaultBatchCount);
                     }
                     break;
