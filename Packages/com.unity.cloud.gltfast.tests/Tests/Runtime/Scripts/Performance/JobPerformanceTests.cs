@@ -1024,6 +1024,7 @@ namespace GLTFast.Tests.Performance.Jobs
         NativeArray<byte> m_InputUInt8;
         NativeArray<ushort> m_InputUInt16;
         NativeArray<uint> m_InputUInt32;
+        NativeArray<int> m_IndexInt32;
         NativeArray<int> m_IndexOutput;
 
         [OneTimeSetUp]
@@ -1032,6 +1033,7 @@ namespace GLTFast.Tests.Performance.Jobs
             m_InputUInt8 = new NativeArray<byte>(k_IndexLength, Allocator.Persistent);
             m_InputUInt16 = new NativeArray<ushort>(k_IndexLength, Allocator.Persistent);
             m_InputUInt32 = new NativeArray<uint>(k_IndexLength, Allocator.Persistent);
+            m_IndexInt32 = new NativeArray<int>(k_IndexLength, Allocator.Persistent);
             m_IndexOutput = new NativeArray<int>(k_IndexLength, Allocator.Persistent);
 
             for (int i = 0; i < 6; i++)
@@ -1039,6 +1041,7 @@ namespace GLTFast.Tests.Performance.Jobs
                 m_InputUInt8[i] = (byte)i;
                 m_InputUInt16[i] = (ushort)i;
                 m_InputUInt32[i] = (uint)i;
+                m_IndexInt32[i] = i;
             }
         }
 
@@ -1049,6 +1052,7 @@ namespace GLTFast.Tests.Performance.Jobs
             m_InputUInt16.Dispose();
             m_InputUInt32.Dispose();
             m_IndexOutput.Dispose();
+            m_IndexInt32.Dispose();
         }
 
         [Test, Performance]
@@ -1086,6 +1090,45 @@ namespace GLTFast.Tests.Performance.Jobs
             Assert.AreEqual(5, m_IndexOutput[3]);
             Assert.AreEqual(4, m_IndexOutput[4]);
             Assert.AreEqual(3, m_IndexOutput[5]);
+        }
+
+        [Test, Performance]
+        public unsafe void CreateIndicesForTriangleStripJob()
+        {
+            Assert.IsTrue(m_IndexOutput.Length > 3);
+            var job = new GLTFast.Jobs.CreateIndicesForTriangleStripJob
+            {
+                result = (int*)m_IndexOutput.GetUnsafePtr()
+            };
+            Measure.Method(() => job.Run(m_IndexOutput.Length))
+                .WarmupCount(1)
+                .MeasurementCount(Constants.measureCount)
+                .IterationsPerMeasurement(Constants.iterationsPerMeasurement)
+                .Run();
+        }
+
+        [Test, Performance]
+        public unsafe void CreateIndicesForTriangleFanJob()
+        {
+            Assert.IsTrue(m_IndexOutput.Length > 3);
+            var job = new GLTFast.Jobs.CreateIndicesForTriangleFanJob
+            {
+                result = (int*)m_IndexOutput.GetUnsafePtr()
+            };
+            Measure.Method(() => job.Run(m_IndexOutput.Length))
+                .WarmupCount(1)
+                .MeasurementCount(Constants.measureCount)
+                .IterationsPerMeasurement(Constants.iterationsPerMeasurement)
+                .Run();
+            Assert.AreEqual(2, m_IndexOutput[0]);
+            Assert.AreEqual(1, m_IndexOutput[1]);
+            Assert.AreEqual(0, m_IndexOutput[2]);
+            Assert.AreEqual(3, m_IndexOutput[3]);
+            Assert.AreEqual(2, m_IndexOutput[4]);
+            Assert.AreEqual(0, m_IndexOutput[5]);
+            Assert.AreEqual(4, m_IndexOutput[6]);
+            Assert.AreEqual(3, m_IndexOutput[7]);
+            Assert.AreEqual(0, m_IndexOutput[8]);
         }
 
         [Test, Performance]
@@ -1178,6 +1221,40 @@ namespace GLTFast.Tests.Performance.Jobs
                 result = (int3*)m_IndexOutput.GetUnsafePtr()
             };
             Measure.Method(() => job.Run(m_IndexOutput.Length / 3))
+                .WarmupCount(1)
+                .MeasurementCount(Constants.measureCount)
+                .IterationsPerMeasurement(Constants.iterationsPerMeasurement)
+                .Run();
+        }
+
+        [Test, Performance]
+        public unsafe void RecalculateIndicesForTriangleFanJob()
+        {
+            Assert.IsTrue(m_IndexOutput.Length > 3);
+            var job = new GLTFast.Jobs.RecalculateIndicesForTriangleFanJob
+            {
+                input = (int*)m_IndexInt32.GetUnsafeReadOnlyPtr(),
+                result = (int*)m_IndexOutput.GetUnsafePtr()
+            };
+            var triangleCount = m_IndexOutput.Length / 3;
+            Measure.Method(() => job.Run(triangleCount))
+                .WarmupCount(1)
+                .MeasurementCount(Constants.measureCount)
+                .IterationsPerMeasurement(Constants.iterationsPerMeasurement)
+                .Run();
+        }
+
+        [Test, Performance]
+        public unsafe void RecalculateIndicesForTriangleStripJob()
+        {
+            Assert.IsTrue(m_IndexOutput.Length > 3);
+            var job = new GLTFast.Jobs.RecalculateIndicesForTriangleStripJob
+            {
+                input = (int*)m_IndexInt32.GetUnsafeReadOnlyPtr(),
+                result = (int*)m_IndexOutput.GetUnsafePtr()
+            };
+            var triangleCount = m_IndexOutput.Length / 3;
+            Measure.Method(() => job.Run(triangleCount))
                 .WarmupCount(1)
                 .MeasurementCount(Constants.measureCount)
                 .IterationsPerMeasurement(Constants.iterationsPerMeasurement)

@@ -356,7 +356,6 @@ namespace GLTFast.Jobs
     [BurstCompile]
     unsafe struct CreateIndicesForTriangleFanJob : IJobParallelFor
     {
-
         [ReadOnly]
         [NativeDisableUnsafePtrRestriction]
         public int* result;
