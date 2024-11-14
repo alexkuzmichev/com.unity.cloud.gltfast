@@ -3708,7 +3708,7 @@ namespace GLTFast
         }
 #endif
 
-        static unsafe void RecalculateIndicesJob(
+        static void RecalculateIndicesJob(
             MeshPrimitiveBase primitive,
             ref NativeArray<int> indices,
             out JobHandle jobHandle
@@ -3730,8 +3730,8 @@ namespace GLTFast
                         var newIndices = new NativeArray<int>(triangleStripTriangleCount * 3, Allocator.Persistent);
                         var triangleStripJob = new RecalculateIndicesForTriangleStripJob
                         {
-                            input = (int*)indices.GetUnsafeReadOnlyPtr(),
-                            result = (int*)newIndices.GetUnsafePtr()
+                            input = indices,
+                            result = newIndices
                         };
                         jobHandle = triangleStripJob.Schedule(triangleStripTriangleCount, DefaultBatchCount);
                         break;
@@ -3742,8 +3742,8 @@ namespace GLTFast
                         var newIndices = new NativeArray<int>(triangleFanTriangleCount * 3, Allocator.Persistent);
                         var triangleFanJob = new RecalculateIndicesForTriangleFanJob
                         {
-                            input = (int*)indices.GetUnsafeReadOnlyPtr(),
-                            result = (int*)newIndices.GetUnsafePtr()
+                            input = indices,
+                            result = newIndices
                         };
                         jobHandle = triangleFanJob.Schedule(triangleFanTriangleCount, DefaultBatchCount);
                         break;
@@ -3754,7 +3754,7 @@ namespace GLTFast
             }
         }
 
-        static unsafe void CalculateIndicesJob(
+        static void CalculateIndicesJob(
             MeshPrimitiveBase primitive,
             int vertexCount,
             out NativeArray<int> indices,
@@ -3773,7 +3773,7 @@ namespace GLTFast
                         indices[vertexCount] = 0;
                         var job = new CreateIndicesInt32Job()
                         {
-                            result = (int*)indices.GetUnsafePtr()
+                            result = indices
                         };
                         jobHandle = job.Schedule(vertexCount, DefaultBatchCount);
                         break;
@@ -3783,7 +3783,7 @@ namespace GLTFast
                         indices = new NativeArray<int>(vertexCount, Allocator.Persistent);
                         var job = new CreateIndicesInt32FlippedJob
                         {
-                            result = (int*)indices.GetUnsafePtr()
+                            result = indices
                         };
                         jobHandle = job.Schedule(indices.Length, DefaultBatchCount);
                         break;
@@ -3793,7 +3793,7 @@ namespace GLTFast
                         indices = new NativeArray<int>((vertexCount - 2) * 3, Allocator.Persistent);
                         var job = new CreateIndicesForTriangleStripJob
                         {
-                            result = (int*)indices.GetUnsafePtr()
+                            result = indices
                         };
                         jobHandle = job.Schedule(indices.Length, DefaultBatchCount);
                         break;
@@ -3802,16 +3802,16 @@ namespace GLTFast
                     indices = new NativeArray<int>((vertexCount - 2) * 3, Allocator.Persistent);
                     var triangleFanJob = new CreateIndicesForTriangleFanJob
                     {
-                        result = (int*)indices.GetUnsafePtr()
+                        result = indices
                     };
                     jobHandle = triangleFanJob.Schedule(indices.Length, DefaultBatchCount);
                     break;
                 default:
                     {
                         indices = new NativeArray<int>(vertexCount, Allocator.Persistent);
-                        var job = new CreateIndicesInt32Job()
+                        var job = new CreateIndicesInt32Job
                         {
-                            result = (int*)indices.GetUnsafePtr()
+                            result = indices
                         };
                         jobHandle = job.Schedule(vertexCount, DefaultBatchCount);
                         break;
@@ -3847,7 +3847,7 @@ namespace GLTFast
                         var job8 = new ConvertIndicesUInt8ToInt32FlippedJob
                         {
                             input = (byte*)bufferView.GetUnsafeReadOnlyPtr(),
-                            result = (int3*)indices.GetUnsafePtr()
+                            result = indices.Reinterpret<int3>(sizeof(int))
                         };
                         jobHandle = job8.Schedule(accessor.count / 3, DefaultBatchCount);
                     }
@@ -3856,7 +3856,7 @@ namespace GLTFast
                         var job8 = new ConvertIndicesUInt8ToInt32Job
                         {
                             input = (byte*)bufferView.GetUnsafeReadOnlyPtr(),
-                            result = (int*)indices.GetUnsafePtr()
+                            result = indices
                         };
                         jobHandle = job8.Schedule(accessor.count, DefaultBatchCount);
                     }
@@ -3867,7 +3867,7 @@ namespace GLTFast
                         var job16 = new ConvertIndicesUInt16ToInt32FlippedJob
                         {
                             input = (ushort*)bufferView.GetUnsafeReadOnlyPtr(),
-                            result = (int3*)indices.GetUnsafePtr()
+                            result = indices.Reinterpret<int3>(sizeof(int))
                         };
                         jobHandle = job16.Schedule(accessor.count / 3, DefaultBatchCount);
                     }
@@ -3876,7 +3876,7 @@ namespace GLTFast
                         var job16 = new ConvertIndicesUInt16ToInt32Job
                         {
                             input = (ushort*)bufferView.GetUnsafeReadOnlyPtr(),
-                            result = (int*)indices.GetUnsafePtr()
+                            result = indices
                         };
                         jobHandle = job16.Schedule(accessor.count, DefaultBatchCount);
                     }
@@ -3887,7 +3887,7 @@ namespace GLTFast
                         var job32 = new ConvertIndicesUInt32ToInt32FlippedJob
                         {
                             input = (uint*)bufferView.GetUnsafeReadOnlyPtr(),
-                            result = (int3*)indices.GetUnsafePtr()
+                            result = indices.Reinterpret<int3>(sizeof(int))
                         };
                         jobHandle = job32.Schedule(accessor.count / 3, DefaultBatchCount);
                     }
@@ -3896,7 +3896,7 @@ namespace GLTFast
                         var job32 = new ConvertIndicesUInt32ToInt32Job
                         {
                             input = (uint*)bufferView.GetUnsafeReadOnlyPtr(),
-                            result = (int*)indices.GetUnsafePtr()
+                            result = indices
                         };
                         jobHandle = job32.Schedule(accessor.count, DefaultBatchCount);
                     }
