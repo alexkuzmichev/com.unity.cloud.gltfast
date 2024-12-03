@@ -12,7 +12,7 @@ legacy_pack:
     # # Inject ValidationExceptions.json
     # This is required, because com.unity.cloud.gltfast.tests has Newtonsoft JSON 
     # as dependency, which alters the schema class inheritance hierarchy,resulting in a breaking change.
-    - cp .yamato/ValidationExceptions.json* Packages/com.unity.cloud.gltfast
+    #- cp .yamato/ValidationExceptions.json* Packages/com.unity.cloud.gltfast
     - upm-ci project pack --project-path Projects/glTFast-Test-minimalistic
   artifacts:
     packages:
