@@ -43,16 +43,6 @@ test_{{ platform.name }}_{{ editor }}:
       --category="{{ test_categories }}"
 
 {% if agent.os == "win" -%}
-    # Run the vetting test via legacy upm-ci to ensure the API validation is run.
-    # TODO: Remove this (along with UPMPVP_ACK_UPMPVP_DOES_NO_API_VALIDATION: 1) once upm-pvp/UnifiedTestRunner support API validation.
-    - npm install "upm-ci-utils@stable" -g --registry {{ registry.npm }}
-    - upm-ci package test
-      -u .Editor
-      --package-path Packages/com.unity.cloud.gltfast
-      --type vetting-tests
-      --platform editmode
-      --extra-create-project-arg=-upmNoDefaultPackages
-      --extra-utr-arg='--category="{{ test_categories }}"'
 {% if editor == "2020" -%}
   after:
     # To prevent random artifacts zip failures, ensure Unity.Licensing.Client.exe is no longer running. See this slack thread for more information (https://unity.slack.com/archives/C998PJJDD/p1683307400228169)

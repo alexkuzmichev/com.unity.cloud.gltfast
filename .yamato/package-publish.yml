@@ -33,6 +33,8 @@ publish_dry_run:
     - path: ".yamato/package-test.yml#test_{{platform.name}}_{{editor}}"
       location: "results/test_{{platform.name}}_{{editor}}"
 {% endfor -%}
+    - path: ".yamato/vetting.yml#vetting_win_{{editor}}"
+      location: "results/test_win_{{editor}}"
 {% endfor -%}
 
 
