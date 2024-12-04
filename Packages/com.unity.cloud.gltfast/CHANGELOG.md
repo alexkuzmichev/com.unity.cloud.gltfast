@@ -24,6 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - Preserve per-submesh bounding box.
+- `GltfAsset` properly cleans up scene instance's `Animation` component, which fixes repeated loading of animated glTFs.
 
 ## [6.9.1] - 2024-11-15
 

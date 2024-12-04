@@ -15,6 +15,7 @@ namespace GLTFast.Tests.Import
     class ComponentTests
     {
         const string k_TestAsset = @"glTF\/FormatVariants.gltf$";
+        const string k_AnimatedTestAsset = @"RainbowCuboid\/original\/RainbowCuboid.gltf$";
 
         [GltfTestCase("glTF-test-models", 1, k_TestAsset)]
         public IEnumerator GltfAsset(GltfTestCaseSet testCaseSet, GltfTestCase testCase)
@@ -23,6 +24,17 @@ namespace GLTFast.Tests.Import
                 Path.Combine(testCaseSet.RootPath, testCase.relativeUri),
                 asset => asset.LoadOnStartup = false
                 );
+            yield return Utils.WaitForTask(task);
+        }
+
+        [GltfTestCase("glTF-test-models", 1, k_AnimatedTestAsset)]
+        public IEnumerator GltfAssetAnimatedTwice(GltfTestCaseSet testCaseSet, GltfTestCase testCase)
+        {
+            var task = LoadGltfViaComponent<GltfAsset>(
+                Path.Combine(testCaseSet.RootPath, testCase.relativeUri),
+                asset => asset.LoadOnStartup = false,
+                repetitions: 2
+            );
             yield return Utils.WaitForTask(task);
         }
 
@@ -55,14 +67,21 @@ namespace GLTFast.Tests.Import
 #endif
         }
 
-        static async Task<T> LoadGltfViaComponent<T>(string uri, Action<T> setupCallback) where T : GltfAssetBase
+        static async Task<T> LoadGltfViaComponent<T>(string uri, Action<T> setupCallback, int repetitions = 0) where T : GltfAssetBase
         {
             var gltf = new GameObject("glTF").AddComponent<T>();
             setupCallback(gltf);
             // gltf.Url = uri;
             Debug.Log($"Loading {uri}");
             var result = await gltf.Load(uri);
-            Assert.IsTrue(result);
+            Assert.IsTrue(result, $"Failed to load {uri}.");
+            for (var i = 0; i < repetitions; i++)
+            {
+                gltf.ClearScenes();
+                gltf.Dispose();
+                result = await gltf.Load(uri);
+                Assert.IsTrue(result, $"Failed to load {uri} on repetition {repetitions}");
+            }
             return gltf;
         }
     }
