@@ -53,7 +53,7 @@ namespace GLTFast.Tests
             return $"Variant {index}";
         }
 
-        public IMaterialsVariantsSlot[] GetMaterialsVariantsSlots(int meshIndex, int meshResultOffset)
+        public IMaterialsVariantsSlot[] GetMaterialsVariantsSlots(int meshIndex, int meshNumeration)
         {
             throw new System.NotImplementedException();
         }

@@ -14,14 +14,15 @@ namespace GLTFast.Tests
         [Test]
         public void SparseTexCoords()
         {
-            var v = new VertexBufferTexCoords<VTexCoord1>(null);
+            var v = new VertexBufferTexCoords<VTexCoord1>(1, 1, null);
 
             var handles = new NativeArray<JobHandle>(1, Allocator.Temp);
             var success = v.ScheduleVertexUVJobs(
-                new GltfBufferMock(),
+                0,
                 new[] { GltfBufferMock.sparseAccessorIndex },
-                3,
-                handles);
+                handles,
+                new GltfBufferMock()
+                );
             Assert.IsFalse(success);
             v.Dispose();
             handles.Dispose();

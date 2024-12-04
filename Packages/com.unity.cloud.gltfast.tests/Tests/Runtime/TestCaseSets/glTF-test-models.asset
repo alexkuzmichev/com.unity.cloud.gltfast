@@ -75,6 +75,11 @@ MonoBehaviour:
     expectInstantiationFail: 0
     expectedLogCodes: 
     requiredExtensions: 
+  - relativeUri: SubMesh/SubMesh.gltf
+    expectLoadFail: 0
+    expectInstantiationFail: 0
+    expectedLogCodes: 
+    requiredExtensions: 
   - relativeUri: UnknownExtensions/UnknownExtensions.gltf
     expectLoadFail: 0
     expectInstantiationFail: 0

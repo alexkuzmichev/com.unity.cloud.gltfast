@@ -17,10 +17,10 @@ using Object = UnityEngine.Object;
 
 namespace GLTFast.Tests.Import
 {
-    [TestFixture]
+    [TestFixture, Category("Import")]
     class AssetsTests
     {
-        [GltfTestCase("glTF-test-models", 33)]
+        [GltfTestCase("glTF-test-models", 34)]
         public IEnumerator GltfTestModels(GltfTestCaseSet testCaseSet, GltfTestCase testCase)
         {
             yield return AsyncWrapper.WaitForTask(RunTestCase(testCaseSet, testCase));

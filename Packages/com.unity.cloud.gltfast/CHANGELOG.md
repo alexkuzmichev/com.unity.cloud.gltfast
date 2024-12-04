@@ -6,6 +6,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Extended access to meshes.
+  - `IGltfReadable.GetSourceMesh` returns source (de-serialized glTF) mesh.
+  - `GltfImportBase.Meshes` to retrieve all imported meshes.
+  - `GltfImportBase.GetMeshCount` returns the number of imported meshes per glTF mesh.
+  - `GltfImportBase.GetMeshes` to iterate the imported meshes of a single glTF mesh.
+  - `GltfImportBase.GetMesh` to access a single imported meshes.
+- Test asset *SubMesh*.
+
+### Changed
+- Mesh primitives of equal vertex buffer layout will result in a single Unity mesh with multiple sub-meshes instead of multiple Unity meshes (fixes [#153](https://github.com/atteneder/glTFast/issues/153)).
+
+### Deprecated
+- `IGltfReadable.GetAccessor` (replaced by `IGltfReadable.GetAccessorData`).
+- `GltfImportBase.GetMeshes` (replaced by `GltfImportBase.Meshes`).
+
+### Fixed
+- Preserve per-submesh bounding box.
 
 ## [6.9.1] - 2024-11-15
 
@@ -13,8 +31,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - (Test) `OpenGltfScene` with open glTF file dialog for convenient testing.
 - (Test) Tests for C# jobs that calculate or re-order indices.
 - Third party notices.
+- `GltfImportBase.Logger` grants access to the logger in use.
+- `GltfImportBase.DeferAgent` grants access to the defer agent in use.
 
 ### Changed
+- Convert one mesh's primitives of identical target vertex buffer structure into sub-meshes of one Unity mesh instead of splitting them up into multiple Unity meshes (fixes [#153](https://github.com/atteneder/glTFast/issues/153)).
 - Node name is assigned earlier during instantiation, enabling easier node identification by name (partially fixes [#724](https://github.com/atteneder/glTFast/issues/724)).
 - (Test) Updated test project dependencies.
 - (CI) Migrated code coverage.
@@ -26,6 +47,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - Made sure that mesh primitives of different drawmode (topology) are not mixed up.
+- Apply morph targets/blend shapes before uploading to GPU in `GLTFAST_KEEP_MESH_DATA` mode.
 
 ## [6.9.0] - 2024-10-30
 
