@@ -14,6 +14,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `GltfImportBase.GetMeshes` to iterate the imported meshes of a single glTF mesh.
   - `GltfImportBase.GetMesh` to access a single imported meshes.
 - Test asset *SubMesh*.
+- (CI) Automatically generated CI jobs (via Wrench/RecipeEngine; required for PackageWorks).
+- (CI) Renovate action to auto-update dependencies in CI jobs.
+- (CI) Renovate validation action.
 
 ### Changed
 - Mesh primitives of equal vertex buffer layout will result in a single Unity mesh with multiple sub-meshes instead of multiple Unity meshes (fixes [#153](https://github.com/atteneder/glTFast/issues/153)).
