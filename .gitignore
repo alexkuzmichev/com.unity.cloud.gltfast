@@ -46,7 +46,8 @@ sysinfo.txt
 /pvp-results
 
 # glTFast test projects
-/Projects/*/ProjectSettings
+/Projects/*/ProjectSettings/*
+!Projects/*/ProjectSettings/ProjectVersion.txt
 /Projects/*/UserSettings
 /Projects/*/Assets/Resources*
 /Projects/*/Assets/StreamingAssets*
