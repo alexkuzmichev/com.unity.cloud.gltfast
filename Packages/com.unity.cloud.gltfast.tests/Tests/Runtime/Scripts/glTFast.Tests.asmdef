@@ -104,6 +104,11 @@
             "name": "com.unity.entities.graphics",
             "expression": "1.0.10",
             "define": "UNITY_ENTITIES_GRAPHICS"
+        },
+        {
+            "name": "com.unity.collections",
+            "expression": "1.5.0",
+            "define": "UNITY_COLLECTIONS"
         }
     ],
     "noEngineReferences": false

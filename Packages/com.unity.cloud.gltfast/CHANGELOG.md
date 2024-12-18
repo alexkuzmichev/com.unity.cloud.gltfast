@@ -19,9 +19,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - (CI) Renovate validation action.
 - `JpgQuality` option in `ExportSettings` for finer control of jpg image exports.
 - Project versions to test projects.
+- Test for `ConvertBoneWeightsUInt8ToFloatInterleavedJob`
+- Test for `ConvertBoneWeightsUInt16ToFloatInterleavedJob`
 
 ### Changed
 - Mesh primitives of equal vertex buffer layout will result in a single Unity mesh with multiple sub-meshes instead of multiple Unity meshes (fixes [#153](https://github.com/atteneder/glTFast/issues/153)).
+- Downgraded package dependencies to version bundled with Editor.
+  - `com.unity.collections` to version `1.2.4` (from `1.5.1`)
+  - `com.unity.mathematics` to version `1.2.6` (from `1.3.1`)
 
 ### Deprecated
 - `IGltfReadable.GetAccessor` (replaced by `IGltfReadable.GetAccessorData`).
@@ -30,6 +35,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Preserve per-submesh bounding box.
 - `GltfAsset` properly cleans up scene instance's `Animation` component, which fixes repeated loading of animated glTFs.
+- Build error when used along with packages that depend on `com.unity.collections` versions older than 1.5 (e.g. Polyspatial 1.x; fixes [#730](https://github.com/atteneder/glTFast/issues/730)).
 
 ## [6.9.1] - 2024-11-15
 

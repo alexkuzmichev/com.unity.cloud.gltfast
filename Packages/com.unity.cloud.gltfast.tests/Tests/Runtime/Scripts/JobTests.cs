@@ -113,7 +113,11 @@ namespace GLTFast.Tests.Jobs
                 outputByteStride = 12,
                 result = (float3*)m_Output.GetUnsafePtr()
             };
+#if UNITY_COLLECTIONS
             job.RunBatch(m_Input.Length);
+#else
+            job.Run(m_Input.Length);
+#endif
 
             CheckNormalizedResult();
             CheckResult();
@@ -142,7 +146,11 @@ namespace GLTFast.Tests.Jobs
                 result = (float3*)m_Output.GetUnsafePtr(),
                 outputByteStride = 12
             };
+#if UNITY_COLLECTIONS
             job.RunBatch(m_Output.Length);
+#else
+            job.Run(m_Output.Length);
+#endif
             CheckNormalizedResult(Constants.epsilonInt16);
         }
 
@@ -156,7 +164,11 @@ namespace GLTFast.Tests.Jobs
                 result = (float3*)m_Output.GetUnsafePtr(),
                 outputByteStride = 12
             };
+#if UNITY_COLLECTIONS
             job.RunBatch(m_Output.Length);
+#else
+            job.Run(m_Output.Length);
+#endif
             CheckNormalizedResult(Constants.epsilonInt8);
         }
 
@@ -170,7 +182,11 @@ namespace GLTFast.Tests.Jobs
                 result = (float3*)m_Output.GetUnsafePtr(),
                 outputByteStride = 12
             };
+#if UNITY_COLLECTIONS
             job.RunBatch(m_Output.Length);
+#else
+            job.Run(m_Output.Length);
+#endif
             CheckResult();
         }
 
@@ -184,7 +200,11 @@ namespace GLTFast.Tests.Jobs
                 result = (float3*)m_Output.GetUnsafePtr(),
                 outputByteStride = 12
             };
+#if UNITY_COLLECTIONS
             job.RunBatch(m_Output.Length);
+#else
+            job.Run(m_Output.Length);
+#endif
             CheckNormalizedResult(Constants.epsilonUInt16);
         }
 
@@ -198,7 +218,11 @@ namespace GLTFast.Tests.Jobs
                 result = (float3*)m_Output.GetUnsafePtr(),
                 outputByteStride = 12
             };
+#if UNITY_COLLECTIONS
             job.RunBatch(m_Output.Length);
+#else
+            job.Run(m_Output.Length);
+#endif
             CheckResult();
         }
 
@@ -212,7 +236,11 @@ namespace GLTFast.Tests.Jobs
                 result = (float3*)m_Output.GetUnsafePtr(),
                 outputByteStride = 12
             };
+#if UNITY_COLLECTIONS
             job.RunBatch(m_Output.Length);
+#else
+            job.Run(m_Output.Length);
+#endif
             CheckResult();
         }
 
@@ -226,7 +254,11 @@ namespace GLTFast.Tests.Jobs
                 result = (float3*)m_Output.GetUnsafePtr(),
                 outputByteStride = 12
             };
+#if UNITY_COLLECTIONS
             job.RunBatch(m_Output.Length);
+#else
+            job.Run(m_Output.Length);
+#endif
             CheckResult();
         }
 
@@ -240,7 +272,11 @@ namespace GLTFast.Tests.Jobs
                 result = (float3*)m_Output.GetUnsafePtr(),
                 outputByteStride = 12
             };
+#if UNITY_COLLECTIONS
             job.RunBatch(m_Output.Length);
+#else
+            job.Run(m_Output.Length);
+#endif
             CheckNormalizedResult(Constants.epsilonUInt8);
         }
 
@@ -254,7 +290,11 @@ namespace GLTFast.Tests.Jobs
                 result = (float3*)m_Output.GetUnsafePtr(),
                 outputByteStride = 12
             };
+#if UNITY_COLLECTIONS
             job.RunBatch(m_Output.Length);
+#else
+            job.Run(m_Output.Length);
+#endif
             CheckNormalizedResult(Constants.epsilonInt16);
         }
 
@@ -268,7 +308,11 @@ namespace GLTFast.Tests.Jobs
                 result = (float3*)m_Output.GetUnsafePtr(),
                 outputByteStride = 12
             };
+#if UNITY_COLLECTIONS
             job.RunBatch(m_Output.Length);
+#else
+            job.Run(m_Output.Length);
+#endif
             CheckNormalizedResult(Constants.epsilonInt8);
         }
     }
@@ -471,7 +515,11 @@ namespace GLTFast.Tests.Jobs
                 result = (float2*)m_UVOutput.GetUnsafePtr(),
                 outputByteStride = 8
             };
+#if UNITY_COLLECTIONS
             job.RunBatch(m_UVOutput.Length);
+#else
+            job.Run(m_UVOutput.Length);
+#endif
             CheckResult(Constants.epsilonUInt8);
         }
 
@@ -499,7 +547,11 @@ namespace GLTFast.Tests.Jobs
                 result = (float2*)m_UVOutput.GetUnsafePtr(),
                 outputByteStride = 8
             };
+#if UNITY_COLLECTIONS
             job.RunBatch(m_UVOutput.Length);
+#else
+            job.Run(m_UVOutput.Length);
+#endif
             CheckResult(Constants.epsilonUInt16);
         }
 
@@ -527,7 +579,11 @@ namespace GLTFast.Tests.Jobs
                 result = (float2*)m_UVOutput.GetUnsafePtr(),
                 outputByteStride = 8
             };
+#if UNITY_COLLECTIONS
             job.RunBatch(m_UVOutput.Length);
+#else
+            job.Run(m_UVOutput.Length);
+#endif
             CheckResult(Constants.epsilonInt16);
         }
 
@@ -541,7 +597,11 @@ namespace GLTFast.Tests.Jobs
                 result = (float2*)m_UVOutput.GetUnsafePtr(),
                 outputByteStride = 8
             };
+#if UNITY_COLLECTIONS
             job.RunBatch(m_UVOutput.Length);
+#else
+            job.Run(m_UVOutput.Length);
+#endif
             CheckNormalizedResult(Constants.epsilonInt16);
         }
 
@@ -555,7 +615,11 @@ namespace GLTFast.Tests.Jobs
                 result = (float2*)m_UVOutput.GetUnsafePtr(),
                 outputByteStride = 8
             };
+#if UNITY_COLLECTIONS
             job.RunBatch(m_UVOutput.Length);
+#else
+            job.Run(m_UVOutput.Length);
+#endif
             CheckResult(Constants.epsilonInt8);
         }
 
@@ -569,7 +633,11 @@ namespace GLTFast.Tests.Jobs
                 result = (float2*)m_UVOutput.GetUnsafePtr(),
                 outputByteStride = 8
             };
+#if UNITY_COLLECTIONS
             job.RunBatch(m_UVOutput.Length);
+#else
+            job.Run(m_UVOutput.Length);
+#endif
             CheckNormalizedResult(Constants.epsilonInt8);
         }
 
@@ -583,7 +651,11 @@ namespace GLTFast.Tests.Jobs
                 result = (float2*)m_UVOutput.GetUnsafePtr(),
                 outputByteStride = 8
             };
+#if UNITY_COLLECTIONS
             job.RunBatch(m_UVOutput.Length);
+#else
+            job.Run(m_UVOutput.Length);
+#endif
             CheckResult();
             CheckNormalizedResult();
         }
@@ -594,6 +666,7 @@ namespace GLTFast.Tests.Jobs
     {
         const int k_RotationLength = 10;
         float4 m_NormalizedReference = new float4(0.844623f, -0.191342f, -0.46194f, 0.191342f);
+        float4 m_NormalizedAbsReference = new float4(0.844623f, 0.191342f, 0.46194f, 0.191342f);
         float4 m_NormalizedTangentReference = new float4(0.844623f, 0.191342f, -0.46194f, 0.191342f);
         float4 m_RotationReference = new float4(2, -13, -42, 1);
         float4 m_TangentReference = new float4(2, 13, -42, 1);
@@ -617,7 +690,7 @@ namespace GLTFast.Tests.Jobs
             m_RotOutput = new NativeArray<float4>(k_RotationLength, Allocator.Persistent);
 
             {
-                var tmp = new float4(0.844623f, 0.191342f, 0.46194f, 0.191342f);
+                var tmp = m_NormalizedAbsReference;
                 m_RotInput[1] = tmp;
 
                 m_InputUInt8[4] = (byte)(byte.MaxValue * tmp.x);
@@ -760,7 +833,11 @@ namespace GLTFast.Tests.Jobs
                 result = (float4*)m_RotOutput.GetUnsafePtr(),
                 outputByteStride = 16
             };
+#if UNITY_COLLECTIONS
             job.RunBatch(m_RotOutput.Length);
+#else
+            job.Run(m_RotOutput.Length);
+#endif
             CheckTangentResult();
         }
 
@@ -774,12 +851,49 @@ namespace GLTFast.Tests.Jobs
                 result = (float4*)m_RotOutput.GetUnsafePtr(),
                 outputByteStride = 16
             };
+#if UNITY_COLLECTIONS
             job.RunBatch(m_RotOutput.Length);
+#else
+            job.Run(m_RotOutput.Length);
+#endif
             CheckBoneWeightResult();
         }
 
-        // TODO: Test ConvertBoneWeightsUInt8ToFloatInterleavedJob
-        // TODO: Test ConvertBoneWeightsUInt16ToFloatInterleavedJob
+        [Test]
+        public unsafe void ConvertBoneWeightsUInt8ToFloatInterleavedJob()
+        {
+            var job = new GLTFast.Jobs.ConvertBoneWeightsUInt8ToFloatInterleavedJob
+            {
+                input = (byte*)m_InputUInt8.GetUnsafeReadOnlyPtr(),
+                inputByteStride = 4,
+                result = (float4*)m_RotOutput.GetUnsafePtr(),
+                outputByteStride = 16
+            };
+#if UNITY_COLLECTIONS
+            job.RunBatch(m_RotOutput.Length);
+#else
+            job.Run(m_RotOutput.Length);
+#endif
+            Utils.AssertNearOrEqual(m_NormalizedAbsReference, m_RotOutput[1], Constants.epsilonInt8);
+        }
+
+        [Test]
+        public unsafe void ConvertBoneWeightsUInt16ToFloatInterleavedJob()
+        {
+            var job = new GLTFast.Jobs.ConvertBoneWeightsUInt16ToFloatInterleavedJob
+            {
+                input = (byte*)m_InputUInt16.GetUnsafeReadOnlyPtr(),
+                inputByteStride = 8,
+                result = (float4*)m_RotOutput.GetUnsafePtr(),
+                outputByteStride = 16
+            };
+#if UNITY_COLLECTIONS
+            job.RunBatch(m_RotOutput.Length);
+#else
+            job.Run(m_RotOutput.Length);
+#endif
+            Utils.AssertNearOrEqual(m_NormalizedAbsReference, m_RotOutput[1], Constants.epsilonInt16);
+        }
 
         [Test]
         public unsafe void ConvertTangentsInt16ToFloatInterleavedNormalizedJob()
@@ -791,7 +905,11 @@ namespace GLTFast.Tests.Jobs
                 result = (float4*)m_RotOutput.GetUnsafePtr(),
                 outputByteStride = 16
             };
+#if UNITY_COLLECTIONS
             job.RunBatch(m_RotOutput.Length);
+#else
+            job.Run(m_RotOutput.Length);
+#endif
             CheckNormalizedTangentResult(Constants.epsilonInt16);
         }
 
@@ -805,7 +923,11 @@ namespace GLTFast.Tests.Jobs
                 result = (float4*)m_RotOutput.GetUnsafePtr(),
                 outputByteStride = 16
             };
+#if UNITY_COLLECTIONS
             job.RunBatch(m_RotOutput.Length);
+#else
+            job.Run(m_RotOutput.Length);
+#endif
             CheckNormalizedTangentResult(Constants.epsilonInt8);
         }
     }
@@ -918,7 +1040,11 @@ namespace GLTFast.Tests.Jobs
                 inputByteStride = 8,
                 result = (float4*)m_ColorOutput.GetUnsafePtr()
             };
+#if UNITY_COLLECTIONS
             job.RunBatch(m_ColorOutput.Length);
+#else
+            job.Run(m_ColorOutput.Length);
+#endif
             CheckResultRGBA(Constants.epsilonUInt16);
         }
 
@@ -931,7 +1057,11 @@ namespace GLTFast.Tests.Jobs
                 inputByteStride = 16,
                 result = (float4*)m_ColorOutput.GetUnsafePtr()
             };
+#if UNITY_COLLECTIONS
             job.RunBatch(m_ColorOutput.Length);
+#else
+            job.Run(m_ColorOutput.Length);
+#endif
             CheckResultRGBA(Constants.epsilonUInt16);
         }
 
