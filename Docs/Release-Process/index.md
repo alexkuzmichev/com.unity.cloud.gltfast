@@ -60,7 +60,7 @@ owners
 
 ## Update Develop
 
-1. From develop, create another branch called `release/update-develop`
+1. From develop, create another branch called `chore/update-develop`
 1. For this step, we will refer to version `X.Y.W-pre.1` where `W` is one patch
    increment ahead of `Z`. For example, if we were releasing `1.2.3` then this would become `1.2.4-pre.1`
 1. Update package version in `Packages/com.unity.cloud.gltfast/package.json` to
@@ -77,6 +77,12 @@ owners
 
 ## Publish Internally
 
+1. Go to the [glTFast Package Works portal](
+   https://package-works.prd.cds.internal.unity3d.com/project?id=6135).
+1. Create a new release stream called `glTFast/X.Y.Z`
+1. In the release stream, add a package to the release stream by selecting the
+   release branch within the repository.
+1. Confirm that all badges are green.
 1. On the [Yamato glTFast
    project],
    look for the `release/X.Y.Z` branch and find the
@@ -95,7 +101,12 @@ owners
 
 When packages are on Artifactory, they are accessible to Unity developers only.
 In order to make these packages accessible to the public, they need to be
-promoted to UPM.
+promoted to UPM. In order for this to be effective, one of the glTFast release
+managers must promote the package on the Go to the 
+[glTFast Package Works portal](
+https://package-works.prd.cds.internal.unity3d.com/project?id=6135).
+
+## Legacy Instructions to Promote Package Externally
 
 1. In the [package promotion][promotion] repo update the
    `promotions/com.unity.cloud-sdk.yml` file with the version to be promoted
