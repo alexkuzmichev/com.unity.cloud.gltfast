@@ -7,6 +7,7 @@ using System.IO;
 using System.Threading.Tasks;
 using GLTFast.Logging;
 using NUnit.Framework;
+using Unity.Mathematics;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -50,6 +51,9 @@ namespace GLTFast.Tests.Import
                 Assert.AreEqual(2, cube.subMeshCount);
                 Assert.AreEqual(24, cube.vertexCount);
 
+                Utils.AssertNearOrEqual(float3.zero, cube.bounds.center);
+                Utils.AssertNearOrEqual(new float3(1f), cube.bounds.extents);
+
                 var cubeSubMesh0 = cube.GetSubMesh(0);
                 Assert.AreEqual(12, cubeSubMesh0.vertexCount);
                 Assert.AreEqual(18, cubeSubMesh0.indexCount);
@@ -71,6 +75,9 @@ namespace GLTFast.Tests.Import
                 Assert.AreEqual("Plane", plane.name);
                 Assert.AreEqual(6, plane.vertexCount);
                 Assert.AreEqual(2, plane.subMeshCount);
+
+                Utils.AssertNearOrEqual(float3.zero, plane.bounds.center);
+                Utils.AssertNearOrEqual(new float3(.5f, 0, .5f), plane.bounds.extents);
 
                 var planeSubMesh0 = plane.GetSubMesh(0);
                 Assert.AreEqual(3, planeSubMesh0.vertexCount);

@@ -90,6 +90,16 @@ MonoBehaviour:
     expectInstantiationFail: 0
     expectedLogCodes: 
     requiredExtensions: 
+  - relativeUri: Bounds/Bounds/Bounds.gltf
+    expectLoadFail: 0
+    expectInstantiationFail: 0
+    expectedLogCodes: 
+    requiredExtensions: 
+  - relativeUri: Bounds/BoundsMissing/BoundsMissing.gltf
+    expectLoadFail: 0
+    expectInstantiationFail: 0
+    expectedLogCodes: 20000000
+    requiredExtensions: 
   - relativeUri: FormatVariants/glTF/FormatVariants.gltf
     expectLoadFail: 0
     expectInstantiationFail: 0

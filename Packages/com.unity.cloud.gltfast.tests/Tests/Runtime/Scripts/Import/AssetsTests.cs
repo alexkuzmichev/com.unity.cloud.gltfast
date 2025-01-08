@@ -20,7 +20,7 @@ namespace GLTFast.Tests.Import
     [TestFixture, Category("Import")]
     class AssetsTests
     {
-        [GltfTestCase("glTF-test-models", 34)]
+        [GltfTestCase("glTF-test-models", 36)]
         public IEnumerator GltfTestModels(GltfTestCaseSet testCaseSet, GltfTestCase testCase)
         {
             yield return AsyncWrapper.WaitForTask(RunTestCase(testCaseSet, testCase));
@@ -148,7 +148,7 @@ namespace GLTFast.Tests.Import
             AssertLoggers(new[] { loadLogger, instantiateLogger }, testCase);
         }
 
-        static void AssertLoggers(IEnumerable<CollectingLogger> loggers, GltfTestCase testCase)
+        internal static void AssertLoggers(IEnumerable<CollectingLogger> loggers, GltfTestCase testCase)
         {
             AssertLogItems(IterateLoggerItems(), testCase);
             return;
