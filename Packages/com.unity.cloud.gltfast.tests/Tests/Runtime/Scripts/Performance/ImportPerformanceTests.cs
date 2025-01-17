@@ -30,6 +30,13 @@ namespace GLTFast.Tests
             );
         }
 
+        [UnityTest, Performance]
+        public IEnumerator FlatHierarchyBinary()
+        {
+            yield return AsyncWrapper.WaitForTask(TestWrapper(() => RunTest(
+                    TestGltfGenerator.FlatHierarchyBinaryPath), k_Repetitions)
+            );
+        }
 
         [UnityTest, Performance]
         public IEnumerator FlatHierarchyMemory()
