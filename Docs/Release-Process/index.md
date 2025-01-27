@@ -102,7 +102,7 @@ owners
 When packages are on Artifactory, they are accessible to Unity developers only.
 In order to make these packages accessible to the public, they need to be
 promoted to UPM. In order for this to be effective, one of the glTFast release
-managers must promote the package on the Go to the 
+managers must promote the package on the Go to the
 [glTFast Package Works portal](
 https://package-works.prd.cds.internal.unity3d.com/project?id=6135).
 
