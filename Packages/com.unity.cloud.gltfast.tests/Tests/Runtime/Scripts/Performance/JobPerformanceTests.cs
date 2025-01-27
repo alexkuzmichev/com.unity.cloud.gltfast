@@ -15,18 +15,11 @@ using UnityEngine;
 
 namespace GLTFast.Tests.Performance.Jobs
 {
-
-    static class Constants
-    {
-        public const int measureCount = 10;
-        public const int iterationsPerMeasurement = 5;
-    }
-
     [TestFixture]
     public class Vector3Jobs
     {
 
-        const int k_Length = 10_000_000;
+        const int k_Length = 50_000;
 
         NativeArray<float3> m_Input;
         NativeArray<ushort> m_InputUInt16;
@@ -75,8 +68,7 @@ namespace GLTFast.Tests.Performance.Jobs
 #endif
                     )
                 .WarmupCount(1)
-                .MeasurementCount(Constants.measureCount)
-                .IterationsPerMeasurement(Constants.iterationsPerMeasurement)
+                .DynamicMeasurementCount()
                 .Run();
         }
 
@@ -90,8 +82,7 @@ namespace GLTFast.Tests.Performance.Jobs
             };
             Measure.Method(() => job.Run(m_Input.Length))
                 .WarmupCount(1)
-                .MeasurementCount(Constants.measureCount)
-                .IterationsPerMeasurement(Constants.iterationsPerMeasurement)
+                .DynamicMeasurementCount()
                 .Run();
         }
 
@@ -113,8 +104,7 @@ namespace GLTFast.Tests.Performance.Jobs
 #endif
                     )
                 .WarmupCount(1)
-                .MeasurementCount(Constants.measureCount)
-                .IterationsPerMeasurement(Constants.iterationsPerMeasurement)
+                .DynamicMeasurementCount()
                 .Run();
         }
 
@@ -136,8 +126,7 @@ namespace GLTFast.Tests.Performance.Jobs
 #endif
                     )
                 .WarmupCount(1)
-                .MeasurementCount(Constants.measureCount)
-                .IterationsPerMeasurement(Constants.iterationsPerMeasurement)
+                .DynamicMeasurementCount()
                 .Run();
         }
 
@@ -159,8 +148,7 @@ namespace GLTFast.Tests.Performance.Jobs
 #endif
                     )
                 .WarmupCount(1)
-                .MeasurementCount(Constants.measureCount)
-                .IterationsPerMeasurement(Constants.iterationsPerMeasurement)
+                .DynamicMeasurementCount()
                 .Run();
         }
 
@@ -182,8 +170,7 @@ namespace GLTFast.Tests.Performance.Jobs
 #endif
                     )
                 .WarmupCount(1)
-                .MeasurementCount(Constants.measureCount)
-                .IterationsPerMeasurement(Constants.iterationsPerMeasurement)
+                .DynamicMeasurementCount()
                 .Run();
         }
 
@@ -205,8 +192,7 @@ namespace GLTFast.Tests.Performance.Jobs
 #endif
                     )
                 .WarmupCount(1)
-                .MeasurementCount(Constants.measureCount)
-                .IterationsPerMeasurement(Constants.iterationsPerMeasurement)
+                .DynamicMeasurementCount()
                 .Run();
         }
 
@@ -228,8 +214,7 @@ namespace GLTFast.Tests.Performance.Jobs
 #endif
                     )
                 .WarmupCount(1)
-                .MeasurementCount(Constants.measureCount)
-                .IterationsPerMeasurement(Constants.iterationsPerMeasurement)
+                .DynamicMeasurementCount()
                 .Run();
         }
 
@@ -251,8 +236,7 @@ namespace GLTFast.Tests.Performance.Jobs
 #endif
                     )
                 .WarmupCount(1)
-                .MeasurementCount(Constants.measureCount)
-                .IterationsPerMeasurement(Constants.iterationsPerMeasurement)
+                .DynamicMeasurementCount()
                 .Run();
         }
 
@@ -274,8 +258,7 @@ namespace GLTFast.Tests.Performance.Jobs
 #endif
                     )
                 .WarmupCount(1)
-                .MeasurementCount(Constants.measureCount)
-                .IterationsPerMeasurement(Constants.iterationsPerMeasurement)
+                .DynamicMeasurementCount()
                 .Run();
         }
 
@@ -297,8 +280,7 @@ namespace GLTFast.Tests.Performance.Jobs
 #endif
                     )
                 .WarmupCount(1)
-                .MeasurementCount(Constants.measureCount)
-                .IterationsPerMeasurement(Constants.iterationsPerMeasurement)
+                .DynamicMeasurementCount()
                 .Run();
         }
 
@@ -320,8 +302,7 @@ namespace GLTFast.Tests.Performance.Jobs
 #endif
                     )
                 .WarmupCount(1)
-                .MeasurementCount(Constants.measureCount)
-                .IterationsPerMeasurement(Constants.iterationsPerMeasurement)
+                .DynamicMeasurementCount()
                 .Run();
         }
     }
@@ -330,7 +311,7 @@ namespace GLTFast.Tests.Performance.Jobs
     public class PositionSparseJobs
     {
 
-        const int k_Length = 100_000;
+        const int k_Length = 10_000;
 
         NativeArray<int> m_Indices;
         NativeArray<float3> m_Input;
@@ -377,8 +358,7 @@ namespace GLTFast.Tests.Performance.Jobs
             };
             Measure.Method(() => job.Run(m_Indices.Length))
                 .WarmupCount(1)
-                .MeasurementCount(Constants.measureCount)
-                .IterationsPerMeasurement(Constants.iterationsPerMeasurement)
+                .DynamicMeasurementCount()
                 .Run();
         }
     }
@@ -386,7 +366,7 @@ namespace GLTFast.Tests.Performance.Jobs
     [TestFixture]
     public class UVJobs
     {
-        const int k_UVLength = 10_000_000;
+        const int k_UVLength = 100_000;
 
         NativeArray<float2> m_UVInput;
         NativeArray<ushort> m_InputUInt16;
@@ -427,8 +407,7 @@ namespace GLTFast.Tests.Performance.Jobs
         //             job.Run(m_UVOutput.Length);
         //         })
         //         .WarmupCount(1)
-        //         .MeasurementCount(Constants.measureCount)
-        //         .IterationsPerMeasurement(Constants.iterationsPerMeasurement)
+        //         .DynamicMeasurementCount()
         //         .Run();
         // }
         //
@@ -442,8 +421,7 @@ namespace GLTFast.Tests.Performance.Jobs
         //             job.Run(m_UVOutput.Length);
         //         })
         //         .WarmupCount(1)
-        //         .MeasurementCount(Constants.measureCount)
-        //         .IterationsPerMeasurement(Constants.iterationsPerMeasurement)
+        //         .DynamicMeasurementCount()
         //         .Run();
         // }
         //
@@ -457,8 +435,7 @@ namespace GLTFast.Tests.Performance.Jobs
         //             job.Run(m_UVOutput.Length);
         //         })
         //         .WarmupCount(1)
-        //         .MeasurementCount(Constants.measureCount)
-        //         .IterationsPerMeasurement(Constants.iterationsPerMeasurement)
+        //         .DynamicMeasurementCount()
         //         .Run();
         // }
         //
@@ -472,8 +449,7 @@ namespace GLTFast.Tests.Performance.Jobs
         //             job.Run(m_UVOutput.Length);
         //         })
         //         .WarmupCount(1)
-        //         .MeasurementCount(Constants.measureCount)
-        //         .IterationsPerMeasurement(Constants.iterationsPerMeasurement)
+        //         .DynamicMeasurementCount()
         //         .Run();
         // }
         //
@@ -487,8 +463,7 @@ namespace GLTFast.Tests.Performance.Jobs
         //             job.Run(m_UVOutput.Length);
         //         })
         //         .WarmupCount(1)
-        //         .MeasurementCount(Constants.measureCount)
-        //         .IterationsPerMeasurement(Constants.iterationsPerMeasurement)
+        //         .DynamicMeasurementCount()
         //         .Run();
         // }
 
@@ -510,8 +485,7 @@ namespace GLTFast.Tests.Performance.Jobs
 #endif
                     )
                 .WarmupCount(1)
-                .MeasurementCount(Constants.measureCount)
-                .IterationsPerMeasurement(Constants.iterationsPerMeasurement)
+                .DynamicMeasurementCount()
                 .Run();
         }
 
@@ -527,8 +501,7 @@ namespace GLTFast.Tests.Performance.Jobs
             };
             Measure.Method(() => job.Run(m_UVOutput.Length))
                 .WarmupCount(1)
-                .MeasurementCount(Constants.measureCount)
-                .IterationsPerMeasurement(Constants.iterationsPerMeasurement)
+                .DynamicMeasurementCount()
                 .Run();
         }
 
@@ -550,8 +523,7 @@ namespace GLTFast.Tests.Performance.Jobs
 #endif
                     )
                 .WarmupCount(1)
-                .MeasurementCount(Constants.measureCount)
-                .IterationsPerMeasurement(Constants.iterationsPerMeasurement)
+                .DynamicMeasurementCount()
                 .Run();
         }
 
@@ -567,8 +539,7 @@ namespace GLTFast.Tests.Performance.Jobs
             };
             Measure.Method(() => job.Run(m_UVOutput.Length))
                 .WarmupCount(1)
-                .MeasurementCount(Constants.measureCount)
-                .IterationsPerMeasurement(Constants.iterationsPerMeasurement)
+                .DynamicMeasurementCount()
                 .Run();
         }
 
@@ -590,8 +561,7 @@ namespace GLTFast.Tests.Performance.Jobs
 #endif
                     )
                 .WarmupCount(1)
-                .MeasurementCount(Constants.measureCount)
-                .IterationsPerMeasurement(Constants.iterationsPerMeasurement)
+                .DynamicMeasurementCount()
                 .Run();
         }
 
@@ -613,8 +583,7 @@ namespace GLTFast.Tests.Performance.Jobs
 #endif
                   )
                 .WarmupCount(1)
-                .MeasurementCount(Constants.measureCount)
-                .IterationsPerMeasurement(Constants.iterationsPerMeasurement)
+                .DynamicMeasurementCount()
                 .Run();
         }
 
@@ -636,8 +605,7 @@ namespace GLTFast.Tests.Performance.Jobs
 #endif
                     )
                 .WarmupCount(1)
-                .MeasurementCount(Constants.measureCount)
-                .IterationsPerMeasurement(Constants.iterationsPerMeasurement)
+                .DynamicMeasurementCount()
                 .Run();
         }
 
@@ -659,8 +627,7 @@ namespace GLTFast.Tests.Performance.Jobs
 #endif
                     )
                 .WarmupCount(1)
-                .MeasurementCount(Constants.measureCount)
-                .IterationsPerMeasurement(Constants.iterationsPerMeasurement)
+                .DynamicMeasurementCount()
                 .Run();
         }
 
@@ -682,8 +649,7 @@ namespace GLTFast.Tests.Performance.Jobs
 #endif
                     )
                 .WarmupCount(1)
-                .MeasurementCount(Constants.measureCount)
-                .IterationsPerMeasurement(Constants.iterationsPerMeasurement)
+                .DynamicMeasurementCount()
                 .Run();
         }
     }
@@ -691,7 +657,7 @@ namespace GLTFast.Tests.Performance.Jobs
     [TestFixture]
     public class Vector4Jobs
     {
-        const int k_RotationLength = 5_000_000;
+        const int k_RotationLength = 100_000;
 
         NativeArray<float4> m_RotInput;
         NativeArray<ushort> m_InputUInt16;
@@ -732,8 +698,7 @@ namespace GLTFast.Tests.Performance.Jobs
             };
             Measure.Method(() => job.Run(m_RotOutput.Length))
                 .WarmupCount(1)
-                .MeasurementCount(Constants.measureCount)
-                .IterationsPerMeasurement(Constants.iterationsPerMeasurement)
+                .DynamicMeasurementCount()
                 .Run();
         }
 
@@ -747,8 +712,7 @@ namespace GLTFast.Tests.Performance.Jobs
             };
             Measure.Method(() => job.Run(m_RotOutput.Length))
                 .WarmupCount(1)
-                .MeasurementCount(Constants.measureCount)
-                .IterationsPerMeasurement(Constants.iterationsPerMeasurement)
+                .DynamicMeasurementCount()
                 .Run();
         }
 
@@ -767,8 +731,7 @@ namespace GLTFast.Tests.Performance.Jobs
             };
             Measure.Method(() => job.Run(m_RotOutput.Length))
                 .WarmupCount(1)
-                .MeasurementCount(Constants.measureCount)
-                .IterationsPerMeasurement(Constants.iterationsPerMeasurement)
+                .DynamicMeasurementCount()
                 .Run();
         }
 
@@ -790,8 +753,7 @@ namespace GLTFast.Tests.Performance.Jobs
 #endif
                     )
                 .WarmupCount(1)
-                .MeasurementCount(Constants.measureCount)
-                .IterationsPerMeasurement(Constants.iterationsPerMeasurement)
+                .DynamicMeasurementCount()
                 .Run();
         }
 
@@ -813,8 +775,7 @@ namespace GLTFast.Tests.Performance.Jobs
 #endif
                     )
                 .WarmupCount(1)
-                .MeasurementCount(Constants.measureCount)
-                .IterationsPerMeasurement(Constants.iterationsPerMeasurement)
+                .DynamicMeasurementCount()
                 .Run();
         }
 
@@ -839,8 +800,7 @@ namespace GLTFast.Tests.Performance.Jobs
 #endif
                     )
                 .WarmupCount(1)
-                .MeasurementCount(Constants.measureCount)
-                .IterationsPerMeasurement(Constants.iterationsPerMeasurement)
+                .DynamicMeasurementCount()
                 .Run();
         }
 
@@ -862,8 +822,7 @@ namespace GLTFast.Tests.Performance.Jobs
 #endif
                     )
                 .WarmupCount(1)
-                .MeasurementCount(Constants.measureCount)
-                .IterationsPerMeasurement(Constants.iterationsPerMeasurement)
+                .DynamicMeasurementCount()
                 .Run();
         }
     }
@@ -871,7 +830,7 @@ namespace GLTFast.Tests.Performance.Jobs
     [TestFixture]
     public class ColorJobs
     {
-        const int k_ColorLength = 3_000_000;
+        const int k_ColorLength = 300_000;
         Color m_ReferenceRGB = new Color(.13f, .42f, .95f, 1f);
         Color m_ReferenceRGBA = new Color(.42f, .95f, .5f, .24f);
 
@@ -927,8 +886,7 @@ namespace GLTFast.Tests.Performance.Jobs
             };
             Measure.Method(() => job.Run(m_ColorOutput.Length))
                 .WarmupCount(1)
-                .MeasurementCount(Constants.measureCount)
-                .IterationsPerMeasurement(Constants.iterationsPerMeasurement)
+                .DynamicMeasurementCount()
                 .Run();
         }
 
@@ -943,8 +901,7 @@ namespace GLTFast.Tests.Performance.Jobs
             };
             Measure.Method(() => job.Run(m_ColorOutput.Length))
                 .WarmupCount(1)
-                .MeasurementCount(Constants.measureCount)
-                .IterationsPerMeasurement(Constants.iterationsPerMeasurement)
+                .DynamicMeasurementCount()
                 .Run();
         }
 
@@ -959,8 +916,7 @@ namespace GLTFast.Tests.Performance.Jobs
             };
             Measure.Method(() => job.Run(m_ColorOutput.Length))
                 .WarmupCount(1)
-                .MeasurementCount(Constants.measureCount)
-                .IterationsPerMeasurement(Constants.iterationsPerMeasurement)
+                .DynamicMeasurementCount()
                 .Run();
         }
 
@@ -981,8 +937,7 @@ namespace GLTFast.Tests.Performance.Jobs
 #endif
                     )
                 .WarmupCount(1)
-                .MeasurementCount(Constants.measureCount)
-                .IterationsPerMeasurement(Constants.iterationsPerMeasurement)
+                .DynamicMeasurementCount()
                 .Run();
         }
 
@@ -1003,8 +958,7 @@ namespace GLTFast.Tests.Performance.Jobs
 #endif
                     )
                 .WarmupCount(1)
-                .MeasurementCount(Constants.measureCount)
-                .IterationsPerMeasurement(Constants.iterationsPerMeasurement)
+                .DynamicMeasurementCount()
                 .Run();
         }
 
@@ -1019,8 +973,7 @@ namespace GLTFast.Tests.Performance.Jobs
             };
             Measure.Method(() => job.Run(m_ColorOutput.Length))
                 .WarmupCount(1)
-                .MeasurementCount(Constants.measureCount)
-                .IterationsPerMeasurement(Constants.iterationsPerMeasurement)
+                .DynamicMeasurementCount()
                 .Run();
         }
     }
@@ -1028,7 +981,7 @@ namespace GLTFast.Tests.Performance.Jobs
     [TestFixture]
     public class BoneIndexJobs
     {
-        const int k_BoneIndexLength = 2_000_000;
+        const int k_BoneIndexLength = 500_000;
         uint4 m_Reference = new uint4(2, 3, 4, 5);
         NativeArray<byte> m_InputUInt8;
         NativeArray<ushort> m_InputUInt16;
@@ -1072,8 +1025,7 @@ namespace GLTFast.Tests.Performance.Jobs
             };
             Measure.Method(() => job.Run(m_BoneIndexOutput.Length))
                 .WarmupCount(1)
-                .MeasurementCount(Constants.measureCount)
-                .IterationsPerMeasurement(Constants.iterationsPerMeasurement)
+                .DynamicMeasurementCount()
                 .Run();
         }
 
@@ -1087,13 +1039,9 @@ namespace GLTFast.Tests.Performance.Jobs
                 result = (uint4*)m_BoneIndexOutput.GetUnsafePtr(),
                 outputByteStride = 16
             };
-            Measure.Method(() =>
-            {
-                job.Run(m_BoneIndexOutput.Length);
-            })
+            Measure.Method(() => job.Run(m_BoneIndexOutput.Length))
                 .WarmupCount(1)
-                .MeasurementCount(Constants.measureCount)
-                .IterationsPerMeasurement(Constants.iterationsPerMeasurement)
+                .DynamicMeasurementCount()
                 .Run();
         }
     }
@@ -1101,7 +1049,7 @@ namespace GLTFast.Tests.Performance.Jobs
     [TestFixture]
     public class MatrixJobs
     {
-        const int k_MatrixLength = 800_000;
+        const int k_MatrixLength = 80_000;
         static readonly Matrix4x4 k_Reference = new Matrix4x4(
             new Vector4(1, -5, -9, 13),
             new Vector4(-2, 6, 10, 14),
@@ -1142,8 +1090,7 @@ namespace GLTFast.Tests.Performance.Jobs
             };
             Measure.Method(() => job.Run(m_MatrixOutput.Length))
                 .WarmupCount(1)
-                .MeasurementCount(Constants.measureCount)
-                .IterationsPerMeasurement(Constants.iterationsPerMeasurement)
+                .DynamicMeasurementCount()
                 .Run();
 
             Assert.AreEqual(k_Reference, m_MatrixOutput[1]);
@@ -1153,7 +1100,7 @@ namespace GLTFast.Tests.Performance.Jobs
     [TestFixture]
     public class IndexJobs
     {
-        const int k_IndexLength = 24_000_000; // multiple of 3!
+        const int k_IndexLength = 1_200_000; // has to be a multiple of 3!
         NativeArray<byte> m_InputUInt8;
         NativeArray<ushort> m_InputUInt16;
         NativeArray<uint> m_InputUInt32;
@@ -1198,8 +1145,7 @@ namespace GLTFast.Tests.Performance.Jobs
             };
             Measure.Method(() => job.Run(m_IndexOutput.Length))
                 .WarmupCount(1)
-                .MeasurementCount(Constants.measureCount)
-                .IterationsPerMeasurement(Constants.iterationsPerMeasurement)
+                .DynamicMeasurementCount()
                 .Run();
         }
 
@@ -1213,8 +1159,7 @@ namespace GLTFast.Tests.Performance.Jobs
             };
             Measure.Method(() => job.Run(m_IndexOutput.Length))
                 .WarmupCount(1)
-                .MeasurementCount(Constants.measureCount)
-                .IterationsPerMeasurement(Constants.iterationsPerMeasurement)
+                .DynamicMeasurementCount()
                 .Run();
 
             Assert.AreEqual(2, m_IndexOutput[0]);
@@ -1235,8 +1180,7 @@ namespace GLTFast.Tests.Performance.Jobs
             };
             Measure.Method(() => job.Run(m_IndexOutput.Length))
                 .WarmupCount(1)
-                .MeasurementCount(Constants.measureCount)
-                .IterationsPerMeasurement(Constants.iterationsPerMeasurement)
+                .DynamicMeasurementCount()
                 .Run();
         }
 
@@ -1250,8 +1194,7 @@ namespace GLTFast.Tests.Performance.Jobs
             };
             Measure.Method(() => job.Run(m_IndexOutput.Length))
                 .WarmupCount(1)
-                .MeasurementCount(Constants.measureCount)
-                .IterationsPerMeasurement(Constants.iterationsPerMeasurement)
+                .DynamicMeasurementCount()
                 .Run();
             Assert.AreEqual(2, m_IndexOutput[0]);
             Assert.AreEqual(1, m_IndexOutput[1]);
@@ -1275,8 +1218,7 @@ namespace GLTFast.Tests.Performance.Jobs
             };
             Measure.Method(() => job.Run(m_IndexOutput.Length))
                 .WarmupCount(1)
-                .MeasurementCount(Constants.measureCount)
-                .IterationsPerMeasurement(Constants.iterationsPerMeasurement)
+                .DynamicMeasurementCount()
                 .Run();
         }
 
@@ -1291,8 +1233,7 @@ namespace GLTFast.Tests.Performance.Jobs
             };
             Measure.Method(() => job.Run(m_IndexOutput.Length / 3))
                 .WarmupCount(1)
-                .MeasurementCount(Constants.measureCount)
-                .IterationsPerMeasurement(Constants.iterationsPerMeasurement)
+                .DynamicMeasurementCount()
                 .Run();
         }
 
@@ -1307,8 +1248,7 @@ namespace GLTFast.Tests.Performance.Jobs
             };
             Measure.Method(() => job.Run(m_IndexOutput.Length / 3))
                 .WarmupCount(1)
-                .MeasurementCount(Constants.measureCount)
-                .IterationsPerMeasurement(Constants.iterationsPerMeasurement)
+                .DynamicMeasurementCount()
                 .Run();
         }
 
@@ -1323,8 +1263,7 @@ namespace GLTFast.Tests.Performance.Jobs
             };
             Measure.Method(() => job.Run(m_IndexOutput.Length))
                 .WarmupCount(1)
-                .MeasurementCount(Constants.measureCount)
-                .IterationsPerMeasurement(Constants.iterationsPerMeasurement)
+                .DynamicMeasurementCount()
                 .Run();
         }
 
@@ -1339,8 +1278,7 @@ namespace GLTFast.Tests.Performance.Jobs
             };
             Measure.Method(() => job.Run(m_IndexOutput.Length))
                 .WarmupCount(1)
-                .MeasurementCount(Constants.measureCount)
-                .IterationsPerMeasurement(Constants.iterationsPerMeasurement)
+                .DynamicMeasurementCount()
                 .Run();
         }
 
@@ -1355,8 +1293,7 @@ namespace GLTFast.Tests.Performance.Jobs
             };
             Measure.Method(() => job.Run(m_IndexOutput.Length / 3))
                 .WarmupCount(1)
-                .MeasurementCount(Constants.measureCount)
-                .IterationsPerMeasurement(Constants.iterationsPerMeasurement)
+                .DynamicMeasurementCount()
                 .Run();
         }
 
@@ -1372,8 +1309,7 @@ namespace GLTFast.Tests.Performance.Jobs
             var triangleCount = m_IndexOutput.Length / 3;
             Measure.Method(() => job.Run(triangleCount))
                 .WarmupCount(1)
-                .MeasurementCount(Constants.measureCount)
-                .IterationsPerMeasurement(Constants.iterationsPerMeasurement)
+                .DynamicMeasurementCount()
                 .Run();
         }
 
@@ -1389,8 +1325,7 @@ namespace GLTFast.Tests.Performance.Jobs
             var triangleCount = m_IndexOutput.Length / 3;
             Measure.Method(() => job.Run(triangleCount))
                 .WarmupCount(1)
-                .MeasurementCount(Constants.measureCount)
-                .IterationsPerMeasurement(Constants.iterationsPerMeasurement)
+                .DynamicMeasurementCount()
                 .Run();
         }
     }
@@ -1398,7 +1333,7 @@ namespace GLTFast.Tests.Performance.Jobs
     [TestFixture]
     public class ScalarJobs
     {
-        const int k_ScalarLength = 5_000_000;
+        const int k_ScalarLength = 500_000;
         NativeArray<sbyte> m_InputInt8;
         NativeArray<byte> m_InputUInt8;
         NativeArray<short> m_InputInt16;
@@ -1455,8 +1390,7 @@ namespace GLTFast.Tests.Performance.Jobs
             };
             Measure.Method(() => job.Run(m_ScalarOutput.Length))
                 .WarmupCount(1)
-                .MeasurementCount(Constants.measureCount)
-                .IterationsPerMeasurement(Constants.iterationsPerMeasurement)
+                .DynamicMeasurementCount()
                 .Run();
         }
 
@@ -1470,8 +1404,7 @@ namespace GLTFast.Tests.Performance.Jobs
             };
             Measure.Method(() => job.Run(m_ScalarOutput.Length))
                 .WarmupCount(1)
-                .MeasurementCount(Constants.measureCount)
-                .IterationsPerMeasurement(Constants.iterationsPerMeasurement)
+                .DynamicMeasurementCount()
                 .Run();
         }
 
@@ -1485,8 +1418,7 @@ namespace GLTFast.Tests.Performance.Jobs
             };
             Measure.Method(() => job.Run(m_ScalarOutput.Length))
                 .WarmupCount(1)
-                .MeasurementCount(Constants.measureCount)
-                .IterationsPerMeasurement(Constants.iterationsPerMeasurement)
+                .DynamicMeasurementCount()
                 .Run();
         }
 
@@ -1500,8 +1432,7 @@ namespace GLTFast.Tests.Performance.Jobs
             };
             Measure.Method(() => job.Run(m_ScalarOutput.Length))
                 .WarmupCount(1)
-                .MeasurementCount(Constants.measureCount)
-                .IterationsPerMeasurement(Constants.iterationsPerMeasurement)
+                .DynamicMeasurementCount()
                 .Run();
         }
     }

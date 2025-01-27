@@ -1,0 +1,92 @@
+using RecipeEngine.Api.Dependencies;
+using RecipeEngine.Api.Extensions;
+using RecipeEngine.Api.Jobs;
+using RecipeEngine.Api.Platforms;
+using RecipeEngine.Api.Recipes;
+using RecipeEngine.Modules.UnifiedTestRunner;
+using RecipeEngine.Modules.UnityEditor;
+using RecipeEngine.Modules.Wrench.Settings;
+using RecipeEngine.Unity.Abstractions.Editors;
+
+namespace Gltfast.Cookbook.Recipes;
+
+/// <summary>
+/// A recipe to create performance jobs.
+/// </summary>
+class PerformanceJobsRecipe : RecipeBase
+{
+    const string k_EditorPath = "Editor";
+    const string k_ProjectPath = "Projects/glTFast-Test";
+    const string k_ArtifactsPath = "test-results~";
+
+    IEnumerable<string> m_SupportedEditorVersions;
+
+    public PerformanceJobsRecipe(WrenchSettings settings)
+    {
+        Name = "Performance";
+        Description = "Contains jobs that run performance tests.";
+        m_SupportedEditorVersions = settings.Packages["com.unity.cloud.gltfast"].SupportedEditorVersions;
+    }
+
+    protected override ISet<Job> LoadJobs()
+    {
+        var jobs = new HashSet<IJobBuilder>();
+        foreach (var editorVersion in m_SupportedEditorVersions)
+        {
+            jobs.Add(CreateJob(editorVersion));
+        }
+        jobs.Add(CreateAllJob(jobs));
+        return jobs.SelectJobs();
+    }
+
+    static IJobBuilder CreateJob(string editorVersion)
+    {
+        return FluentJob
+            .Create($"Performance_{editorVersion}_Win")
+            .WithAgent("package-ci/win11:v4", FlavorType.BuildLarge, ResourceType.Vm)
+            .WithCommands(
+                UnityEditorCommand.Download(new Editor(editorVersion, editorVersion), "unity-downloader-cli", k_EditorPath),
+                new RecipeEngine.Api.Commands.Command($"unity-config project add dependency com.unity.test-framework.performance@3.0.3 -p {k_ProjectPath}"),
+                UnityEditorCommand.Execute($"{k_EditorPath}\\Unity.exe", CreateTestGltfFiles),
+                UtrCommand.Run(SystemType.Windows, CreateUtrCommand)
+            )
+            .WithArtifact("logs", $"{k_ArtifactsPath}/**/*");
+    }
+
+    static IJobBuilder CreateAllJob(ISet<IJobBuilder> jobs)
+    {
+        var deps = new HashSet<Dependency>();
+        foreach (var job in jobs)
+        {
+            deps.Add(new Dependency("Performance", job.Id));
+        }
+
+        return FluentJob
+            .Create("Performance_All")
+            .WithDescription("Runs all performance jobs.")
+            .WithDependencies(deps);
+    }
+
+    static IUnityEditorExecuteBuilder CreateTestGltfFiles(IUnityEditorExecuteBuilder builder) =>
+        builder
+            .WithProjectPath(k_ProjectPath)
+            .WithBatchMode()
+            .WithExecuteMethod("GLTFast.Tests.TestGltfGenerator.CreatePerformanceTestFiles")
+            .WithNoGraphics()
+            .WithArgs("-upmNoDefaultPackages")
+            .WithLogs($"{k_ArtifactsPath}/create-gltf-files.log")
+            .WithQuit();
+
+    static IUtrCommandBuilder CreateUtrCommand(IUtrCommandBuilder builder) =>
+        builder
+            .WithSuite(UtrTestSuiteType.Playmode)
+            .WithScriptingBackend(ScriptingBackendType.Il2Cpp)
+            .WithPlatform(SystemType.Windows)
+            .WithEditor(k_EditorPath)
+            .WithTestProject(k_ProjectPath)
+            .WithArtifacts(k_ArtifactsPath)
+            .WithExtraEditorArgs("-upmNoDefaultPackages")
+            .WithCategory("Performance")
+            .WithPerformanceDataReporting(true)
+            .WithPerformanceProject("com.unity.cloud.gltfast");
+}

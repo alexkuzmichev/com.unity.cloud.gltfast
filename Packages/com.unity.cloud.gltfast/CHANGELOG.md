@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - (Tests) Procedurally generated glTFs for testing purpose.
 
 ### Changed
+- (Tests) Reduced jobs performance test duration by lowering buffer sizes and switching to dynamic measurement counts.
 
 ### Fixed
 - Performance test compilation if *Collections* package >= 1.5.0 is not installed.
