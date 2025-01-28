@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - (Tests) Runtime import performance tests.
 - (Tests) Procedurally generated glTFs for testing purpose.
+- (Tests) Editor export tests.
 
 ### Changed
 - (Tests) Reduced jobs performance test duration by lowering buffer sizes and switching to dynamic measurement counts.
@@ -16,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Performance test compilation if *Collections* package >= 1.5.0 is not installed.
 - Inconsistent profiler markers.
+- (Export) Unity Editor not responding anymore after export glTF with non-readable meshes.
 - (CI) Ensuring the development documentation and the `Tools` code is checked for code formatting as well.
 
 ### Removed
