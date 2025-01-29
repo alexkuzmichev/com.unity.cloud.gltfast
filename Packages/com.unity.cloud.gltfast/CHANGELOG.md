@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - (Tests) Runtime import performance tests.
 - (Tests) Procedurally generated glTFs for testing purpose.
 - (Tests) Editor export tests.
+- (Importer) *Textures Readable* checkbox in the imnporter inspector (*Textures* section).
 
 ### Changed
 - (Tests) Reduced jobs performance test duration by lowering buffer sizes and switching to dynamic measurement counts.
