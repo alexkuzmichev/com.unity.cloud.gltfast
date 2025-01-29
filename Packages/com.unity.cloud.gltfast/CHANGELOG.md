@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Inconsistent profiler markers.
 - (Export) Unity Editor not responding anymore after export glTF with non-readable meshes.
 - (CI) Ensuring the development documentation and the `Tools` code is checked for code formatting as well.
+- Compilation for `ICodeLogger` implementors by adding a default implementation for `Log` (works for Unity 2021 LTS and newer).
 
 ### Removed
 
