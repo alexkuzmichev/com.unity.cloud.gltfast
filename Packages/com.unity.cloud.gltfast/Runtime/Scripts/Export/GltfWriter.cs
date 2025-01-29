@@ -902,6 +902,12 @@ namespace GLTFast.Export
                 return false;
 #endif
             }
+            else if ((m_Settings.Compression & Compression.MeshOpt) != 0)
+            {
+                m_Logger?.Error("Meshopt compression is not supported yet.");
+                return false;
+            }
+
             var tasks = m_Settings.Deterministic ? null : new List<Task>(m_Meshes.Count);
 
             var meshData = CollectMeshData(out var meshDataArray);
