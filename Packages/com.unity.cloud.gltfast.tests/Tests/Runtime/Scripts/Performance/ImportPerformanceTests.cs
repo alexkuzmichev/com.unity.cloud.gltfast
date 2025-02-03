@@ -70,12 +70,23 @@ namespace GLTFast.Tests
             );
         }
 
-        public void Setup()
+        public async void Setup()
         {
-            if (!TestGltfGenerator.CertifyPerformanceTestGltfs())
+            try
             {
-                throw new InvalidDataException("Performance test glTFs have to be created first!\n" +
-                    "See Menu -> Tools -> Create performance test glTFs");
+                if (!TestGltfGenerator.CertifyPerformanceTestGltfs())
+                {
+#if UNITY_EDITOR
+                    await TestGltfGenerator.CreatePerformanceTestFilesAsync();
+                    Debug.Log("Created test glTFs");
+#else
+                    throw new InvalidDataException("Performance test glTFs missing!");
+#endif
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.LogException(e);
             }
         }
 

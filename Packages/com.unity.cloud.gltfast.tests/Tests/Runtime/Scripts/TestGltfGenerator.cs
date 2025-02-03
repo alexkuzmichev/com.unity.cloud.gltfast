@@ -1,6 +1,7 @@
 // SPDX-FileCopyrightText: 2025 Unity Technologies and the glTFast authors
 // SPDX-License-Identifier: Apache-2.0
 
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
@@ -27,13 +28,19 @@ namespace GLTFast.Tests
             Path.Combine(Application.streamingAssetsPath, k_TestFileFolder, "big-cylinder.glb");
 
 #if UNITY_EDITOR
-        [MenuItem("Tools/glTFast/Create performance test glTFs")]
         static async void CreatePerformanceTestFiles()
         {
-            await CreatePerformanceTestFilesAsync();
+            try
+            {
+                await CreatePerformanceTestFilesAsync();
+            }
+            catch (Exception e)
+            {
+                Debug.LogException(e);
+            }
         }
 
-        static async Task CreatePerformanceTestFilesAsync()
+        internal static async Task CreatePerformanceTestFilesAsync()
         {
             var folder = Path.Combine(Application.streamingAssetsPath, k_TestFileFolder);
             if (!Directory.Exists(folder))
@@ -49,7 +56,9 @@ namespace GLTFast.Tests
 
         internal static bool CertifyPerformanceTestGltfs()
         {
-            return File.Exists(FlatHierarchyBinaryPath)
+            return File.Exists(FlatHierarchyPath)
+                && File.Exists(FlatHierarchyBinaryPath)
+                && File.Exists(BigCylinderPath)
                 && File.Exists(BigCylinderBinaryPath);
         }
 

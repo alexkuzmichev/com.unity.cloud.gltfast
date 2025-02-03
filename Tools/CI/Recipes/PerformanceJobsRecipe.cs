@@ -1,3 +1,4 @@
+using RecipeEngine.Api.Commands;
 using RecipeEngine.Api.Dependencies;
 using RecipeEngine.Api.Extensions;
 using RecipeEngine.Api.Jobs;
@@ -41,15 +42,19 @@ class PerformanceJobsRecipe : RecipeBase
 
     static IJobBuilder CreateJob(string editorVersion)
     {
+        var commands = new List<Command>();
+        commands.Add(UnityEditorCommand.Download(new Editor(editorVersion, editorVersion), "unity-downloader-cli", k_EditorPath));
+        commands.Add(new Command($"unity-config project add dependency com.unity.test-framework.performance@3.0.3 -p {k_ProjectPath}"));
+        if (editorVersion.StartsWith("2020") || editorVersion.StartsWith("2021"))
+        {
+            commands.Add(UnityEditorCommand.Execute($"{k_EditorPath}\\Unity.exe", CreateTestGltfFiles));
+        }
+        commands.Add(UtrCommand.Run(SystemType.Windows, CreateUtrCommand));
+
         return FluentJob
             .Create($"Performance_{editorVersion}_Win")
             .WithAgent("package-ci/win11:v4", FlavorType.BuildLarge, ResourceType.Vm)
-            .WithCommands(
-                UnityEditorCommand.Download(new Editor(editorVersion, editorVersion), "unity-downloader-cli", k_EditorPath),
-                new RecipeEngine.Api.Commands.Command($"unity-config project add dependency com.unity.test-framework.performance@3.0.3 -p {k_ProjectPath}"),
-                UnityEditorCommand.Execute($"{k_EditorPath}\\Unity.exe", CreateTestGltfFiles),
-                UtrCommand.Run(SystemType.Windows, CreateUtrCommand)
-            )
+            .WithCommands(commands)
             .WithArtifact("logs", $"{k_ArtifactsPath}/**/*");
     }
 
