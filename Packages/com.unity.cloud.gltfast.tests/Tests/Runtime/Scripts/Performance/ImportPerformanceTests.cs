@@ -1,8 +1,6 @@
 // SPDX-FileCopyrightText: 2025 Unity Technologies and the glTFast authors
 // SPDX-License-Identifier: Apache-2.0
 
-#if UNITY_PERFORMANCE_TESTS
-
 using System;
 using System.Collections;
 using System.IO;
@@ -25,6 +23,9 @@ namespace GLTFast.Tests
         [UnityTest, Performance]
         public IEnumerator FlatHierarchy()
         {
+#if !RUN_PERFORMANCE_TESTS
+            Assert.Ignore("Skipping performance tests (scripting define RUN_PERFORMANCE_TESTS is not set).");
+#endif
             yield return AsyncWrapper.WaitForTask(TestWrapper(() => RunTest(
                 TestGltfGenerator.FlatHierarchyPath), k_Repetitions)
             );
@@ -33,6 +34,9 @@ namespace GLTFast.Tests
         [UnityTest, Performance]
         public IEnumerator FlatHierarchyBinary()
         {
+#if !RUN_PERFORMANCE_TESTS
+            Assert.Ignore("Skipping performance tests (scripting define RUN_PERFORMANCE_TESTS is not set).");
+#endif
             yield return AsyncWrapper.WaitForTask(TestWrapper(() => RunTest(
                     TestGltfGenerator.FlatHierarchyBinaryPath), k_Repetitions)
             );
@@ -41,6 +45,9 @@ namespace GLTFast.Tests
         [UnityTest, Performance]
         public IEnumerator FlatHierarchyMemory()
         {
+#if !RUN_PERFORMANCE_TESTS
+            Assert.Ignore("Skipping performance tests (scripting define RUN_PERFORMANCE_TESTS is not set).");
+#endif
             yield return AsyncWrapper.WaitForTask(TestWrapper(() => RunTest(
                     TestGltfGenerator.FlatHierarchyPath, true), k_Repetitions)
             );
@@ -49,6 +56,9 @@ namespace GLTFast.Tests
         [UnityTest, Performance]
         public IEnumerator BigCylinder()
         {
+#if !RUN_PERFORMANCE_TESTS
+            Assert.Ignore("Skipping performance tests (scripting define RUN_PERFORMANCE_TESTS is not set).");
+#endif
             yield return AsyncWrapper.WaitForTask(TestWrapper(() => RunTest(
                 TestGltfGenerator.BigCylinderPath), k_Repetitions, 3)
             );
@@ -57,6 +67,9 @@ namespace GLTFast.Tests
         [UnityTest, Performance]
         public IEnumerator BigCylinderBinary()
         {
+#if !RUN_PERFORMANCE_TESTS
+            Assert.Ignore("Skipping performance tests (scripting define RUN_PERFORMANCE_TESTS is not set).");
+#endif
             yield return AsyncWrapper.WaitForTask(TestWrapper(() => RunTest(
                 TestGltfGenerator.BigCylinderBinaryPath), k_Repetitions, 3)
             );
@@ -65,11 +78,15 @@ namespace GLTFast.Tests
         [UnityTest, Performance]
         public IEnumerator BigCylinderBinaryMemory()
         {
+#if !RUN_PERFORMANCE_TESTS
+            Assert.Ignore("Skipping performance tests (scripting define RUN_PERFORMANCE_TESTS is not set).");
+#endif
             yield return AsyncWrapper.WaitForTask(TestWrapper(() => RunTest(
                 TestGltfGenerator.BigCylinderBinaryPath, true), k_Repetitions, 3)
             );
         }
 
+#if RUN_PERFORMANCE_TESTS
         public async void Setup()
         {
             try
@@ -89,6 +106,9 @@ namespace GLTFast.Tests
                 Debug.LogException(e);
             }
         }
+#else
+        public void Setup() { }
+#endif
 
         static async Task RunTest(string path, bool loadFromMemory = false)
         {
@@ -135,7 +155,7 @@ namespace GLTFast.Tests
 
             for (var i = 0; i < repeat; i++)
             {
-                using(Measure.Scope())
+                using (Measure.Scope())
                 {
                     await action();
                 }
@@ -143,4 +163,3 @@ namespace GLTFast.Tests
         }
     }
 }
-#endif

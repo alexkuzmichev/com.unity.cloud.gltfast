@@ -1,8 +1,6 @@
 // SPDX-FileCopyrightText: 2024 Unity Technologies and the glTFast authors
 // SPDX-License-Identifier: Apache-2.0
 
-#if UNITY_PERFORMANCE_TESTS
-
 using System;
 using GLTFast.Schema;
 using NUnit.Framework;
@@ -53,6 +51,9 @@ namespace GLTFast.Tests.Performance.Jobs
         [Test, Performance]
         public unsafe void ConvertVector3FloatToFloatInterleavedJob()
         {
+#if !RUN_PERFORMANCE_TESTS
+            Assert.Ignore("Skipping performance tests (scripting define RUN_PERFORMANCE_TESTS is not set).");
+#endif
             var job = new GLTFast.Jobs.ConvertVector3FloatToFloatInterleavedJob
             {
                 inputByteStride = 12,
@@ -75,6 +76,9 @@ namespace GLTFast.Tests.Performance.Jobs
         [Test, Performance]
         public unsafe void ConvertVector3FloatToFloatJob()
         {
+#if !RUN_PERFORMANCE_TESTS
+            Assert.Ignore("Skipping performance tests (scripting define RUN_PERFORMANCE_TESTS is not set).");
+#endif
             var job = new GLTFast.Jobs.ConvertVector3FloatToFloatJob
             {
                 input = (float3*)m_Input.GetUnsafeReadOnlyPtr(),
@@ -89,6 +93,9 @@ namespace GLTFast.Tests.Performance.Jobs
         [Test, Performance]
         public unsafe void ConvertVector3Int16ToFloatInterleavedNormalizedJob()
         {
+#if !RUN_PERFORMANCE_TESTS
+            Assert.Ignore("Skipping performance tests (scripting define RUN_PERFORMANCE_TESTS is not set).");
+#endif
             var job = new GLTFast.Jobs.ConvertVector3Int16ToFloatInterleavedNormalizedJob
             {
                 input = (byte*)m_InputInt16.GetUnsafeReadOnlyPtr(),
@@ -111,6 +118,9 @@ namespace GLTFast.Tests.Performance.Jobs
         [Test, Performance]
         public unsafe void ConvertVector3Int8ToFloatInterleavedNormalizedJob()
         {
+#if !RUN_PERFORMANCE_TESTS
+            Assert.Ignore("Skipping performance tests (scripting define RUN_PERFORMANCE_TESTS is not set).");
+#endif
             var job = new GLTFast.Jobs.ConvertVector3Int8ToFloatInterleavedNormalizedJob
             {
                 input = (sbyte*)m_InputInt8.GetUnsafeReadOnlyPtr(),
@@ -133,6 +143,9 @@ namespace GLTFast.Tests.Performance.Jobs
         [Test, Performance]
         public unsafe void ConvertPositionsUInt16ToFloatInterleavedJob()
         {
+#if !RUN_PERFORMANCE_TESTS
+            Assert.Ignore("Skipping performance tests (scripting define RUN_PERFORMANCE_TESTS is not set).");
+#endif
             var job = new GLTFast.Jobs.ConvertPositionsUInt16ToFloatInterleavedJob
             {
                 input = (byte*)m_InputUInt16.GetUnsafeReadOnlyPtr(),
@@ -155,6 +168,9 @@ namespace GLTFast.Tests.Performance.Jobs
         [Test, Performance]
         public unsafe void ConvertPositionsUInt16ToFloatInterleavedNormalizedJob()
         {
+#if !RUN_PERFORMANCE_TESTS
+            Assert.Ignore("Skipping performance tests (scripting define RUN_PERFORMANCE_TESTS is not set).");
+#endif
             var job = new GLTFast.Jobs.ConvertPositionsUInt16ToFloatInterleavedNormalizedJob
             {
                 input = (byte*)m_InputUInt16.GetUnsafeReadOnlyPtr(),
@@ -177,6 +193,9 @@ namespace GLTFast.Tests.Performance.Jobs
         [Test, Performance]
         public unsafe void ConvertPositionsInt16ToFloatInterleavedJob()
         {
+#if !RUN_PERFORMANCE_TESTS
+            Assert.Ignore("Skipping performance tests (scripting define RUN_PERFORMANCE_TESTS is not set).");
+#endif
             var job = new GLTFast.Jobs.ConvertPositionsInt16ToFloatInterleavedJob
             {
                 input = (byte*)m_InputInt16.GetUnsafeReadOnlyPtr(),
@@ -199,6 +218,9 @@ namespace GLTFast.Tests.Performance.Jobs
         [Test, Performance]
         public unsafe void ConvertPositionsInt8ToFloatInterleavedJob()
         {
+#if !RUN_PERFORMANCE_TESTS
+            Assert.Ignore("Skipping performance tests (scripting define RUN_PERFORMANCE_TESTS is not set).");
+#endif
             var job = new GLTFast.Jobs.ConvertPositionsInt8ToFloatInterleavedJob
             {
                 input = (sbyte*)m_InputInt8.GetUnsafeReadOnlyPtr(),
@@ -221,6 +243,9 @@ namespace GLTFast.Tests.Performance.Jobs
         [Test, Performance]
         public unsafe void ConvertPositionsUInt8ToFloatInterleavedJob()
         {
+#if !RUN_PERFORMANCE_TESTS
+            Assert.Ignore("Skipping performance tests (scripting define RUN_PERFORMANCE_TESTS is not set).");
+#endif
             var job = new GLTFast.Jobs.ConvertPositionsUInt8ToFloatInterleavedJob
             {
                 input = (byte*)m_InputUInt8.GetUnsafeReadOnlyPtr(),
@@ -243,6 +268,9 @@ namespace GLTFast.Tests.Performance.Jobs
         [Test, Performance]
         public unsafe void ConvertPositionsUInt8ToFloatInterleavedNormalizedJob()
         {
+#if !RUN_PERFORMANCE_TESTS
+            Assert.Ignore("Skipping performance tests (scripting define RUN_PERFORMANCE_TESTS is not set).");
+#endif
             var job = new GLTFast.Jobs.ConvertPositionsUInt8ToFloatInterleavedNormalizedJob
             {
                 input = (byte*)m_InputUInt8.GetUnsafeReadOnlyPtr(),
@@ -265,6 +293,9 @@ namespace GLTFast.Tests.Performance.Jobs
         [Test, Performance]
         public unsafe void ConvertNormalsInt16ToFloatInterleavedNormalizedJob()
         {
+#if !RUN_PERFORMANCE_TESTS
+            Assert.Ignore("Skipping performance tests (scripting define RUN_PERFORMANCE_TESTS is not set).");
+#endif
             var job = new GLTFast.Jobs.ConvertNormalsInt16ToFloatInterleavedNormalizedJob
             {
                 input = (byte*)m_InputInt16.GetUnsafeReadOnlyPtr(),
@@ -287,6 +318,9 @@ namespace GLTFast.Tests.Performance.Jobs
         [Test, Performance]
         public unsafe void ConvertNormalsInt8ToFloatInterleavedNormalizedJob()
         {
+#if !RUN_PERFORMANCE_TESTS
+            Assert.Ignore("Skipping performance tests (scripting define RUN_PERFORMANCE_TESTS is not set).");
+#endif
             var job = new GLTFast.Jobs.ConvertNormalsInt8ToFloatInterleavedNormalizedJob
             {
                 input = (sbyte*)m_InputInt8.GetUnsafeReadOnlyPtr(),
@@ -310,7 +344,6 @@ namespace GLTFast.Tests.Performance.Jobs
     [TestFixture]
     public class PositionSparseJobs
     {
-
         const int k_Length = 10_000;
 
         NativeArray<int> m_Indices;
@@ -342,6 +375,9 @@ namespace GLTFast.Tests.Performance.Jobs
         [Test, Performance]
         public unsafe void ConvertPositionsSparseJob()
         {
+#if !RUN_PERFORMANCE_TESTS
+            Assert.Ignore("Skipping performance tests (scripting define RUN_PERFORMANCE_TESTS is not set).");
+#endif
             const GltfComponentType indexType = GltfComponentType.UnsignedInt;
             const GltfComponentType valueType = GltfComponentType.Float;
             const bool normalized = false;
@@ -470,6 +506,9 @@ namespace GLTFast.Tests.Performance.Jobs
         [Test, Performance]
         public unsafe void ConvertUVsUInt8ToFloatInterleavedJob()
         {
+#if !RUN_PERFORMANCE_TESTS
+            Assert.Ignore("Skipping performance tests (scripting define RUN_PERFORMANCE_TESTS is not set).");
+#endif
             var job = new GLTFast.Jobs.ConvertUVsUInt8ToFloatInterleavedJob
             {
                 input = (byte*)m_InputUInt8.GetUnsafeReadOnlyPtr(),
@@ -492,6 +531,9 @@ namespace GLTFast.Tests.Performance.Jobs
         [Test, Performance]
         public unsafe void ConvertUVsUInt8ToFloatInterleavedNormalizedJob()
         {
+#if !RUN_PERFORMANCE_TESTS
+            Assert.Ignore("Skipping performance tests (scripting define RUN_PERFORMANCE_TESTS is not set).");
+#endif
             var job = new GLTFast.Jobs.ConvertUVsUInt8ToFloatInterleavedNormalizedJob
             {
                 input = (byte*)m_InputUInt8.GetUnsafeReadOnlyPtr(),
@@ -508,6 +550,9 @@ namespace GLTFast.Tests.Performance.Jobs
         [Test, Performance]
         public unsafe void ConvertUVsUInt16ToFloatInterleavedJob()
         {
+#if !RUN_PERFORMANCE_TESTS
+            Assert.Ignore("Skipping performance tests (scripting define RUN_PERFORMANCE_TESTS is not set).");
+#endif
             var job = new GLTFast.Jobs.ConvertUVsUInt16ToFloatInterleavedJob
             {
                 input = (byte*)m_InputUInt16.GetUnsafeReadOnlyPtr(),
@@ -530,6 +575,9 @@ namespace GLTFast.Tests.Performance.Jobs
         [Test, Performance]
         public unsafe void ConvertUVsUInt16ToFloatInterleavedNormalizedJob()
         {
+#if !RUN_PERFORMANCE_TESTS
+            Assert.Ignore("Skipping performance tests (scripting define RUN_PERFORMANCE_TESTS is not set).");
+#endif
             var job = new GLTFast.Jobs.ConvertUVsUInt16ToFloatInterleavedNormalizedJob
             {
                 input = (byte*)m_InputUInt16.GetUnsafeReadOnlyPtr(),
@@ -546,6 +594,9 @@ namespace GLTFast.Tests.Performance.Jobs
         [Test, Performance]
         public unsafe void ConvertUVsInt16ToFloatInterleavedJob()
         {
+#if !RUN_PERFORMANCE_TESTS
+            Assert.Ignore("Skipping performance tests (scripting define RUN_PERFORMANCE_TESTS is not set).");
+#endif
             var job = new GLTFast.Jobs.ConvertUVsInt16ToFloatInterleavedJob
             {
                 input = (short*)m_InputInt16.GetUnsafeReadOnlyPtr(),
@@ -568,6 +619,9 @@ namespace GLTFast.Tests.Performance.Jobs
         [Test, Performance]
         public unsafe void ConvertUVsInt16ToFloatInterleavedNormalizedJob()
         {
+#if !RUN_PERFORMANCE_TESTS
+            Assert.Ignore("Skipping performance tests (scripting define RUN_PERFORMANCE_TESTS is not set).");
+#endif
             var job = new GLTFast.Jobs.ConvertUVsInt16ToFloatInterleavedNormalizedJob
             {
                 input = (short*)m_InputInt16.GetUnsafeReadOnlyPtr(),
@@ -590,6 +644,9 @@ namespace GLTFast.Tests.Performance.Jobs
         [Test, Performance]
         public unsafe void ConvertUVsInt8ToFloatInterleavedJob()
         {
+#if !RUN_PERFORMANCE_TESTS
+            Assert.Ignore("Skipping performance tests (scripting define RUN_PERFORMANCE_TESTS is not set).");
+#endif
             var job = new GLTFast.Jobs.ConvertUVsInt8ToFloatInterleavedJob
             {
                 input = (sbyte*)m_InputInt8.GetUnsafeReadOnlyPtr(),
@@ -612,6 +669,9 @@ namespace GLTFast.Tests.Performance.Jobs
         [Test, Performance]
         public unsafe void ConvertUVsInt8ToFloatInterleavedNormalizedJob()
         {
+#if !RUN_PERFORMANCE_TESTS
+            Assert.Ignore("Skipping performance tests (scripting define RUN_PERFORMANCE_TESTS is not set).");
+#endif
             var job = new GLTFast.Jobs.ConvertUVsInt8ToFloatInterleavedNormalizedJob
             {
                 input = (sbyte*)m_InputInt8.GetUnsafeReadOnlyPtr(),
@@ -634,6 +694,9 @@ namespace GLTFast.Tests.Performance.Jobs
         [Test, Performance]
         public unsafe void ConvertUVsFloatToFloatInterleavedJob()
         {
+#if !RUN_PERFORMANCE_TESTS
+            Assert.Ignore("Skipping performance tests (scripting define RUN_PERFORMANCE_TESTS is not set).");
+#endif
             var job = new GLTFast.Jobs.ConvertUVsFloatToFloatInterleavedJob
             {
                 input = (byte*)m_UVInput.GetUnsafeReadOnlyPtr(),
@@ -691,6 +754,9 @@ namespace GLTFast.Tests.Performance.Jobs
         [Test, Performance]
         public unsafe void ConvertRotationsFloatToFloatJob()
         {
+#if !RUN_PERFORMANCE_TESTS
+            Assert.Ignore("Skipping performance tests (scripting define RUN_PERFORMANCE_TESTS is not set).");
+#endif
             var job = new GLTFast.Jobs.ConvertRotationsFloatToFloatJob
             {
                 input = (float4*)m_RotInput.GetUnsafeReadOnlyPtr(),
@@ -705,6 +771,9 @@ namespace GLTFast.Tests.Performance.Jobs
         [Test, Performance]
         public unsafe void ConvertRotationsInt16ToFloatJob()
         {
+#if !RUN_PERFORMANCE_TESTS
+            Assert.Ignore("Skipping performance tests (scripting define RUN_PERFORMANCE_TESTS is not set).");
+#endif
             var job = new GLTFast.Jobs.ConvertRotationsInt16ToFloatJob
             {
                 input = (short*)m_InputInt16.GetUnsafeReadOnlyPtr(),
@@ -719,6 +788,9 @@ namespace GLTFast.Tests.Performance.Jobs
         [Test, Performance]
         public unsafe void ConvertRotationsInt8ToFloatJob()
         {
+#if !RUN_PERFORMANCE_TESTS
+            Assert.Ignore("Skipping performance tests (scripting define RUN_PERFORMANCE_TESTS is not set).");
+#endif
             m_InputInt8[0] = sbyte.MinValue;
             m_InputInt8[1] = -64;
             m_InputInt8[2] = 64;
@@ -738,6 +810,9 @@ namespace GLTFast.Tests.Performance.Jobs
         [Test, Performance]
         public unsafe void ConvertTangentsFloatToFloatInterleavedJob()
         {
+#if !RUN_PERFORMANCE_TESTS
+            Assert.Ignore("Skipping performance tests (scripting define RUN_PERFORMANCE_TESTS is not set).");
+#endif
             var job = new GLTFast.Jobs.ConvertTangentsFloatToFloatInterleavedJob
             {
                 input = (byte*)m_RotInput.GetUnsafeReadOnlyPtr(),
@@ -760,6 +835,9 @@ namespace GLTFast.Tests.Performance.Jobs
         [Test, Performance]
         public unsafe void ConvertBoneWeightsFloatToFloatInterleavedJob()
         {
+#if !RUN_PERFORMANCE_TESTS
+            Assert.Ignore("Skipping performance tests (scripting define RUN_PERFORMANCE_TESTS is not set).");
+#endif
             var job = new GLTFast.Jobs.ConvertBoneWeightsFloatToFloatInterleavedJob
             {
                 input = (byte*)m_RotInput.GetUnsafeReadOnlyPtr(),
@@ -785,6 +863,9 @@ namespace GLTFast.Tests.Performance.Jobs
         [Test, Performance]
         public unsafe void ConvertTangentsInt16ToFloatInterleavedNormalizedJob()
         {
+#if !RUN_PERFORMANCE_TESTS
+            Assert.Ignore("Skipping performance tests (scripting define RUN_PERFORMANCE_TESTS is not set).");
+#endif
             var job = new GLTFast.Jobs.ConvertTangentsInt16ToFloatInterleavedNormalizedJob
             {
                 input = (short*)m_InputInt16.GetUnsafeReadOnlyPtr(),
@@ -807,6 +888,9 @@ namespace GLTFast.Tests.Performance.Jobs
         [Test, Performance]
         public unsafe void ConvertTangentsInt8ToFloatInterleavedNormalizedJob()
         {
+#if !RUN_PERFORMANCE_TESTS
+            Assert.Ignore("Skipping performance tests (scripting define RUN_PERFORMANCE_TESTS is not set).");
+#endif
             var job = new GLTFast.Jobs.ConvertTangentsInt8ToFloatInterleavedNormalizedJob
             {
                 input = (sbyte*)m_InputInt8.GetUnsafeReadOnlyPtr(),
@@ -878,6 +962,9 @@ namespace GLTFast.Tests.Performance.Jobs
         [Test, Performance]
         public unsafe void ConvertColorsRGBFloatToRGBAFloatJob()
         {
+#if !RUN_PERFORMANCE_TESTS
+            Assert.Ignore("Skipping performance tests (scripting define RUN_PERFORMANCE_TESTS is not set).");
+#endif
             var job = new GLTFast.Jobs.ConvertColorsRGBFloatToRGBAFloatJob
             {
                 input = (byte*)m_ColorInput.GetUnsafeReadOnlyPtr(),
@@ -893,6 +980,9 @@ namespace GLTFast.Tests.Performance.Jobs
         [Test, Performance]
         public unsafe void ConvertColorsRGBUInt8ToRGBAFloatJob()
         {
+#if !RUN_PERFORMANCE_TESTS
+            Assert.Ignore("Skipping performance tests (scripting define RUN_PERFORMANCE_TESTS is not set).");
+#endif
             var job = new GLTFast.Jobs.ConvertColorsRgbUInt8ToRGBAFloatJob
             {
                 input = (byte*)m_InputUInt8.GetUnsafeReadOnlyPtr(),
@@ -908,6 +998,9 @@ namespace GLTFast.Tests.Performance.Jobs
         [Test, Performance]
         public unsafe void ConvertColorsRGBUInt16ToRGBAFloatJob()
         {
+#if !RUN_PERFORMANCE_TESTS
+            Assert.Ignore("Skipping performance tests (scripting define RUN_PERFORMANCE_TESTS is not set).");
+#endif
             var job = new GLTFast.Jobs.ConvertColorsRgbUInt16ToRGBAFloatJob
             {
                 input = (ushort*)m_InputUInt16.GetUnsafeReadOnlyPtr(),
@@ -923,6 +1016,9 @@ namespace GLTFast.Tests.Performance.Jobs
         [Test, Performance]
         public unsafe void ConvertColorsRGBAUInt16ToRGBAFloatJob()
         {
+#if !RUN_PERFORMANCE_TESTS
+            Assert.Ignore("Skipping performance tests (scripting define RUN_PERFORMANCE_TESTS is not set).");
+#endif
             var job = new GLTFast.Jobs.ConvertColorsRgbaUInt16ToRGBAFloatJob
             {
                 input = (ushort*)m_InputUInt16.GetUnsafeReadOnlyPtr(),
@@ -944,6 +1040,9 @@ namespace GLTFast.Tests.Performance.Jobs
         [Test, Performance]
         public unsafe void ConvertColorsRGBAFloatToRGBAFloatJob()
         {
+#if !RUN_PERFORMANCE_TESTS
+            Assert.Ignore("Skipping performance tests (scripting define RUN_PERFORMANCE_TESTS is not set).");
+#endif
             var job = new GLTFast.Jobs.ConvertColorsRGBAFloatToRGBAFloatJob
             {
                 input = (byte*)m_ColorInput.GetUnsafeReadOnlyPtr(),
@@ -965,6 +1064,9 @@ namespace GLTFast.Tests.Performance.Jobs
         [Test, Performance]
         public unsafe void ConvertColorsRGBAUInt8ToRGBAFloatJob()
         {
+#if !RUN_PERFORMANCE_TESTS
+            Assert.Ignore("Skipping performance tests (scripting define RUN_PERFORMANCE_TESTS is not set).");
+#endif
             var job = new GLTFast.Jobs.ConvertColorsRgbaUInt8ToRGBAFloatJob
             {
                 input = (byte*)m_InputUInt8.GetUnsafeReadOnlyPtr(),
@@ -1016,6 +1118,9 @@ namespace GLTFast.Tests.Performance.Jobs
         [Test, Performance]
         public unsafe void ConvertBoneJointsUInt8ToUInt32Job()
         {
+#if !RUN_PERFORMANCE_TESTS
+            Assert.Ignore("Skipping performance tests (scripting define RUN_PERFORMANCE_TESTS is not set).");
+#endif
             var job = new GLTFast.Jobs.ConvertBoneJointsUInt8ToUInt32Job
             {
                 input = (byte*)m_InputUInt8.GetUnsafeReadOnlyPtr(),
@@ -1032,6 +1137,9 @@ namespace GLTFast.Tests.Performance.Jobs
         [Test, Performance]
         public unsafe void ConvertBoneJointsUInt16ToUInt32Job()
         {
+#if !RUN_PERFORMANCE_TESTS
+            Assert.Ignore("Skipping performance tests (scripting define RUN_PERFORMANCE_TESTS is not set).");
+#endif
             var job = new GLTFast.Jobs.ConvertBoneJointsUInt16ToUInt32Job
             {
                 input = (byte*)m_InputUInt16.GetUnsafeReadOnlyPtr(),
@@ -1083,6 +1191,9 @@ namespace GLTFast.Tests.Performance.Jobs
         [Test, Performance]
         public unsafe void ConvertMatricesJob()
         {
+#if !RUN_PERFORMANCE_TESTS
+            Assert.Ignore("Skipping performance tests (scripting define RUN_PERFORMANCE_TESTS is not set).");
+#endif
             var job = new GLTFast.Jobs.ConvertMatricesJob
             {
                 input = (float4x4*)m_MatrixInput.GetUnsafeReadOnlyPtr(),
@@ -1138,6 +1249,9 @@ namespace GLTFast.Tests.Performance.Jobs
         [Test, Performance]
         public void CreateIndicesInt32Job()
         {
+#if !RUN_PERFORMANCE_TESTS
+            Assert.Ignore("Skipping performance tests (scripting define RUN_PERFORMANCE_TESTS is not set).");
+#endif
             Assert.IsTrue(m_IndexOutput.Length % 3 == 0);
             var job = new GLTFast.Jobs.CreateIndicesInt32Job
             {
@@ -1152,6 +1266,9 @@ namespace GLTFast.Tests.Performance.Jobs
         [Test, Performance]
         public void CreateIndicesInt32FlippedJob()
         {
+#if !RUN_PERFORMANCE_TESTS
+            Assert.Ignore("Skipping performance tests (scripting define RUN_PERFORMANCE_TESTS is not set).");
+#endif
             Assert.IsTrue(m_IndexOutput.Length % 3 == 0);
             var job = new GLTFast.Jobs.CreateIndicesInt32FlippedJob
             {
@@ -1173,6 +1290,9 @@ namespace GLTFast.Tests.Performance.Jobs
         [Test, Performance]
         public void CreateIndicesForTriangleStripJob()
         {
+#if !RUN_PERFORMANCE_TESTS
+            Assert.Ignore("Skipping performance tests (scripting define RUN_PERFORMANCE_TESTS is not set).");
+#endif
             Assert.IsTrue(m_IndexOutput.Length > 3);
             var job = new GLTFast.Jobs.CreateIndicesForTriangleStripJob
             {
@@ -1187,6 +1307,9 @@ namespace GLTFast.Tests.Performance.Jobs
         [Test, Performance]
         public void CreateIndicesForTriangleFanJob()
         {
+#if !RUN_PERFORMANCE_TESTS
+            Assert.Ignore("Skipping performance tests (scripting define RUN_PERFORMANCE_TESTS is not set).");
+#endif
             Assert.IsTrue(m_IndexOutput.Length > 3);
             var job = new GLTFast.Jobs.CreateIndicesForTriangleFanJob
             {
@@ -1210,6 +1333,9 @@ namespace GLTFast.Tests.Performance.Jobs
         [Test, Performance]
         public unsafe void ConvertIndicesUInt8ToInt32Job()
         {
+#if !RUN_PERFORMANCE_TESTS
+            Assert.Ignore("Skipping performance tests (scripting define RUN_PERFORMANCE_TESTS is not set).");
+#endif
             Assert.IsTrue(m_IndexOutput.Length % 3 == 0);
             var job = new GLTFast.Jobs.ConvertIndicesUInt8ToInt32Job
             {
@@ -1225,6 +1351,9 @@ namespace GLTFast.Tests.Performance.Jobs
         [Test, Performance]
         public unsafe void ConvertIndicesUInt8ToInt32FlippedJob()
         {
+#if !RUN_PERFORMANCE_TESTS
+            Assert.Ignore("Skipping performance tests (scripting define RUN_PERFORMANCE_TESTS is not set).");
+#endif
             Assert.IsTrue(m_IndexOutput.Length % 3 == 0);
             var job = new GLTFast.Jobs.ConvertIndicesUInt8ToInt32FlippedJob
             {
@@ -1240,6 +1369,9 @@ namespace GLTFast.Tests.Performance.Jobs
         [Test, Performance]
         public unsafe void ConvertIndicesUInt16ToInt32FlippedJob()
         {
+#if !RUN_PERFORMANCE_TESTS
+            Assert.Ignore("Skipping performance tests (scripting define RUN_PERFORMANCE_TESTS is not set).");
+#endif
             Assert.IsTrue(m_IndexOutput.Length % 3 == 0);
             var job = new GLTFast.Jobs.ConvertIndicesUInt16ToInt32FlippedJob
             {
@@ -1255,6 +1387,9 @@ namespace GLTFast.Tests.Performance.Jobs
         [Test, Performance]
         public unsafe void ConvertIndicesUInt16ToInt32Job()
         {
+#if !RUN_PERFORMANCE_TESTS
+            Assert.Ignore("Skipping performance tests (scripting define RUN_PERFORMANCE_TESTS is not set).");
+#endif
             Assert.IsTrue(m_IndexOutput.Length % 3 == 0);
             var job = new GLTFast.Jobs.ConvertIndicesUInt16ToInt32Job
             {
@@ -1270,6 +1405,9 @@ namespace GLTFast.Tests.Performance.Jobs
         [Test, Performance]
         public unsafe void ConvertIndicesUInt32ToInt32Job()
         {
+#if !RUN_PERFORMANCE_TESTS
+            Assert.Ignore("Skipping performance tests (scripting define RUN_PERFORMANCE_TESTS is not set).");
+#endif
             Assert.IsTrue(m_IndexOutput.Length % 3 == 0);
             var job = new GLTFast.Jobs.ConvertIndicesUInt32ToInt32Job
             {
@@ -1285,6 +1423,9 @@ namespace GLTFast.Tests.Performance.Jobs
         [Test, Performance]
         public unsafe void ConvertIndicesUInt32ToInt32FlippedJob()
         {
+#if !RUN_PERFORMANCE_TESTS
+            Assert.Ignore("Skipping performance tests (scripting define RUN_PERFORMANCE_TESTS is not set).");
+#endif
             Assert.IsTrue(m_IndexOutput.Length % 3 == 0);
             var job = new GLTFast.Jobs.ConvertIndicesUInt32ToInt32FlippedJob
             {
@@ -1300,6 +1441,9 @@ namespace GLTFast.Tests.Performance.Jobs
         [Test, Performance]
         public void RecalculateIndicesForTriangleFanJob()
         {
+#if !RUN_PERFORMANCE_TESTS
+            Assert.Ignore("Skipping performance tests (scripting define RUN_PERFORMANCE_TESTS is not set).");
+#endif
             Assert.IsTrue(m_IndexOutput.Length > 3);
             var job = new GLTFast.Jobs.RecalculateIndicesForTriangleFanJob
             {
@@ -1316,6 +1460,9 @@ namespace GLTFast.Tests.Performance.Jobs
         [Test, Performance]
         public void RecalculateIndicesForTriangleStripJob()
         {
+#if !RUN_PERFORMANCE_TESTS
+            Assert.Ignore("Skipping performance tests (scripting define RUN_PERFORMANCE_TESTS is not set).");
+#endif
             Assert.IsTrue(m_IndexOutput.Length > 3);
             var job = new GLTFast.Jobs.RecalculateIndicesForTriangleStripJob
             {
@@ -1383,6 +1530,9 @@ namespace GLTFast.Tests.Performance.Jobs
         [Test, Performance]
         public unsafe void ConvertScalarInt8ToFloatNormalizedJob()
         {
+#if !RUN_PERFORMANCE_TESTS
+            Assert.Ignore("Skipping performance tests (scripting define RUN_PERFORMANCE_TESTS is not set).");
+#endif
             var job = new GLTFast.Jobs.ConvertScalarInt8ToFloatNormalizedJob
             {
                 input = (sbyte*)m_InputInt8.GetUnsafeReadOnlyPtr(),
@@ -1397,6 +1547,9 @@ namespace GLTFast.Tests.Performance.Jobs
         [Test, Performance]
         public unsafe void ConvertScalarUInt8ToFloatNormalizedJob()
         {
+#if !RUN_PERFORMANCE_TESTS
+            Assert.Ignore("Skipping performance tests (scripting define RUN_PERFORMANCE_TESTS is not set).");
+#endif
             var job = new GLTFast.Jobs.ConvertScalarUInt8ToFloatNormalizedJob
             {
                 input = (byte*)m_InputUInt8.GetUnsafeReadOnlyPtr(),
@@ -1411,6 +1564,9 @@ namespace GLTFast.Tests.Performance.Jobs
         [Test, Performance]
         public unsafe void ConvertScalarInt16ToFloatNormalizedJob()
         {
+#if !RUN_PERFORMANCE_TESTS
+            Assert.Ignore("Skipping performance tests (scripting define RUN_PERFORMANCE_TESTS is not set).");
+#endif
             var job = new GLTFast.Jobs.ConvertScalarInt16ToFloatNormalizedJob
             {
                 input = (short*)m_InputInt16.GetUnsafeReadOnlyPtr(),
@@ -1425,6 +1581,9 @@ namespace GLTFast.Tests.Performance.Jobs
         [Test, Performance]
         public unsafe void ConvertScalarUInt16ToFloatNormalizedJob()
         {
+#if !RUN_PERFORMANCE_TESTS
+            Assert.Ignore("Skipping performance tests (scripting define RUN_PERFORMANCE_TESTS is not set).");
+#endif
             var job = new GLTFast.Jobs.ConvertScalarUInt16ToFloatNormalizedJob
             {
                 input = (ushort*)m_InputUInt16.GetUnsafeReadOnlyPtr(),
@@ -1437,4 +1596,3 @@ namespace GLTFast.Tests.Performance.Jobs
         }
     }
 }
-#endif // UNITY_PERFORMANCE_TESTS

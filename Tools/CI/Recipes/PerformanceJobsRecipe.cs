@@ -44,7 +44,7 @@ class PerformanceJobsRecipe : RecipeBase
     {
         var commands = new List<Command>();
         commands.Add(UnityEditorCommand.Download(new Editor(editorVersion, editorVersion), "unity-downloader-cli", k_EditorPath));
-        commands.Add(new Command($"unity-config project add dependency com.unity.test-framework.performance@3.0.3 -p {k_ProjectPath}"));
+        commands.Add(UnityEditorCommand.Execute($"{k_EditorPath}\\Unity.exe", EnablePerformanceTests));
         if (editorVersion.StartsWith("2020") || editorVersion.StartsWith("2021"))
         {
             commands.Add(UnityEditorCommand.Execute($"{k_EditorPath}\\Unity.exe", CreateTestGltfFiles));
@@ -71,6 +71,17 @@ class PerformanceJobsRecipe : RecipeBase
             .WithDescription("Runs all performance jobs.")
             .WithDependencies(deps);
     }
+
+    static IUnityEditorExecuteBuilder EnablePerformanceTests(IUnityEditorExecuteBuilder builder) =>
+        builder
+            .WithProjectPath(k_ProjectPath)
+            .WithBatchMode()
+            .WithNoGraphics()
+            .WithExecuteMethod("GLTFast.Editor.Tests.SetupProject.ApplySetup")
+            .WithArgs("glTFastSetup:performance")
+            .WithArgs("-upmNoDefaultPackages")
+            .WithLogs($"{k_ArtifactsPath}/enable-performance-tests.log")
+            .WithQuit();
 
     static IUnityEditorExecuteBuilder CreateTestGltfFiles(IUnityEditorExecuteBuilder builder) =>
         builder

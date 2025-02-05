@@ -8,7 +8,7 @@ performance_2020_3_win:
     flavor: b1.large
   commands:
   - command: unity-downloader-cli --unity-version 2020.3 --path Editor --wait -c editor -c il2cpp
-  - command: unity-config project add dependency com.unity.test-framework.performance@3.0.3 -p Projects/glTFast-Test
+  - command: Editor\Unity.exe -projectPath Projects/glTFast-Test -batchmode -nographics -executeMethod GLTFast.Editor.Tests.SetupProject.ApplySetup glTFastSetup:performance -upmNoDefaultPackages -logfile test-results~/enable-performance-tests.log -quit
   - command: Editor\Unity.exe -projectPath Projects/glTFast-Test -batchmode -executeMethod GLTFast.Tests.TestGltfGenerator.CreatePerformanceTestFiles -nographics -upmNoDefaultPackages -logfile test-results~/create-gltf-files.log -quit
   - command: UnifiedTestRunner.exe --suite=playmode --scripting-backend=il2cpp --platform=StandaloneWindows64 --editor-location=Editor --testproject=Projects/glTFast-Test --artifacts-path=test-results~ --category=Performance --report-performance-data --performance-project-id=com.unity.cloud.gltfast --extra-editor-arg=-upmNoDefaultPackages
   artifacts:
@@ -23,7 +23,7 @@ performance_2021_3_win:
     flavor: b1.large
   commands:
   - command: unity-downloader-cli --unity-version 2021.3 --path Editor --wait -c editor -c il2cpp
-  - command: unity-config project add dependency com.unity.test-framework.performance@3.0.3 -p Projects/glTFast-Test
+  - command: Editor\Unity.exe -projectPath Projects/glTFast-Test -batchmode -nographics -executeMethod GLTFast.Editor.Tests.SetupProject.ApplySetup glTFastSetup:performance -upmNoDefaultPackages -logfile test-results~/enable-performance-tests.log -quit
   - command: Editor\Unity.exe -projectPath Projects/glTFast-Test -batchmode -executeMethod GLTFast.Tests.TestGltfGenerator.CreatePerformanceTestFiles -nographics -upmNoDefaultPackages -logfile test-results~/create-gltf-files.log -quit
   - command: UnifiedTestRunner.exe --suite=playmode --scripting-backend=il2cpp --platform=StandaloneWindows64 --editor-location=Editor --testproject=Projects/glTFast-Test --artifacts-path=test-results~ --category=Performance --report-performance-data --performance-project-id=com.unity.cloud.gltfast --extra-editor-arg=-upmNoDefaultPackages
   artifacts:
@@ -38,7 +38,7 @@ performance_2022_3_win:
     flavor: b1.large
   commands:
   - command: unity-downloader-cli --unity-version 2022.3 --path Editor --wait -c editor -c il2cpp
-  - command: unity-config project add dependency com.unity.test-framework.performance@3.0.3 -p Projects/glTFast-Test
+  - command: Editor\Unity.exe -projectPath Projects/glTFast-Test -batchmode -nographics -executeMethod GLTFast.Editor.Tests.SetupProject.ApplySetup glTFastSetup:performance -upmNoDefaultPackages -logfile test-results~/enable-performance-tests.log -quit
   - command: UnifiedTestRunner.exe --suite=playmode --scripting-backend=il2cpp --platform=StandaloneWindows64 --editor-location=Editor --testproject=Projects/glTFast-Test --artifacts-path=test-results~ --category=Performance --report-performance-data --performance-project-id=com.unity.cloud.gltfast --extra-editor-arg=-upmNoDefaultPackages
   artifacts:
     logs:
@@ -52,7 +52,7 @@ performance_6000_0_win:
     flavor: b1.large
   commands:
   - command: unity-downloader-cli --unity-version 6000.0 --path Editor --wait -c editor -c il2cpp
-  - command: unity-config project add dependency com.unity.test-framework.performance@3.0.3 -p Projects/glTFast-Test
+  - command: Editor\Unity.exe -projectPath Projects/glTFast-Test -batchmode -nographics -executeMethod GLTFast.Editor.Tests.SetupProject.ApplySetup glTFastSetup:performance -upmNoDefaultPackages -logfile test-results~/enable-performance-tests.log -quit
   - command: UnifiedTestRunner.exe --suite=playmode --scripting-backend=il2cpp --platform=StandaloneWindows64 --editor-location=Editor --testproject=Projects/glTFast-Test --artifacts-path=test-results~ --category=Performance --report-performance-data --performance-project-id=com.unity.cloud.gltfast --extra-editor-arg=-upmNoDefaultPackages
   artifacts:
     logs:
@@ -66,7 +66,7 @@ performance_6000_1_win:
     flavor: b1.large
   commands:
   - command: unity-downloader-cli --unity-version 6000.1 --path Editor --wait -c editor -c il2cpp
-  - command: unity-config project add dependency com.unity.test-framework.performance@3.0.3 -p Projects/glTFast-Test
+  - command: Editor\Unity.exe -projectPath Projects/glTFast-Test -batchmode -nographics -executeMethod GLTFast.Editor.Tests.SetupProject.ApplySetup glTFastSetup:performance -upmNoDefaultPackages -logfile test-results~/enable-performance-tests.log -quit
   - command: UnifiedTestRunner.exe --suite=playmode --scripting-backend=il2cpp --platform=StandaloneWindows64 --editor-location=Editor --testproject=Projects/glTFast-Test --artifacts-path=test-results~ --category=Performance --report-performance-data --performance-project-id=com.unity.cloud.gltfast --extra-editor-arg=-upmNoDefaultPackages
   artifacts:
     logs:
@@ -80,7 +80,7 @@ performance_6000_2_win:
     flavor: b1.large
   commands:
   - command: unity-downloader-cli --unity-version 6000.2 --path Editor --wait -c editor -c il2cpp
-  - command: unity-config project add dependency com.unity.test-framework.performance@3.0.3 -p Projects/glTFast-Test
+  - command: Editor\Unity.exe -projectPath Projects/glTFast-Test -batchmode -nographics -executeMethod GLTFast.Editor.Tests.SetupProject.ApplySetup glTFastSetup:performance -upmNoDefaultPackages -logfile test-results~/enable-performance-tests.log -quit
   - command: UnifiedTestRunner.exe --suite=playmode --scripting-backend=il2cpp --platform=StandaloneWindows64 --editor-location=Editor --testproject=Projects/glTFast-Test --artifacts-path=test-results~ --category=Performance --report-performance-data --performance-project-id=com.unity.cloud.gltfast --extra-editor-arg=-upmNoDefaultPackages
   artifacts:
     logs:
