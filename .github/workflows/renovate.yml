@@ -28,7 +28,7 @@ jobs:
     with:
       # This is the image that contains our custom renovate and will be auto
       # updated by Renovate itself.
-      image: europe-docker.pkg.dev/unity-cds-services-prd/ds-docker/renovate:10.2.6@sha256:754687010d3a734d5c9c9903cecfb514187397faf62196ec1d77f0dce771e56d
+      image: europe-docker.pkg.dev/unity-cds-services-prd/ds-docker/renovate:10.2.8@sha256:32dc5191f585eb83b36abecee781c5d0023ea6033b3216a1829bd68a1dbd194a
       log-level: ${{ github.event.inputs.log-level }}
     secrets:
       renovate-auth-secret: ${{ secrets.RENOVATE_AUTH_SECRET }}
