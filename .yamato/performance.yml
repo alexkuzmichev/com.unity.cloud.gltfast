@@ -86,6 +86,21 @@ performance_6000_2_win:
     logs:
       paths:
       - test-results~/**/*
+performance_6000_2_win:
+  name: Performance_6000.2_Win
+  agent:
+    image: package-ci/win11:v4
+    type: Unity::VM
+    flavor: b1.large
+  commands:
+  - command: unity-downloader-cli --unity-version 6000.2 --path Editor --wait -c editor -c il2cpp
+  - command: unity-config project add dependency com.unity.test-framework.performance@3.0.3 -p Projects/glTFast-Test
+  - command: Editor\Unity.exe -projectPath Projects/glTFast-Test -batchmode -executeMethod GLTFast.Tests.TestGltfGenerator.CreatePerformanceTestFiles -nographics -upmNoDefaultPackages -logfile test-results~/create-gltf-files.log -quit
+  - command: UnifiedTestRunner.exe --suite=playmode --scripting-backend=il2cpp --platform=StandaloneWindows64 --editor-location=Editor --testproject=Projects/glTFast-Test --artifacts-path=test-results~ --category=Performance --report-performance-data --performance-project-id=com.unity.cloud.gltfast --extra-editor-arg=-upmNoDefaultPackages
+  artifacts:
+    logs:
+      paths:
+      - test-results~/**/*
 
 # Runs all performance jobs.
 performance_all:

@@ -24,7 +24,7 @@ on:
 jobs:
   renovate:
     # The reusable workflow will be updated by renovate if there's a new version
-    uses: unity/renovate-workflows/.github/workflows/run.yml@v4.0.0
+    uses: unity/renovate-workflows/.github/workflows/run.yml@v4.1.0
     with:
       # This is the image that contains our custom renovate and will be auto
       # updated by Renovate itself.
