@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+
+### Changed
+
+### Fixed
+
+### Removed
+
+### Deprecated
+
+### Security
+
+## [6.10.2] - 2025-02-03
+
+### Added
 - (Importer) *Textures Readable* checkbox in the imnporter inspector (*Textures* section).
 - (Export) Error message when attempting to export with unsupported meshopt compression.
 - (Tests) Runtime import performance tests.
@@ -24,12 +38,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - (Export) Missing `inverseBindMatrices`/`bindPoses` on skinned meshes when exporting with Draco compression.
 - (CI) Ensuring the development documentation and the `Tools` code is checked for code formatting as well.
 - Compilation for `ICodeLogger` implementors by adding a default implementation for `Log` (works for Unity 2021 LTS and newer).
-
-### Removed
-
-### Deprecated
-
-### Security
 
 ## [6.10.1] - 2025-01-09
 
