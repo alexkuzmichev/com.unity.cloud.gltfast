@@ -11,13 +11,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 ### Fixed
-- (Import) Morph targets on multi-primitive meshes (where primitives reference identical vertex buffers; fixes [#755](https://github.com/atteneder/glTFast/issues/755)).
 
 ### Removed
 
 ### Deprecated
 
 ### Security
+
+## [6.10.3] - 2025-02-21
+
+### Fixed
+- (Import) Morph targets on multi-primitive meshes (where primitives reference identical vertex buffers; fixes [#755](https://github.com/atteneder/glTFast/issues/755)).
 
 ## [6.10.2] - 2025-02-03
 
