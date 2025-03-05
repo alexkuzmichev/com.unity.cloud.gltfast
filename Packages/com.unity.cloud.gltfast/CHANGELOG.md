@@ -366,6 +366,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added proper root namespace to all assembly definitions
 - License and copyright notices
 - (Export) Increased performance due to concurrent buffer conversions
+- Support for KTX (Khronos Texture) is now provided by [*KTX for Unity* (com.unity.cloud.ktx)][KtxForUnity], which is a fork of and replaces [*KtxUnity* (com.atteneder.ktx)][KtxUnity].
 
 ## [5.0.4] - 2023-03-30
 
