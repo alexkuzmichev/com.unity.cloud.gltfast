@@ -13,7 +13,10 @@ using NUnit.Framework;
 using UnityEngine;
 using Object = UnityEngine.Object;
 using GLTFast.Logging;
+using Unity.Collections;
+#if USE_WEB_REQUEST
 using UnityEngine.Networking;
+#endif
 using UnityEngine.TestTools;
 
 namespace GLTFast.Tests.Import
@@ -31,7 +34,8 @@ namespace GLTFast.Tests.Import
         enum LoadType
         {
             Path,
-            Bytes,
+            NativeArray,
+            ManagedByteArray,
             Uri,
             File,
             Binary,
@@ -63,7 +67,14 @@ namespace GLTFast.Tests.Import
         [GltfTestCase("glTF-test-models", 2, k_RelativeUriFilter)]
         public IEnumerator Load(GltfTestCaseSet testCaseSet, GltfTestCase testCase)
         {
-            var task = LoadInternal(testCaseSet, testCase, LoadType.Bytes, InstantiationType.Main);
+            var task = LoadInternal(testCaseSet, testCase, LoadType.NativeArray, InstantiationType.Main);
+            yield return Utils.WaitForTask(task);
+        }
+
+        [GltfTestCase("glTF-test-models", 2, k_RelativeUriFilter)]
+        public IEnumerator LoadByteArray(GltfTestCaseSet testCaseSet, GltfTestCase testCase)
+        {
+            var task = LoadInternal(testCaseSet, testCase, LoadType.ManagedByteArray, InstantiationType.Main);
             yield return Utils.WaitForTask(task);
         }
 
@@ -157,7 +168,13 @@ namespace GLTFast.Tests.Import
             bool success;
             switch (loadType)
             {
-                case LoadType.Bytes:
+                case LoadType.NativeArray:
+                    {
+                        using var data = await ReadNativeArrayAsync(path);
+                        success = await gltf.Load(data.AsReadOnly(), new Uri(path));
+                        break;
+                    }
+                case LoadType.ManagedByteArray:
                     {
                         var data = await ReadAllBytesAsync(path);
                         success = await gltf.Load(data, new Uri(path));
@@ -176,7 +193,9 @@ namespace GLTFast.Tests.Import
                 case LoadType.Binary:
                     {
                         var data = await ReadAllBytesAsync(path);
+#pragma warning disable CS0618 // Type or member is obsolete
                         success = await gltf.LoadGltfBinary(data, new Uri(path));
+#pragma warning restore CS0618 // Type or member is obsolete
                         break;
                     }
                 case LoadType.Stream:
@@ -224,12 +243,32 @@ namespace GLTFast.Tests.Import
 
         // TODO: Remove pragma, as is is required for 2020 LTS and earlier only.
 #pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
+        internal static async Task<NativeArray<byte>> ReadNativeArrayAsync(string path)
+        {
+#if USE_WEB_REQUEST
+            var downloadHandler = await UnityWebRequestDownload(path);
+            // TODO: Use downloadHandler.nativeData directly!
+            return new NativeArray<byte>(downloadHandler.data, Allocator.Persistent);
+#else
+#if UNITY_2021_3_OR_NEWER
+            var data = await File.ReadAllBytesAsync(path);
+#else
+            var data = File.ReadAllBytes(path);
+#endif
+            // TODO: Read into NativeArray directly!
+            return new NativeArray<byte>(data, Allocator.Persistent);
+#endif
+        }
+
+        // TODO: Remove pragma, as is is required for 2020 LTS and earlier only.
+#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
         internal static async Task<byte[]> ReadAllBytesAsync(string path)
         {
 #if USE_WEB_REQUEST
             var downloadHandler = await UnityWebRequestDownload(path);
             return downloadHandler.data;
 #else
+            // TODO: Read into NativeArray directly!
 #if UNITY_2021_3_OR_NEWER
             return await File.ReadAllBytesAsync(path);
 #else

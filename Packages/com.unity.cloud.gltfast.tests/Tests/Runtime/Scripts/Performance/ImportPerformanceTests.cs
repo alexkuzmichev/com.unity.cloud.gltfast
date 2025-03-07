@@ -48,9 +48,8 @@ namespace GLTFast.Tests
 #if !RUN_PERFORMANCE_TESTS
             Assert.Ignore("Skipping performance tests (scripting define RUN_PERFORMANCE_TESTS is not set).");
 #endif
-            yield return AsyncWrapper.WaitForTask(TestWrapper(() => RunTest(
-                    TestGltfGenerator.FlatHierarchyPath, true), k_Repetitions)
-            );
+            yield return AsyncWrapper.WaitForTask(RunTestFromMemory(
+                    TestGltfGenerator.FlatHierarchyPath), k_Repetitions);
         }
 
         [UnityTest, Performance]
@@ -81,9 +80,7 @@ namespace GLTFast.Tests
 #if !RUN_PERFORMANCE_TESTS
             Assert.Ignore("Skipping performance tests (scripting define RUN_PERFORMANCE_TESTS is not set).");
 #endif
-            yield return AsyncWrapper.WaitForTask(TestWrapper(() => RunTest(
-                TestGltfGenerator.BigCylinderBinaryPath, true), k_Repetitions, 3)
-            );
+            yield return AsyncWrapper.WaitForTask(RunTestFromMemory(TestGltfGenerator.BigCylinderBinaryPath));
         }
 
 #if RUN_PERFORMANCE_TESTS
@@ -110,24 +107,33 @@ namespace GLTFast.Tests
         public void Setup() { }
 #endif
 
-        static async Task RunTest(string path, bool loadFromMemory = false)
+        static async Task RunTestFromMemory(string path)
+        {
+            using var data = await LoadTests.ReadNativeArrayAsync(path);
+            await TestWrapper(() => RunTest(gltf =>
+            {
+                Debug.Log($"Loading {path}");
+                return gltf.Load(data.AsReadOnly(), new Uri(path));
+            }), k_Repetitions);
+        }
+
+        static async Task RunTest(string path)
+        {
+            await RunTest(gltf =>
+            {
+                Debug.Log($"Loading {path}");
+                return gltf.Load(path);
+            });
+        }
+
+        static async Task RunTest(Func<GltfImportBase, Task<bool>> loadFunction)
         {
             var go = new GameObject();
             var loadLogger = new CollectingLogger();
-            Debug.Log($"Loading {path}");
 
             using var gltf = new GltfImport(logger: loadLogger);
 
-            bool success;
-            if (loadFromMemory)
-            {
-                var data = await LoadTests.ReadAllBytesAsync(path);
-                success = await gltf.Load(data, new Uri(path));
-            }
-            else
-            {
-                success = await gltf.Load(path);
-            }
+            var success = await loadFunction(gltf);
 
             if (!success)
             {

@@ -7,14 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- [GltfImport.Load](xref:GLTFast.GltfImportBase.Load(Unity.Collections.NativeArray{System.Byte}.ReadOnly,Uri,GLTFast.ImportSettings,CancellationToken)) overload that accept glTF data in form of [NativeArray&lt;byte&gt;.ReadOnly](xref:Unity.Collections.NativeArray`1.ReadOnly).
+- [INativeDownload](xref:GLTFast.Loading.INativeDownload), which can be used to expand [IDownload](xref:GLTFast.Loading.IDownload) implementations to provide access to downloaded data directly without creating a copy in managed memory.
+- Content-based glTF JSON vs. glTF-Binary detection (limited to Unity 2021 LTS or newer; resolves [#193](https://github.com/atteneder/glTFast/issues/193)).
 
 ### Changed
+- (Performance) By default glTF and KTX data is not copied to managed memory implicitly when loading glTFs (true for Unity 2021 LTS or newer).
 
 ### Fixed
 
 ### Removed
 
 ### Deprecated
+- [GltfImport.LoadGltfBinary](xref:GLTFast.GltfImportBase.LoadGltfBinary*) (in favor of the generic [GltfImport.Load](xref:GLTFast.GltfImportBase.Load*))
 
 ### Security
 
