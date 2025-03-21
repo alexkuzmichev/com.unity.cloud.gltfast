@@ -9,7 +9,7 @@
    the next version, if there are any breaking changes, bump the major version,
    commit this change.
 1. Update `Packages/com.unity.cloud.gltfast/CHANGELOG.md` and replace `Unreleased`
-   by the version and the release date, commit this change. If you go out
+   by the version and the release date, commit this change. Remove empty sub-sections. If you go out
    of a pre-release version, merge all sections in the x.y.z section.
 1. Update the constant variable `GLTFast.Export.Constants.version`
    (in `Packages/com.unity.cloud.gltfast/Runtime/Scripts/Export/Constants.cs`)
@@ -24,6 +24,13 @@
    [template](./Templates/release-pr-message.md).
 1. Wait for approval and wait for the Yamato job to complete successfully. If
    any issues arise, communicate with the appropriate owners until resolved.
+1. Currently (as of version 6.x) the automatic API validation is muted due to false negatives and has to be manually checked.
+   1. Locate the Yamato Job *API Validation - cloud.gltfast - 2020.3 - windows* and unzip its *logs* artifact.
+   1. Download `ValidationSuiteReports/ApiValidationReport.json` and compare it against `Docs/Release-Process/<A.B.C>-ApiValidationReportReference.json` (where `<A.B.C>` represent the version of the last release that introduced API changes). Ensure no difference goes undetected by using a specialised comparison tool like [TextCompare](https://www.textcompare.org/).
+   1. Make sure no unknown breaking change was added at [JsonPath](https://github.com/json-path/JsonPath) `$.assemblyChanges[*].breakingChanges`
+   1. Additions (new entries at the path `$.assemblyChanges[*].additions`) are tolerated but those imply that this release's minor version number is **required** to be increased. If that does not align with the version number chosen, restart the process with the correct version number.
+   1. Finally, if there's been any difference in the API validation report, save the `ApiValidationReport.json` file as it is needed in [Update the `develop` branch](#update-the-develop-branch) process later on.
+1. Merge `release/X.Y.Z-working` into `release/X.Y.Z`.
 1. Proceed to creating the STAR checklist and generating the QA artifacts.
 
 ## Prepare STAR Checklist
@@ -56,7 +63,7 @@ owners
      `Publish Dry Run cloud.gltfast` job.
    - Once successful, re-execute the steps in this section.
 
-## Update Develop
+## Update the `develop` branch
 
 1. From develop, create another branch called `chore/update-develop`
 1. For this step, we will refer to version `X.Y.W-pre.1` where `W` is one patch
@@ -72,6 +79,9 @@ owners
    (in `Packages/com.unity.cloud.gltfast/Runtime/Scripts/Export/Constants.cs`)
    to `X.Y.W-pre.1`.
 1. Update package version in `.yamato/ValidationExceptions.json` (if any API validation exception is required)
+1. If an API change has been detected during [Prepare Release Branch](#prepare-release-branch) update the API validation report within folder `Docs/Release-Process`:
+   1. Remove the existing report `*-ApiValidationReportReference.json`.
+   1. Move the file `ApiValidationReportReference.json` that you kept before into said folder and prefix it with the new version followed by a `-` (`X.Y.Z-ApiValidationReportReference.json`).
 1. Open a PR and, once reviewed, merge it into develop and delete the working
    branch
 

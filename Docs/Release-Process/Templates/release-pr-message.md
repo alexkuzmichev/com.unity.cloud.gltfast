@@ -4,7 +4,7 @@
 > Replace the `{{ }}` tags from the template below with relevant values.
 
 ```text
-@asset-ecosystem-shiproom-stakeholders :arrow-right: The end of sprint PR for glTFast has been created and is available here: {{PR LINK}}
+@asset-ecosystem-shiproom-stakeholders :arrow-right: The end of sprint PR for :gltf: glTFast has been created and is available here: {{PR LINK}}
 
 All leads please review your packages along with the PRs and raise any issues.
 @gltfast-owners
