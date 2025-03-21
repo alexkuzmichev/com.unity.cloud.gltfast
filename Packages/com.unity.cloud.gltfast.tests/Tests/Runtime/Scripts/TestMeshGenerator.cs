@@ -5,6 +5,7 @@ using System;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Assertions;
+using UnityEngine.Rendering;
 
 namespace GLTFast.Tests
 {
@@ -67,6 +68,91 @@ namespace GLTFast.Tests
             m.normals = normals;
             m.uv = uv;
             m.triangles = indices;
+
+            m.RecalculateTangents();
+            m.RecalculateBounds();
+
+            return m;
+        }
+
+        internal static Mesh GenerateSubMeshCube(IndexFormat indexFormat = IndexFormat.UInt16)
+        {
+            const float lengthHalf = .5f;
+            const MeshTopology topology = MeshTopology.Quads;
+            var quads = topology == MeshTopology.Quads;
+
+            var m = new Mesh
+            {
+                name = "Cube"
+            };
+
+            var indicesPerFace = quads ? 4 : 6;
+            var positions = new Vector3[24];
+            var normals = new Vector3[24];
+            var uv = new Vector2[24];
+
+            for (var i = 0; i < 8; i++)
+            {
+                var a = (i & 0b100) == 0;
+                var b = (i & 0b10) == 0;
+                var c = ((i + 1) & 0b10) == 0;
+
+                positions[i] = new Vector3(
+                    a ? -lengthHalf : lengthHalf,
+                    b ? lengthHalf : -lengthHalf,
+                    c ? lengthHalf : -lengthHalf
+                    );
+                normals[i] = a ? Vector3.left : Vector3.right;
+                uv[i] = new Vector2(
+                    a ^ c ? 1 : 0,
+                    b ? 0 : 1
+                );
+
+                positions[i + 8] = new Vector3(
+                    b ? lengthHalf : -lengthHalf,
+                    c ? lengthHalf : -lengthHalf,
+                    a ? -lengthHalf : lengthHalf
+                );
+                normals[i + 8] = a ? Vector3.back : Vector3.forward;
+                uv[i + 8] = new Vector2(
+                    a ^ b ? 0 : 1,
+                    c ? 0 : 1
+                );
+
+                positions[i + 16] = new Vector3(
+                    b ? lengthHalf : -lengthHalf,
+                    a ? lengthHalf : -lengthHalf,
+                    c ? lengthHalf : -lengthHalf
+                );
+                normals[i + 16] = a ? Vector3.up : Vector3.down;
+                uv[i + 16] = new Vector2(
+                    a ^ b ? 0 : 1,
+                    c ? 0 : 1
+                );
+            }
+
+            // Assign arrays to mesh
+            m.indexFormat = indexFormat;
+            m.vertices = positions;
+            m.normals = normals;
+            m.uv = uv;
+            m.subMeshCount = 6;
+            for (var i = 0; i < m.subMeshCount; i++)
+            {
+                m.SetIndices(
+                    i % 2 == 0 ? new[] { 0, 1, 2, 3 } : new[] { 0, 3, 2, 1 },
+                    MeshTopology.Quads, i);
+                var subMesh = new SubMeshDescriptor
+                {
+                    indexStart = indicesPerFace * i,
+                    indexCount = indicesPerFace,
+                    topology = topology,
+                    baseVertex = indicesPerFace * i,
+                    firstVertex = indicesPerFace * i,
+                    vertexCount = indicesPerFace
+                };
+                m.SetSubMesh(i, subMesh);
+            }
 
             m.RecalculateTangents();
             m.RecalculateBounds();

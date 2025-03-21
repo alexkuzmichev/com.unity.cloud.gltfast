@@ -12,7 +12,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 ### Fixed
-- `InvalidOperationException` on multi-primitive meshes with vertex colors thrown by the native container safety system (fixes [#30](https://github.com/Unity-Technologies/com.unity.cloud.gltfast/issues/30)).
+- (Import)`InvalidOperationException` on multi-primitive meshes with vertex colors thrown by the native container safety system (fixes [#30](https://github.com/Unity-Technologies/com.unity.cloud.gltfast/issues/30)).
+- (Export) Sub-meshes that have a base vertex other than zero are exported with correct indices now.
 
 ### Removed
 

@@ -8,6 +8,7 @@ using GLTFast.Export;
 using GLTFast.Logging;
 using NUnit.Framework;
 using UnityEngine;
+using UnityEngine.Rendering;
 using UnityEngine.TestTools;
 
 namespace GLTFast.Tests.Export
@@ -114,6 +115,26 @@ namespace GLTFast.Tests.Export
 #endif
         }
 
+        [UnityTest]
+        public IEnumerator MeshCubeQuadsSubMeshUInt16()
+        {
+            var logger = new CollectingLogger();
+
+            yield return AsyncWrapper.WaitForTask(
+                MeshCubeQuadsSubMesh(IndexFormat.UInt16, logger)
+            );
+        }
+
+        [UnityTest]
+        public IEnumerator MeshCubeQuadsSubMeshUInt32()
+        {
+            var logger = new CollectingLogger();
+
+            yield return AsyncWrapper.WaitForTask(
+                MeshCubeQuadsSubMesh(IndexFormat.UInt32, logger)
+            );
+        }
+
         static async Task DracoUncompressedFallback(ICodeLogger logger)
         {
             var writer = new GltfWriter(
@@ -164,6 +185,24 @@ namespace GLTFast.Tests.Export
                 }
                 );
             Object.Destroy(tmpGameObject);
+        }
+
+        static async Task MeshCubeQuadsSubMesh(IndexFormat indexFormat, ICodeLogger logger)
+        {
+            var writer = new GltfWriter(logger: logger);
+            var node = writer.AddNode();
+            var materials = new int[6];
+            var materialExport = MaterialExport.GetDefaultMaterialExport();
+            var shader = Shader.Find("Standard");
+            writer.AddMaterial(new Material(shader) { color = Color.red }, out materials[0], materialExport);
+            writer.AddMaterial(new Material(shader) { color = Color.green }, out materials[1], materialExport);
+            writer.AddMaterial(new Material(shader) { color = Color.blue }, out materials[2], materialExport);
+            writer.AddMaterial(new Material(shader) { color = Color.yellow }, out materials[3], materialExport);
+            writer.AddMaterial(new Material(shader) { color = Color.magenta }, out materials[4], materialExport);
+            writer.AddMaterial(new Material(shader) { color = Color.cyan }, out materials[5], materialExport);
+            writer.AddMeshToNode((int)node, TestMeshGenerator.GenerateSubMeshCube(indexFormat), materials, null);
+            writer.AddScene(new uint[] { node }, "CubeScene");
+            await writer.SaveToFileAndDispose(Path.Combine(Application.persistentDataPath, $"MeshCubeQuadsSubMesh-{indexFormat}.gltf"));
         }
     }
 }
