@@ -1,0 +1,27 @@
+{
+    "name": "glTFast.Tests.Animation",
+    "rootNamespace": "",
+    "references": [
+        "GUID:7897e000c47a54a4c8a8a7345af3c565",
+        "GUID:6f659d78ae11d7743846a9526105dbbe",
+        "GUID:27619889b8ba8c24980f49ee34dbb44a"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [
+        "UNITY_INCLUDE_TESTS",
+        "UNITY_ANIMATION"
+    ],
+    "versionDefines": [
+        {
+            "name": "com.unity.modules.animation",
+            "expression": "",
+            "define": "UNITY_ANIMATION"
+        }
+    ],
+    "noEngineReferences": false
+}

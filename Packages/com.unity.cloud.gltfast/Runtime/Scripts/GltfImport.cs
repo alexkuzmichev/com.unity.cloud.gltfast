@@ -2876,6 +2876,11 @@ namespace GLTFast
 
             instantiator.BeginScene(scene.name, scene.nodes);
 #if UNITY_ANIMATION
+            // TODO: this should be removed in favor of a cleaner way to access ImportSettings in the instantiator
+            // only available internally for now to avoid breaking changes
+            if (instantiator is GameObjectInstantiator gameObjectInstantiator)
+                gameObjectInstantiator.ImportSettings = m_Settings;
+            
             instantiator.AddAnimation(m_AnimationClips);
 #endif
 
