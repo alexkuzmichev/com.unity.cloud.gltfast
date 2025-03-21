@@ -2880,7 +2880,7 @@ namespace GLTFast
             // only available internally for now to avoid breaking changes
             if (instantiator is GameObjectInstantiator gameObjectInstantiator)
                 gameObjectInstantiator.ImportSettings = m_Settings;
-            
+
             instantiator.AddAnimation(m_AnimationClips);
 #endif
 

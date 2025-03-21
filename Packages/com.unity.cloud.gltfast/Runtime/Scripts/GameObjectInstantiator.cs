@@ -184,10 +184,10 @@ namespace GLTFast
                     {
                         var animationPlayableComponent = SceneTransform.gameObject.AddComponent<AnimationPlayableComponent>();
                         animationPlayableComponent.Init(animationClips, false);
-                        
+
                         // this is always null for Editor imports
                         // Playables currently not supported in Editor workflow
-                        if (animationPlayableComponent.Playable.HasValue) 
+                        if (animationPlayableComponent.Playable.HasValue)
                             SceneInstance.Playable = animationPlayableComponent.Playable.Value;
                     }
                 }

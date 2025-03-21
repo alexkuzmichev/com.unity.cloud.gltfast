@@ -37,7 +37,7 @@ namespace GLTFast
         /// Only available if the built-in Animation module is enabled.
         /// </summary>
         public Animation LegacyAnimation { get; private set; }
-        
+
         /// <summary>
         /// <see cref="Playable" /> instance. Is null if scene has no
         /// Playables animation clips.
