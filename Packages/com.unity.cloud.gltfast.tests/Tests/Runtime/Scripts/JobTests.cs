@@ -999,7 +999,7 @@ namespace GLTFast.Tests.Jobs
             {
                 input = (byte*)m_ColorInput.GetUnsafeReadOnlyPtr(),
                 inputByteStride = 12,
-                result = (float4*)m_ColorOutput.GetUnsafePtr()
+                result = m_ColorOutput
             };
             job.Run(m_ColorOutput.Length);
             CheckResultRGB();
@@ -1038,7 +1038,7 @@ namespace GLTFast.Tests.Jobs
             {
                 input = (ushort*)m_InputUInt16.GetUnsafeReadOnlyPtr(),
                 inputByteStride = 8,
-                result = (float4*)m_ColorOutput.GetUnsafePtr()
+                result = m_ColorOutput
             };
 #if UNITY_COLLECTIONS
             job.RunBatch(m_ColorOutput.Length);
@@ -1055,7 +1055,7 @@ namespace GLTFast.Tests.Jobs
             {
                 input = (byte*)m_ColorInput.GetUnsafeReadOnlyPtr(),
                 inputByteStride = 16,
-                result = (float4*)m_ColorOutput.GetUnsafePtr()
+                result = m_ColorOutput
             };
 #if UNITY_COLLECTIONS
             job.RunBatch(m_ColorOutput.Length);
@@ -1412,7 +1412,7 @@ namespace GLTFast.Tests.Jobs
         }
 
         [Test]
-        public unsafe void CreateIndicesForTriangleStripJob()
+        public void CreateIndicesForTriangleStripJob()
         {
             Assert.IsTrue(m_IndexOutput.Length > 3);
             var job = new GLTFast.Jobs.CreateIndicesForTriangleStripJob

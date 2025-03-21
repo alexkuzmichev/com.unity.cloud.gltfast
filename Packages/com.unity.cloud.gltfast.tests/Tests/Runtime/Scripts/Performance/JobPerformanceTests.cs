@@ -969,7 +969,7 @@ namespace GLTFast.Tests.Performance.Jobs
             {
                 input = (byte*)m_ColorInput.GetUnsafeReadOnlyPtr(),
                 inputByteStride = 12,
-                result = (float4*)m_ColorOutput.GetUnsafePtr()
+                result = m_ColorOutput
             };
             Measure.Method(() => job.Run(m_ColorOutput.Length))
                 .WarmupCount(1)
@@ -1023,7 +1023,7 @@ namespace GLTFast.Tests.Performance.Jobs
             {
                 input = (ushort*)m_InputUInt16.GetUnsafeReadOnlyPtr(),
                 inputByteStride = 8,
-                result = (float4*)m_ColorOutput.GetUnsafePtr()
+                result = m_ColorOutput
             };
             Measure.Method(() =>
 #if UNITY_COLLECTIONS
@@ -1047,7 +1047,7 @@ namespace GLTFast.Tests.Performance.Jobs
             {
                 input = (byte*)m_ColorInput.GetUnsafeReadOnlyPtr(),
                 inputByteStride = 16,
-                result = (float4*)m_ColorOutput.GetUnsafePtr()
+                result = m_ColorOutput
             };
             Measure.Method(() =>
 #if UNITY_COLLECTIONS
