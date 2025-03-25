@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - [Playables](https://docs.unity3d.com/Manual/Playables.html) option for runtime animation imports.
+- Support for accessors without a buffer view when importing animation clips.
 
 ### Changed
 
