@@ -490,7 +490,9 @@ namespace GLTFast
 #endif
             var fs = new FileStream(localPath, FileMode.Open, FileAccess.Read);
             var result = await LoadStream(fs, uri, importSettings, cancellationToken);
+#if !UNITY_2021_3_OR_NEWER || !NET_STANDARD_2_1
             fs.Dispose();
+#endif
             return result;
         }
 

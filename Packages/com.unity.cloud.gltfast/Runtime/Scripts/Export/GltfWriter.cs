@@ -560,8 +560,8 @@ namespace GLTFast.Export
             const uint chunkOverhead = 8; // 4 bytes chunk length + 4 bytes chunk type (uint each)
             if (isBinary)
             {
-                outStream.Write(BitConverter.GetBytes(GltfGlobals.GltfBinaryMagic));
-                outStream.Write(BitConverter.GetBytes((uint)2));
+                await WriteBytesToStream(outStream, BitConverter.GetBytes(GltfGlobals.GltfBinaryMagic));
+                await WriteBytesToStream(outStream, BitConverter.GetBytes((uint)2));
 
                 MemoryStream jsonStream = null;
                 uint jsonLength;
@@ -602,10 +602,10 @@ namespace GLTFast.Export
                     outStream.Seek(8, SeekOrigin.Begin);
                 }
 
-                outStream.Write(BitConverter.GetBytes(totalLength));
+                await WriteBytesToStream(outStream, BitConverter.GetBytes(totalLength));
 
-                outStream.Write(BitConverter.GetBytes((uint)(jsonLength + jsonPad)));
-                outStream.Write(BitConverter.GetBytes((uint)ChunkFormat.Json));
+                await WriteBytesToStream(outStream, BitConverter.GetBytes((uint)(jsonLength + jsonPad)));
+                await WriteBytesToStream(outStream, BitConverter.GetBytes((uint)ChunkFormat.Json));
 
                 if (outStreamCanSeek)
                 {
@@ -624,8 +624,8 @@ namespace GLTFast.Export
 
                 if (hasBufferContent)
                 {
-                    outStream.Write(BitConverter.GetBytes((uint)(m_BufferStream.Length + binPad)));
-                    outStream.Write(BitConverter.GetBytes((uint)ChunkFormat.Binary));
+                    await WriteBytesToStream(outStream, BitConverter.GetBytes((uint)(m_BufferStream.Length + binPad)));
+                    await WriteBytesToStream(outStream, BitConverter.GetBytes((uint)ChunkFormat.Binary));
                     var ms = (MemoryStream)m_BufferStream;
                     ms.WriteTo(outStream);
 #if UNITY_WEBGL && !UNITY_EDITOR
@@ -653,6 +653,20 @@ namespace GLTFast.Export
 
             Dispose();
             return true;
+        }
+
+        static
+#if UNITY_2021_3_OR_NEWER
+            async
+#endif
+            Task WriteBytesToStream(Stream outStream, byte[] bytes)
+        {
+#if UNITY_2021_3_OR_NEWER
+            await outStream.WriteAsync(bytes);
+#else
+            outStream.Write(bytes);
+            return Task.CompletedTask;
+#endif
         }
 
         async Task WriteJsonToStream(Stream outStream)
