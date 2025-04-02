@@ -1,12 +1,16 @@
 {
     "missingAssemblies": [],
-    "newAssemblies": [],
+    "newAssemblies": [
+        "glTFast.Animation"
+    ],
     "assemblyChanges": [
         {
             "assemblyName": "glTFast",
             "additions": [
+                "MemberAdded ( -> GLTFast.AnimationMethod GLTFast.AnimationMethod::Playables)",
                 "MemberAdded ( -> System.Void GLTFast.GameObjectInstantiator::AddAnimation(UnityEngine.AnimationClip[]))",
                 "MemberAdded ( -> UnityEngine.Animation GLTFast.GameObjectSceneInstance::LegacyAnimation())",
+                "MemberAdded ( -> System.Nullable`1<UnityEngine.Playables.Playable> GLTFast.GameObjectSceneInstance::Playable())",
                 "MemberAdded ( -> UnityEngine.AnimationClip[] GLTFast.GltfImportBase::GetAnimationClips())",
                 "MemberAdded ( -> System.Void GLTFast.IInstantiator::AddAnimation(UnityEngine.AnimationClip[]))",
                 "MemberAdded ( -> System.Collections.Generic.IReadOnlyList`1<GLTFast.Schema.AnimationChannelBase> GLTFast.Schema.AnimationBase::Channels())",
@@ -77,6 +81,6 @@
         }
     ],
     "breakingChanges": 2,
-    "additions": 58,
+    "additions": 60,
     "removedAssemblyCount": 0
 }
