@@ -60,6 +60,11 @@ MonoBehaviour:
     expectInstantiationFail: 0
     expectedLogCodes: 
     requiredExtensions: 
+  - relativeUri: NodeLevelMorphTargetWeights/NodeLevelMorphTargetWeights.gltf
+    expectLoadFail: 0
+    expectInstantiationFail: 0
+    expectedLogCodes: 
+    requiredExtensions: 
   - relativeUri: OnlyAccessors/OnlyAccessors.gltf
     expectLoadFail: 0
     expectInstantiationFail: 0
