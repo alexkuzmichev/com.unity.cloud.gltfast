@@ -11,13 +11,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 ### Fixed
-- Incorrect using for Assert from NUnit.Framework to UnityEngine.Assertions
 
 ### Removed
 
 ### Deprecated
 
 ### Security
+
+## [6.12.1] - 2025-04-08
+
+### Fixed
+- Incorrect using for Assert from NUnit.Framework to UnityEngine.Assertions
 
 ## [6.12.0] - 2025-03-31
 
