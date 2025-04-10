@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 ### Fixed
+- Use XYZ-style normals in shaders even if DXT5nm-style is enabled.
 
 ### Removed
 
