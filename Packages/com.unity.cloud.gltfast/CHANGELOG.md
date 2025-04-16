@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Use XYZ-style normals in shaders even if DXT5nm-style is enabled.
 - (Import) When a node has morph target weights, they are applied properly (instead of the primitive's weights; fixes [#531](https://github.com/atteneder/glTFast/issues/531)).
+- Default Material from [MaterialGenerator](xref:GLTFast.Materials.MaterialGenerator*) cached in [GltfImport](xref:GLTFast.GltfImport*) not always being created on the main thread.
 
 ### Removed
 

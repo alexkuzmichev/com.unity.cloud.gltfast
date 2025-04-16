@@ -109,43 +109,49 @@ namespace GLTFast.Tests.Import
             yield return AsyncWrapper.WaitForTask(RunTestCase(testCaseSet, testCase));
         }
 
-        static async Task RunTestCase(GltfTestCaseSet testCaseSet, GltfTestCase testCase)
+        internal static async Task RunTestCase(GltfTestCaseSet testCaseSet, GltfTestCase testCase)
         {
-            AssertRequiredExtensions(testCase.requiredExtensions);
             var go = new GameObject();
-            var deferAgent = new UninterruptedDeferAgent();
-            var loadLogger = new CollectingLogger();
-            var path = Path.Combine(testCaseSet.RootPath, testCase.relativeUri);
-            Debug.Log($"Loading {testCase} from {path}");
-
-            using var gltf = new GltfImport(deferAgent: deferAgent, logger: loadLogger);
-            var success = await gltf.Load(path);
-            if (success ^ !testCase.expectLoadFail)
+            try
             {
-                AssertLoggers(new[] { loadLogger }, testCase);
-                if (success)
+                AssertRequiredExtensions(testCase.requiredExtensions);
+                var deferAgent = new UninterruptedDeferAgent();
+                var loadLogger = new CollectingLogger();
+                var path = Path.Combine(testCaseSet.RootPath, testCase.relativeUri);
+                Debug.Log($"Loading {testCase} from {path}");
+
+                using var gltf = new GltfImport(deferAgent: deferAgent, logger: loadLogger);
+                var success = await gltf.Load(path);
+                if (success ^ !testCase.expectLoadFail)
                 {
-                    throw new AssertionException("glTF import unexpectedly succeeded!");
+                    AssertLoggers(new[] { loadLogger }, testCase);
+                    if (success)
+                    {
+                        throw new AssertionException("glTF import unexpectedly succeeded!");
+                    }
+
+                    throw new AssertionException("glTF import failed!");
                 }
 
-                throw new AssertionException("glTF import failed!");
+                if (!success)
+                {
+                    AssertLoggers(new[] { loadLogger }, testCase);
+                    return;
+                }
+                var instantiateLogger = new CollectingLogger();
+                var instantiator = CreateInstantiator(gltf, instantiateLogger, go.transform);
+                success = await gltf.InstantiateMainSceneAsync(instantiator);
+                if (!success)
+                {
+                    instantiateLogger.LogAll();
+                    throw new AssertionException("glTF instantiation failed");
+                }
+                AssertLoggers(new[] { loadLogger, instantiateLogger }, testCase);
             }
-
-            if (!success)
+            finally
             {
-                AssertLoggers(new[] { loadLogger }, testCase);
-                return;
+                Object.Destroy(go);
             }
-            var instantiateLogger = new CollectingLogger();
-            var instantiator = CreateInstantiator(gltf, instantiateLogger, go.transform);
-            success = await gltf.InstantiateMainSceneAsync(instantiator);
-            if (!success)
-            {
-                instantiateLogger.LogAll();
-                throw new AssertionException("glTF instantiation failed");
-            }
-            Object.Destroy(go);
-            AssertLoggers(new[] { loadLogger, instantiateLogger }, testCase);
         }
 
         internal static void AssertLoggers(IEnumerable<CollectingLogger> loggers, GltfTestCase testCase)
