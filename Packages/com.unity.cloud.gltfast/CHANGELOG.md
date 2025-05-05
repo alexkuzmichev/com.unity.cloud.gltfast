@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Use XYZ-style normals in shaders even if DXT5nm-style is enabled.
 - (Import) When a node has morph target weights, they are applied properly (instead of the primitive's weights; fixes [#531](https://github.com/atteneder/glTFast/issues/531)).
 - Default Material from [MaterialGenerator](xref:GLTFast.Materials.MaterialGenerator*) cached in [GltfImport](xref:GLTFast.GltfImport*) not always being created on the main thread.
+- (Import) Specular-Glossiness materials with alpha mode `MASK` are not blended anymore in URP/HDRP (fixes [#757](https://github.com/atteneder/glTFast/issues/757)).
 
 ### Removed
 
