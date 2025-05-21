@@ -320,13 +320,6 @@ namespace GLTFast
 
             Logger = logger;
 
-            // must get default generator here, since if we want it later it's not guaranteed to be done on the main thread
-#if UNITY_EDITOR
-            m_MaterialGenerator.SetLogger(Logger);
-            defaultMaterial = m_MaterialGenerator.GetDefaultMaterial(m_DefaultMaterialPointsSupport);
-            m_MaterialGenerator.SetLogger(null);
-#endif
-
             ImportAddonRegistry.InjectAllAddons(this);
         }
 
@@ -870,6 +863,11 @@ namespace GLTFast
         public UnityEngine.Material GetDefaultMaterial()
         {
 #if UNITY_EDITOR
+            if (defaultMaterial == null) {
+                m_MaterialGenerator.SetLogger(Logger);
+                defaultMaterial = m_MaterialGenerator.GetDefaultMaterial(m_DefaultMaterialPointsSupport);
+                m_MaterialGenerator.SetLogger(null);
+            }
             return defaultMaterial;
 #else
             m_MaterialGenerator.SetLogger(Logger);
