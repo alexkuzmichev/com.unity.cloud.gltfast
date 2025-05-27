@@ -9,11 +9,11 @@ validate_-_cloud_gltfast_-_2020_3_-_macos:
     type: Unity::VM::osx
     flavor: b1.xlarge
   commands:
-  - command: curl https://artifactory.prd.it.unity3d.com/artifactory/stevedore-unity-internal/wrench-localapv/1-2-61_6af0746012fdbe27c8d9841fcad8f97465d1943826d6884e6aabf0d289b83093.zip -o wrench-localapv.zip
+  - command: curl https://artifactory.prd.it.unity3d.com/artifactory/stevedore-unity-internal/wrench-localapv/1-2-68_53c92d3b34ce3f4b652c9785dd1530bdc5885f6523465d6969c3be91f9ccaaf1.zip -o wrench-localapv.zip
   - command: 7z x -aoa wrench-localapv.zip
   - command: pip install semver requests --index-url https://artifactory-slo.bf.unity3d.com/artifactory/api/pypi/pypi/simple
   - command: python PythonScripts/print_machine_info.py
-  - command: unity-downloader-cli -u 2020.3 -c Editor --fast
+  - command: unity-downloader-cli -u 2020.3/staging -c Editor --fast
     timeout: 10
     retries: 3
   - command: upm-pvp create-test-project test-cloud.gltfast --packages "upm-ci~/packages/*.tgz" --unity .Editor
@@ -62,10 +62,10 @@ validate_-_cloud_gltfast_-_2020_3_-_macos:
   - path: .yamato/wrench/package-pack-jobs.yml#package_pack_-_cloud_gltfast
   variables:
     UPMPVP_ACK_UPMPVP_DOES_NO_API_VALIDATION: 1
-    UPMPVP_CONTEXT_WRENCH: 0.10.48.0
+    UPMPVP_CONTEXT_WRENCH: 0.10.50.0
   metadata:
     Job Maintainers: '#rm-packageworks'
-    Wrench: 0.10.48.0
+    Wrench: 0.10.50.0
   labels:
   - Packages:cloud.gltfast
 
@@ -77,11 +77,11 @@ validate_-_cloud_gltfast_-_2020_3_-_ubuntu:
     type: Unity::VM
     flavor: b1.large
   commands:
-  - command: curl https://artifactory.prd.it.unity3d.com/artifactory/stevedore-unity-internal/wrench-localapv/1-2-61_6af0746012fdbe27c8d9841fcad8f97465d1943826d6884e6aabf0d289b83093.zip -o wrench-localapv.zip
+  - command: curl https://artifactory.prd.it.unity3d.com/artifactory/stevedore-unity-internal/wrench-localapv/1-2-68_53c92d3b34ce3f4b652c9785dd1530bdc5885f6523465d6969c3be91f9ccaaf1.zip -o wrench-localapv.zip
   - command: 7z x -aoa wrench-localapv.zip
   - command: pip install semver requests --index-url https://artifactory-slo.bf.unity3d.com/artifactory/api/pypi/pypi/simple
   - command: python PythonScripts/print_machine_info.py
-  - command: unity-downloader-cli -u 2020.3 -c Editor --fast
+  - command: unity-downloader-cli -u 2020.3/staging -c Editor --fast
     timeout: 10
     retries: 3
   - command: upm-pvp create-test-project test-cloud.gltfast --packages "upm-ci~/packages/*.tgz" --unity .Editor
@@ -130,10 +130,10 @@ validate_-_cloud_gltfast_-_2020_3_-_ubuntu:
   - path: .yamato/wrench/package-pack-jobs.yml#package_pack_-_cloud_gltfast
   variables:
     UPMPVP_ACK_UPMPVP_DOES_NO_API_VALIDATION: 1
-    UPMPVP_CONTEXT_WRENCH: 0.10.48.0
+    UPMPVP_CONTEXT_WRENCH: 0.10.50.0
   metadata:
     Job Maintainers: '#rm-packageworks'
-    Wrench: 0.10.48.0
+    Wrench: 0.10.50.0
   labels:
   - Packages:cloud.gltfast
 
@@ -145,11 +145,11 @@ validate_-_cloud_gltfast_-_2020_3_-_windows:
     type: Unity::VM
     flavor: b1.large
   commands:
-  - command: curl https://artifactory.prd.it.unity3d.com/artifactory/stevedore-unity-internal/wrench-localapv/1-2-61_6af0746012fdbe27c8d9841fcad8f97465d1943826d6884e6aabf0d289b83093.zip -o wrench-localapv.zip
+  - command: curl https://artifactory.prd.it.unity3d.com/artifactory/stevedore-unity-internal/wrench-localapv/1-2-68_53c92d3b34ce3f4b652c9785dd1530bdc5885f6523465d6969c3be91f9ccaaf1.zip -o wrench-localapv.zip
   - command: 7z x -aoa wrench-localapv.zip
   - command: pip install semver requests --index-url https://artifactory-slo.bf.unity3d.com/artifactory/api/pypi/pypi/simple
   - command: python PythonScripts/print_machine_info.py
-  - command: unity-downloader-cli -u 2020.3 -c Editor --fast
+  - command: unity-downloader-cli -u 2020.3/staging -c Editor --fast
     timeout: 10
     retries: 3
   - command: upm-pvp create-test-project test-cloud.gltfast --packages "upm-ci~/packages/*.tgz" --unity .Editor
@@ -198,10 +198,10 @@ validate_-_cloud_gltfast_-_2020_3_-_windows:
   - path: .yamato/wrench/package-pack-jobs.yml#package_pack_-_cloud_gltfast
   variables:
     UPMPVP_ACK_UPMPVP_DOES_NO_API_VALIDATION: 1
-    UPMPVP_CONTEXT_WRENCH: 0.10.48.0
+    UPMPVP_CONTEXT_WRENCH: 0.10.50.0
   metadata:
     Job Maintainers: '#rm-packageworks'
-    Wrench: 0.10.48.0
+    Wrench: 0.10.50.0
   labels:
   - Packages:cloud.gltfast
 
@@ -213,7 +213,7 @@ validate_-_cloud_gltfast_-_2020_3_48f1_-_windows:
     type: Unity::VM
     flavor: b1.large
   commands:
-  - command: curl https://artifactory.prd.it.unity3d.com/artifactory/stevedore-unity-internal/wrench-localapv/1-2-61_6af0746012fdbe27c8d9841fcad8f97465d1943826d6884e6aabf0d289b83093.zip -o wrench-localapv.zip
+  - command: curl https://artifactory.prd.it.unity3d.com/artifactory/stevedore-unity-internal/wrench-localapv/1-2-68_53c92d3b34ce3f4b652c9785dd1530bdc5885f6523465d6969c3be91f9ccaaf1.zip -o wrench-localapv.zip
   - command: 7z x -aoa wrench-localapv.zip
   - command: pip install semver requests --index-url https://artifactory-slo.bf.unity3d.com/artifactory/api/pypi/pypi/simple
   - command: python PythonScripts/print_machine_info.py
@@ -266,10 +266,10 @@ validate_-_cloud_gltfast_-_2020_3_48f1_-_windows:
   - path: .yamato/wrench/package-pack-jobs.yml#package_pack_-_cloud_gltfast
   variables:
     UPMPVP_ACK_UPMPVP_DOES_NO_API_VALIDATION: 1
-    UPMPVP_CONTEXT_WRENCH: 0.10.48.0
+    UPMPVP_CONTEXT_WRENCH: 0.10.50.0
   metadata:
     Job Maintainers: '#rm-packageworks'
-    Wrench: 0.10.48.0
+    Wrench: 0.10.50.0
   labels:
   - Packages:cloud.gltfast
 
@@ -281,11 +281,11 @@ validate_-_cloud_gltfast_-_2021_3_-_macos:
     type: Unity::VM::osx
     flavor: b1.xlarge
   commands:
-  - command: curl https://artifactory.prd.it.unity3d.com/artifactory/stevedore-unity-internal/wrench-localapv/1-2-61_6af0746012fdbe27c8d9841fcad8f97465d1943826d6884e6aabf0d289b83093.zip -o wrench-localapv.zip
+  - command: curl https://artifactory.prd.it.unity3d.com/artifactory/stevedore-unity-internal/wrench-localapv/1-2-68_53c92d3b34ce3f4b652c9785dd1530bdc5885f6523465d6969c3be91f9ccaaf1.zip -o wrench-localapv.zip
   - command: 7z x -aoa wrench-localapv.zip
   - command: pip install semver requests --index-url https://artifactory-slo.bf.unity3d.com/artifactory/api/pypi/pypi/simple
   - command: python PythonScripts/print_machine_info.py
-  - command: unity-downloader-cli -u 2021.3 -c Editor --fast
+  - command: unity-downloader-cli -u 2021.3/staging -c Editor --fast
     timeout: 10
     retries: 3
   - command: upm-pvp create-test-project test-cloud.gltfast --packages "upm-ci~/packages/*.tgz" --unity .Editor
@@ -334,10 +334,10 @@ validate_-_cloud_gltfast_-_2021_3_-_macos:
   - path: .yamato/wrench/package-pack-jobs.yml#package_pack_-_cloud_gltfast
   variables:
     UPMPVP_ACK_UPMPVP_DOES_NO_API_VALIDATION: 1
-    UPMPVP_CONTEXT_WRENCH: 0.10.48.0
+    UPMPVP_CONTEXT_WRENCH: 0.10.50.0
   metadata:
     Job Maintainers: '#rm-packageworks'
-    Wrench: 0.10.48.0
+    Wrench: 0.10.50.0
   labels:
   - Packages:cloud.gltfast
 
@@ -349,11 +349,11 @@ validate_-_cloud_gltfast_-_2021_3_-_ubuntu:
     type: Unity::VM
     flavor: b1.large
   commands:
-  - command: curl https://artifactory.prd.it.unity3d.com/artifactory/stevedore-unity-internal/wrench-localapv/1-2-61_6af0746012fdbe27c8d9841fcad8f97465d1943826d6884e6aabf0d289b83093.zip -o wrench-localapv.zip
+  - command: curl https://artifactory.prd.it.unity3d.com/artifactory/stevedore-unity-internal/wrench-localapv/1-2-68_53c92d3b34ce3f4b652c9785dd1530bdc5885f6523465d6969c3be91f9ccaaf1.zip -o wrench-localapv.zip
   - command: 7z x -aoa wrench-localapv.zip
   - command: pip install semver requests --index-url https://artifactory-slo.bf.unity3d.com/artifactory/api/pypi/pypi/simple
   - command: python PythonScripts/print_machine_info.py
-  - command: unity-downloader-cli -u 2021.3 -c Editor --fast
+  - command: unity-downloader-cli -u 2021.3/staging -c Editor --fast
     timeout: 10
     retries: 3
   - command: upm-pvp create-test-project test-cloud.gltfast --packages "upm-ci~/packages/*.tgz" --unity .Editor
@@ -402,10 +402,10 @@ validate_-_cloud_gltfast_-_2021_3_-_ubuntu:
   - path: .yamato/wrench/package-pack-jobs.yml#package_pack_-_cloud_gltfast
   variables:
     UPMPVP_ACK_UPMPVP_DOES_NO_API_VALIDATION: 1
-    UPMPVP_CONTEXT_WRENCH: 0.10.48.0
+    UPMPVP_CONTEXT_WRENCH: 0.10.50.0
   metadata:
     Job Maintainers: '#rm-packageworks'
-    Wrench: 0.10.48.0
+    Wrench: 0.10.50.0
   labels:
   - Packages:cloud.gltfast
 
@@ -417,11 +417,11 @@ validate_-_cloud_gltfast_-_2021_3_-_windows:
     type: Unity::VM
     flavor: b1.large
   commands:
-  - command: curl https://artifactory.prd.it.unity3d.com/artifactory/stevedore-unity-internal/wrench-localapv/1-2-61_6af0746012fdbe27c8d9841fcad8f97465d1943826d6884e6aabf0d289b83093.zip -o wrench-localapv.zip
+  - command: curl https://artifactory.prd.it.unity3d.com/artifactory/stevedore-unity-internal/wrench-localapv/1-2-68_53c92d3b34ce3f4b652c9785dd1530bdc5885f6523465d6969c3be91f9ccaaf1.zip -o wrench-localapv.zip
   - command: 7z x -aoa wrench-localapv.zip
   - command: pip install semver requests --index-url https://artifactory-slo.bf.unity3d.com/artifactory/api/pypi/pypi/simple
   - command: python PythonScripts/print_machine_info.py
-  - command: unity-downloader-cli -u 2021.3 -c Editor --fast
+  - command: unity-downloader-cli -u 2021.3/staging -c Editor --fast
     timeout: 10
     retries: 3
   - command: upm-pvp create-test-project test-cloud.gltfast --packages "upm-ci~/packages/*.tgz" --unity .Editor
@@ -470,10 +470,10 @@ validate_-_cloud_gltfast_-_2021_3_-_windows:
   - path: .yamato/wrench/package-pack-jobs.yml#package_pack_-_cloud_gltfast
   variables:
     UPMPVP_ACK_UPMPVP_DOES_NO_API_VALIDATION: 1
-    UPMPVP_CONTEXT_WRENCH: 0.10.48.0
+    UPMPVP_CONTEXT_WRENCH: 0.10.50.0
   metadata:
     Job Maintainers: '#rm-packageworks'
-    Wrench: 0.10.48.0
+    Wrench: 0.10.50.0
   labels:
   - Packages:cloud.gltfast
 
@@ -485,11 +485,11 @@ validate_-_cloud_gltfast_-_2022_3_-_macos:
     type: Unity::VM::osx
     flavor: b1.xlarge
   commands:
-  - command: curl https://artifactory.prd.it.unity3d.com/artifactory/stevedore-unity-internal/wrench-localapv/1-2-61_6af0746012fdbe27c8d9841fcad8f97465d1943826d6884e6aabf0d289b83093.zip -o wrench-localapv.zip
+  - command: curl https://artifactory.prd.it.unity3d.com/artifactory/stevedore-unity-internal/wrench-localapv/1-2-68_53c92d3b34ce3f4b652c9785dd1530bdc5885f6523465d6969c3be91f9ccaaf1.zip -o wrench-localapv.zip
   - command: 7z x -aoa wrench-localapv.zip
   - command: pip install semver requests --index-url https://artifactory-slo.bf.unity3d.com/artifactory/api/pypi/pypi/simple
   - command: python PythonScripts/print_machine_info.py
-  - command: unity-downloader-cli -u 2022.3 -c Editor --fast
+  - command: unity-downloader-cli -u 2022.3/staging -c Editor --fast
     timeout: 10
     retries: 3
   - command: upm-pvp create-test-project test-cloud.gltfast --packages "upm-ci~/packages/*.tgz" --unity .Editor
@@ -538,10 +538,10 @@ validate_-_cloud_gltfast_-_2022_3_-_macos:
   - path: .yamato/wrench/package-pack-jobs.yml#package_pack_-_cloud_gltfast
   variables:
     UPMPVP_ACK_UPMPVP_DOES_NO_API_VALIDATION: 1
-    UPMPVP_CONTEXT_WRENCH: 0.10.48.0
+    UPMPVP_CONTEXT_WRENCH: 0.10.50.0
   metadata:
     Job Maintainers: '#rm-packageworks'
-    Wrench: 0.10.48.0
+    Wrench: 0.10.50.0
   labels:
   - Packages:cloud.gltfast
 
@@ -553,11 +553,11 @@ validate_-_cloud_gltfast_-_2022_3_-_ubuntu:
     type: Unity::VM
     flavor: b1.large
   commands:
-  - command: curl https://artifactory.prd.it.unity3d.com/artifactory/stevedore-unity-internal/wrench-localapv/1-2-61_6af0746012fdbe27c8d9841fcad8f97465d1943826d6884e6aabf0d289b83093.zip -o wrench-localapv.zip
+  - command: curl https://artifactory.prd.it.unity3d.com/artifactory/stevedore-unity-internal/wrench-localapv/1-2-68_53c92d3b34ce3f4b652c9785dd1530bdc5885f6523465d6969c3be91f9ccaaf1.zip -o wrench-localapv.zip
   - command: 7z x -aoa wrench-localapv.zip
   - command: pip install semver requests --index-url https://artifactory-slo.bf.unity3d.com/artifactory/api/pypi/pypi/simple
   - command: python PythonScripts/print_machine_info.py
-  - command: unity-downloader-cli -u 2022.3 -c Editor --fast
+  - command: unity-downloader-cli -u 2022.3/staging -c Editor --fast
     timeout: 10
     retries: 3
   - command: upm-pvp create-test-project test-cloud.gltfast --packages "upm-ci~/packages/*.tgz" --unity .Editor
@@ -606,10 +606,10 @@ validate_-_cloud_gltfast_-_2022_3_-_ubuntu:
   - path: .yamato/wrench/package-pack-jobs.yml#package_pack_-_cloud_gltfast
   variables:
     UPMPVP_ACK_UPMPVP_DOES_NO_API_VALIDATION: 1
-    UPMPVP_CONTEXT_WRENCH: 0.10.48.0
+    UPMPVP_CONTEXT_WRENCH: 0.10.50.0
   metadata:
     Job Maintainers: '#rm-packageworks'
-    Wrench: 0.10.48.0
+    Wrench: 0.10.50.0
   labels:
   - Packages:cloud.gltfast
 
@@ -621,11 +621,11 @@ validate_-_cloud_gltfast_-_2022_3_-_windows:
     type: Unity::VM
     flavor: b1.large
   commands:
-  - command: curl https://artifactory.prd.it.unity3d.com/artifactory/stevedore-unity-internal/wrench-localapv/1-2-61_6af0746012fdbe27c8d9841fcad8f97465d1943826d6884e6aabf0d289b83093.zip -o wrench-localapv.zip
+  - command: curl https://artifactory.prd.it.unity3d.com/artifactory/stevedore-unity-internal/wrench-localapv/1-2-68_53c92d3b34ce3f4b652c9785dd1530bdc5885f6523465d6969c3be91f9ccaaf1.zip -o wrench-localapv.zip
   - command: 7z x -aoa wrench-localapv.zip
   - command: pip install semver requests --index-url https://artifactory-slo.bf.unity3d.com/artifactory/api/pypi/pypi/simple
   - command: python PythonScripts/print_machine_info.py
-  - command: unity-downloader-cli -u 2022.3 -c Editor --fast
+  - command: unity-downloader-cli -u 2022.3/staging -c Editor --fast
     timeout: 10
     retries: 3
   - command: upm-pvp create-test-project test-cloud.gltfast --packages "upm-ci~/packages/*.tgz" --unity .Editor
@@ -674,10 +674,10 @@ validate_-_cloud_gltfast_-_2022_3_-_windows:
   - path: .yamato/wrench/package-pack-jobs.yml#package_pack_-_cloud_gltfast
   variables:
     UPMPVP_ACK_UPMPVP_DOES_NO_API_VALIDATION: 1
-    UPMPVP_CONTEXT_WRENCH: 0.10.48.0
+    UPMPVP_CONTEXT_WRENCH: 0.10.50.0
   metadata:
     Job Maintainers: '#rm-packageworks'
-    Wrench: 0.10.48.0
+    Wrench: 0.10.50.0
   labels:
   - Packages:cloud.gltfast
 
@@ -689,11 +689,11 @@ validate_-_cloud_gltfast_-_6000_0_-_macos:
     type: Unity::VM::osx
     flavor: b1.xlarge
   commands:
-  - command: curl https://artifactory.prd.it.unity3d.com/artifactory/stevedore-unity-internal/wrench-localapv/1-2-61_6af0746012fdbe27c8d9841fcad8f97465d1943826d6884e6aabf0d289b83093.zip -o wrench-localapv.zip
+  - command: curl https://artifactory.prd.it.unity3d.com/artifactory/stevedore-unity-internal/wrench-localapv/1-2-68_53c92d3b34ce3f4b652c9785dd1530bdc5885f6523465d6969c3be91f9ccaaf1.zip -o wrench-localapv.zip
   - command: 7z x -aoa wrench-localapv.zip
   - command: pip install semver requests --index-url https://artifactory-slo.bf.unity3d.com/artifactory/api/pypi/pypi/simple
   - command: python PythonScripts/print_machine_info.py
-  - command: unity-downloader-cli -u 6000.0 -c Editor --fast
+  - command: unity-downloader-cli -u 6000.0/staging -c Editor --fast
     timeout: 10
     retries: 3
   - command: upm-pvp create-test-project test-cloud.gltfast --packages "upm-ci~/packages/*.tgz" --unity .Editor
@@ -742,10 +742,10 @@ validate_-_cloud_gltfast_-_6000_0_-_macos:
   - path: .yamato/wrench/package-pack-jobs.yml#package_pack_-_cloud_gltfast
   variables:
     UPMPVP_ACK_UPMPVP_DOES_NO_API_VALIDATION: 1
-    UPMPVP_CONTEXT_WRENCH: 0.10.48.0
+    UPMPVP_CONTEXT_WRENCH: 0.10.50.0
   metadata:
     Job Maintainers: '#rm-packageworks'
-    Wrench: 0.10.48.0
+    Wrench: 0.10.50.0
   labels:
   - Packages:cloud.gltfast
 
@@ -757,11 +757,11 @@ validate_-_cloud_gltfast_-_6000_0_-_ubuntu:
     type: Unity::VM
     flavor: b1.large
   commands:
-  - command: curl https://artifactory.prd.it.unity3d.com/artifactory/stevedore-unity-internal/wrench-localapv/1-2-61_6af0746012fdbe27c8d9841fcad8f97465d1943826d6884e6aabf0d289b83093.zip -o wrench-localapv.zip
+  - command: curl https://artifactory.prd.it.unity3d.com/artifactory/stevedore-unity-internal/wrench-localapv/1-2-68_53c92d3b34ce3f4b652c9785dd1530bdc5885f6523465d6969c3be91f9ccaaf1.zip -o wrench-localapv.zip
   - command: 7z x -aoa wrench-localapv.zip
   - command: pip install semver requests --index-url https://artifactory-slo.bf.unity3d.com/artifactory/api/pypi/pypi/simple
   - command: python PythonScripts/print_machine_info.py
-  - command: unity-downloader-cli -u 6000.0 -c Editor --fast
+  - command: unity-downloader-cli -u 6000.0/staging -c Editor --fast
     timeout: 10
     retries: 3
   - command: upm-pvp create-test-project test-cloud.gltfast --packages "upm-ci~/packages/*.tgz" --unity .Editor
@@ -810,10 +810,10 @@ validate_-_cloud_gltfast_-_6000_0_-_ubuntu:
   - path: .yamato/wrench/package-pack-jobs.yml#package_pack_-_cloud_gltfast
   variables:
     UPMPVP_ACK_UPMPVP_DOES_NO_API_VALIDATION: 1
-    UPMPVP_CONTEXT_WRENCH: 0.10.48.0
+    UPMPVP_CONTEXT_WRENCH: 0.10.50.0
   metadata:
     Job Maintainers: '#rm-packageworks'
-    Wrench: 0.10.48.0
+    Wrench: 0.10.50.0
   labels:
   - Packages:cloud.gltfast
 
@@ -825,11 +825,11 @@ validate_-_cloud_gltfast_-_6000_0_-_windows:
     type: Unity::VM
     flavor: b1.large
   commands:
-  - command: curl https://artifactory.prd.it.unity3d.com/artifactory/stevedore-unity-internal/wrench-localapv/1-2-61_6af0746012fdbe27c8d9841fcad8f97465d1943826d6884e6aabf0d289b83093.zip -o wrench-localapv.zip
+  - command: curl https://artifactory.prd.it.unity3d.com/artifactory/stevedore-unity-internal/wrench-localapv/1-2-68_53c92d3b34ce3f4b652c9785dd1530bdc5885f6523465d6969c3be91f9ccaaf1.zip -o wrench-localapv.zip
   - command: 7z x -aoa wrench-localapv.zip
   - command: pip install semver requests --index-url https://artifactory-slo.bf.unity3d.com/artifactory/api/pypi/pypi/simple
   - command: python PythonScripts/print_machine_info.py
-  - command: unity-downloader-cli -u 6000.0 -c Editor --fast
+  - command: unity-downloader-cli -u 6000.0/staging -c Editor --fast
     timeout: 10
     retries: 3
   - command: upm-pvp create-test-project test-cloud.gltfast --packages "upm-ci~/packages/*.tgz" --unity .Editor
@@ -878,10 +878,10 @@ validate_-_cloud_gltfast_-_6000_0_-_windows:
   - path: .yamato/wrench/package-pack-jobs.yml#package_pack_-_cloud_gltfast
   variables:
     UPMPVP_ACK_UPMPVP_DOES_NO_API_VALIDATION: 1
-    UPMPVP_CONTEXT_WRENCH: 0.10.48.0
+    UPMPVP_CONTEXT_WRENCH: 0.10.50.0
   metadata:
     Job Maintainers: '#rm-packageworks'
-    Wrench: 0.10.48.0
+    Wrench: 0.10.50.0
   labels:
   - Packages:cloud.gltfast
 
@@ -893,11 +893,11 @@ validate_-_cloud_gltfast_-_6000_1_-_macos:
     type: Unity::VM::osx
     flavor: b1.xlarge
   commands:
-  - command: curl https://artifactory.prd.it.unity3d.com/artifactory/stevedore-unity-internal/wrench-localapv/1-2-61_6af0746012fdbe27c8d9841fcad8f97465d1943826d6884e6aabf0d289b83093.zip -o wrench-localapv.zip
+  - command: curl https://artifactory.prd.it.unity3d.com/artifactory/stevedore-unity-internal/wrench-localapv/1-2-68_53c92d3b34ce3f4b652c9785dd1530bdc5885f6523465d6969c3be91f9ccaaf1.zip -o wrench-localapv.zip
   - command: 7z x -aoa wrench-localapv.zip
   - command: pip install semver requests --index-url https://artifactory-slo.bf.unity3d.com/artifactory/api/pypi/pypi/simple
   - command: python PythonScripts/print_machine_info.py
-  - command: unity-downloader-cli -u 6000.1 -c Editor --fast
+  - command: unity-downloader-cli -u 6000.1/staging -c Editor --fast
     timeout: 10
     retries: 3
   - command: upm-pvp create-test-project test-cloud.gltfast --packages "upm-ci~/packages/*.tgz" --unity .Editor
@@ -946,10 +946,10 @@ validate_-_cloud_gltfast_-_6000_1_-_macos:
   - path: .yamato/wrench/package-pack-jobs.yml#package_pack_-_cloud_gltfast
   variables:
     UPMPVP_ACK_UPMPVP_DOES_NO_API_VALIDATION: 1
-    UPMPVP_CONTEXT_WRENCH: 0.10.48.0
+    UPMPVP_CONTEXT_WRENCH: 0.10.50.0
   metadata:
     Job Maintainers: '#rm-packageworks'
-    Wrench: 0.10.48.0
+    Wrench: 0.10.50.0
   labels:
   - Packages:cloud.gltfast
 
@@ -961,11 +961,11 @@ validate_-_cloud_gltfast_-_6000_1_-_ubuntu:
     type: Unity::VM
     flavor: b1.large
   commands:
-  - command: curl https://artifactory.prd.it.unity3d.com/artifactory/stevedore-unity-internal/wrench-localapv/1-2-61_6af0746012fdbe27c8d9841fcad8f97465d1943826d6884e6aabf0d289b83093.zip -o wrench-localapv.zip
+  - command: curl https://artifactory.prd.it.unity3d.com/artifactory/stevedore-unity-internal/wrench-localapv/1-2-68_53c92d3b34ce3f4b652c9785dd1530bdc5885f6523465d6969c3be91f9ccaaf1.zip -o wrench-localapv.zip
   - command: 7z x -aoa wrench-localapv.zip
   - command: pip install semver requests --index-url https://artifactory-slo.bf.unity3d.com/artifactory/api/pypi/pypi/simple
   - command: python PythonScripts/print_machine_info.py
-  - command: unity-downloader-cli -u 6000.1 -c Editor --fast
+  - command: unity-downloader-cli -u 6000.1/staging -c Editor --fast
     timeout: 10
     retries: 3
   - command: upm-pvp create-test-project test-cloud.gltfast --packages "upm-ci~/packages/*.tgz" --unity .Editor
@@ -1014,10 +1014,10 @@ validate_-_cloud_gltfast_-_6000_1_-_ubuntu:
   - path: .yamato/wrench/package-pack-jobs.yml#package_pack_-_cloud_gltfast
   variables:
     UPMPVP_ACK_UPMPVP_DOES_NO_API_VALIDATION: 1
-    UPMPVP_CONTEXT_WRENCH: 0.10.48.0
+    UPMPVP_CONTEXT_WRENCH: 0.10.50.0
   metadata:
     Job Maintainers: '#rm-packageworks'
-    Wrench: 0.10.48.0
+    Wrench: 0.10.50.0
   labels:
   - Packages:cloud.gltfast
 
@@ -1029,11 +1029,11 @@ validate_-_cloud_gltfast_-_6000_1_-_windows:
     type: Unity::VM
     flavor: b1.large
   commands:
-  - command: curl https://artifactory.prd.it.unity3d.com/artifactory/stevedore-unity-internal/wrench-localapv/1-2-61_6af0746012fdbe27c8d9841fcad8f97465d1943826d6884e6aabf0d289b83093.zip -o wrench-localapv.zip
+  - command: curl https://artifactory.prd.it.unity3d.com/artifactory/stevedore-unity-internal/wrench-localapv/1-2-68_53c92d3b34ce3f4b652c9785dd1530bdc5885f6523465d6969c3be91f9ccaaf1.zip -o wrench-localapv.zip
   - command: 7z x -aoa wrench-localapv.zip
   - command: pip install semver requests --index-url https://artifactory-slo.bf.unity3d.com/artifactory/api/pypi/pypi/simple
   - command: python PythonScripts/print_machine_info.py
-  - command: unity-downloader-cli -u 6000.1 -c Editor --fast
+  - command: unity-downloader-cli -u 6000.1/staging -c Editor --fast
     timeout: 10
     retries: 3
   - command: upm-pvp create-test-project test-cloud.gltfast --packages "upm-ci~/packages/*.tgz" --unity .Editor
@@ -1082,10 +1082,10 @@ validate_-_cloud_gltfast_-_6000_1_-_windows:
   - path: .yamato/wrench/package-pack-jobs.yml#package_pack_-_cloud_gltfast
   variables:
     UPMPVP_ACK_UPMPVP_DOES_NO_API_VALIDATION: 1
-    UPMPVP_CONTEXT_WRENCH: 0.10.48.0
+    UPMPVP_CONTEXT_WRENCH: 0.10.50.0
   metadata:
     Job Maintainers: '#rm-packageworks'
-    Wrench: 0.10.48.0
+    Wrench: 0.10.50.0
   labels:
   - Packages:cloud.gltfast
 
@@ -1097,11 +1097,11 @@ validate_-_cloud_gltfast_-_6000_2_-_macos:
     type: Unity::VM::osx
     flavor: b1.xlarge
   commands:
-  - command: curl https://artifactory.prd.it.unity3d.com/artifactory/stevedore-unity-internal/wrench-localapv/1-2-61_6af0746012fdbe27c8d9841fcad8f97465d1943826d6884e6aabf0d289b83093.zip -o wrench-localapv.zip
+  - command: curl https://artifactory.prd.it.unity3d.com/artifactory/stevedore-unity-internal/wrench-localapv/1-2-68_53c92d3b34ce3f4b652c9785dd1530bdc5885f6523465d6969c3be91f9ccaaf1.zip -o wrench-localapv.zip
   - command: 7z x -aoa wrench-localapv.zip
   - command: pip install semver requests --index-url https://artifactory-slo.bf.unity3d.com/artifactory/api/pypi/pypi/simple
   - command: python PythonScripts/print_machine_info.py
-  - command: unity-downloader-cli -u 6000.2 -c Editor --fast
+  - command: unity-downloader-cli -u 6000.2/staging -c Editor --fast
     timeout: 10
     retries: 3
   - command: upm-pvp create-test-project test-cloud.gltfast --packages "upm-ci~/packages/*.tgz" --unity .Editor
@@ -1150,10 +1150,10 @@ validate_-_cloud_gltfast_-_6000_2_-_macos:
   - path: .yamato/wrench/package-pack-jobs.yml#package_pack_-_cloud_gltfast
   variables:
     UPMPVP_ACK_UPMPVP_DOES_NO_API_VALIDATION: 1
-    UPMPVP_CONTEXT_WRENCH: 0.10.48.0
+    UPMPVP_CONTEXT_WRENCH: 0.10.50.0
   metadata:
     Job Maintainers: '#rm-packageworks'
-    Wrench: 0.10.48.0
+    Wrench: 0.10.50.0
   labels:
   - Packages:cloud.gltfast
 
@@ -1165,11 +1165,11 @@ validate_-_cloud_gltfast_-_6000_2_-_ubuntu:
     type: Unity::VM
     flavor: b1.large
   commands:
-  - command: curl https://artifactory.prd.it.unity3d.com/artifactory/stevedore-unity-internal/wrench-localapv/1-2-61_6af0746012fdbe27c8d9841fcad8f97465d1943826d6884e6aabf0d289b83093.zip -o wrench-localapv.zip
+  - command: curl https://artifactory.prd.it.unity3d.com/artifactory/stevedore-unity-internal/wrench-localapv/1-2-68_53c92d3b34ce3f4b652c9785dd1530bdc5885f6523465d6969c3be91f9ccaaf1.zip -o wrench-localapv.zip
   - command: 7z x -aoa wrench-localapv.zip
   - command: pip install semver requests --index-url https://artifactory-slo.bf.unity3d.com/artifactory/api/pypi/pypi/simple
   - command: python PythonScripts/print_machine_info.py
-  - command: unity-downloader-cli -u 6000.2 -c Editor --fast
+  - command: unity-downloader-cli -u 6000.2/staging -c Editor --fast
     timeout: 10
     retries: 3
   - command: upm-pvp create-test-project test-cloud.gltfast --packages "upm-ci~/packages/*.tgz" --unity .Editor
@@ -1218,10 +1218,10 @@ validate_-_cloud_gltfast_-_6000_2_-_ubuntu:
   - path: .yamato/wrench/package-pack-jobs.yml#package_pack_-_cloud_gltfast
   variables:
     UPMPVP_ACK_UPMPVP_DOES_NO_API_VALIDATION: 1
-    UPMPVP_CONTEXT_WRENCH: 0.10.48.0
+    UPMPVP_CONTEXT_WRENCH: 0.10.50.0
   metadata:
     Job Maintainers: '#rm-packageworks'
-    Wrench: 0.10.48.0
+    Wrench: 0.10.50.0
   labels:
   - Packages:cloud.gltfast
 
@@ -1233,11 +1233,11 @@ validate_-_cloud_gltfast_-_6000_2_-_windows:
     type: Unity::VM
     flavor: b1.large
   commands:
-  - command: curl https://artifactory.prd.it.unity3d.com/artifactory/stevedore-unity-internal/wrench-localapv/1-2-61_6af0746012fdbe27c8d9841fcad8f97465d1943826d6884e6aabf0d289b83093.zip -o wrench-localapv.zip
+  - command: curl https://artifactory.prd.it.unity3d.com/artifactory/stevedore-unity-internal/wrench-localapv/1-2-68_53c92d3b34ce3f4b652c9785dd1530bdc5885f6523465d6969c3be91f9ccaaf1.zip -o wrench-localapv.zip
   - command: 7z x -aoa wrench-localapv.zip
   - command: pip install semver requests --index-url https://artifactory-slo.bf.unity3d.com/artifactory/api/pypi/pypi/simple
   - command: python PythonScripts/print_machine_info.py
-  - command: unity-downloader-cli -u 6000.2 -c Editor --fast
+  - command: unity-downloader-cli -u 6000.2/staging -c Editor --fast
     timeout: 10
     retries: 3
   - command: upm-pvp create-test-project test-cloud.gltfast --packages "upm-ci~/packages/*.tgz" --unity .Editor
@@ -1286,10 +1286,10 @@ validate_-_cloud_gltfast_-_6000_2_-_windows:
   - path: .yamato/wrench/package-pack-jobs.yml#package_pack_-_cloud_gltfast
   variables:
     UPMPVP_ACK_UPMPVP_DOES_NO_API_VALIDATION: 1
-    UPMPVP_CONTEXT_WRENCH: 0.10.48.0
+    UPMPVP_CONTEXT_WRENCH: 0.10.50.0
   metadata:
     Job Maintainers: '#rm-packageworks'
-    Wrench: 0.10.48.0
+    Wrench: 0.10.50.0
   labels:
   - Packages:cloud.gltfast
 
@@ -1301,11 +1301,11 @@ validate_-_cloud_gltfast_-_6000_3_-_macos:
     type: Unity::VM::osx
     flavor: b1.xlarge
   commands:
-  - command: curl https://artifactory.prd.it.unity3d.com/artifactory/stevedore-unity-internal/wrench-localapv/1-2-61_6af0746012fdbe27c8d9841fcad8f97465d1943826d6884e6aabf0d289b83093.zip -o wrench-localapv.zip
+  - command: curl https://artifactory.prd.it.unity3d.com/artifactory/stevedore-unity-internal/wrench-localapv/1-2-68_53c92d3b34ce3f4b652c9785dd1530bdc5885f6523465d6969c3be91f9ccaaf1.zip -o wrench-localapv.zip
   - command: 7z x -aoa wrench-localapv.zip
   - command: pip install semver requests --index-url https://artifactory-slo.bf.unity3d.com/artifactory/api/pypi/pypi/simple
   - command: python PythonScripts/print_machine_info.py
-  - command: unity-downloader-cli -u 6000.3 -c Editor --fast
+  - command: unity-downloader-cli -u trunk -c Editor --fast
     timeout: 10
     retries: 3
   - command: upm-pvp create-test-project test-cloud.gltfast --packages "upm-ci~/packages/*.tgz" --unity .Editor
@@ -1354,10 +1354,10 @@ validate_-_cloud_gltfast_-_6000_3_-_macos:
   - path: .yamato/wrench/package-pack-jobs.yml#package_pack_-_cloud_gltfast
   variables:
     UPMPVP_ACK_UPMPVP_DOES_NO_API_VALIDATION: 1
-    UPMPVP_CONTEXT_WRENCH: 0.10.48.0
+    UPMPVP_CONTEXT_WRENCH: 0.10.50.0
   metadata:
     Job Maintainers: '#rm-packageworks'
-    Wrench: 0.10.48.0
+    Wrench: 0.10.50.0
   labels:
   - Packages:cloud.gltfast
 
@@ -1369,11 +1369,11 @@ validate_-_cloud_gltfast_-_6000_3_-_ubuntu:
     type: Unity::VM
     flavor: b1.large
   commands:
-  - command: curl https://artifactory.prd.it.unity3d.com/artifactory/stevedore-unity-internal/wrench-localapv/1-2-61_6af0746012fdbe27c8d9841fcad8f97465d1943826d6884e6aabf0d289b83093.zip -o wrench-localapv.zip
+  - command: curl https://artifactory.prd.it.unity3d.com/artifactory/stevedore-unity-internal/wrench-localapv/1-2-68_53c92d3b34ce3f4b652c9785dd1530bdc5885f6523465d6969c3be91f9ccaaf1.zip -o wrench-localapv.zip
   - command: 7z x -aoa wrench-localapv.zip
   - command: pip install semver requests --index-url https://artifactory-slo.bf.unity3d.com/artifactory/api/pypi/pypi/simple
   - command: python PythonScripts/print_machine_info.py
-  - command: unity-downloader-cli -u 6000.3 -c Editor --fast
+  - command: unity-downloader-cli -u trunk -c Editor --fast
     timeout: 10
     retries: 3
   - command: upm-pvp create-test-project test-cloud.gltfast --packages "upm-ci~/packages/*.tgz" --unity .Editor
@@ -1422,10 +1422,10 @@ validate_-_cloud_gltfast_-_6000_3_-_ubuntu:
   - path: .yamato/wrench/package-pack-jobs.yml#package_pack_-_cloud_gltfast
   variables:
     UPMPVP_ACK_UPMPVP_DOES_NO_API_VALIDATION: 1
-    UPMPVP_CONTEXT_WRENCH: 0.10.48.0
+    UPMPVP_CONTEXT_WRENCH: 0.10.50.0
   metadata:
     Job Maintainers: '#rm-packageworks'
-    Wrench: 0.10.48.0
+    Wrench: 0.10.50.0
   labels:
   - Packages:cloud.gltfast
 
@@ -1437,11 +1437,11 @@ validate_-_cloud_gltfast_-_6000_3_-_windows:
     type: Unity::VM
     flavor: b1.large
   commands:
-  - command: curl https://artifactory.prd.it.unity3d.com/artifactory/stevedore-unity-internal/wrench-localapv/1-2-61_6af0746012fdbe27c8d9841fcad8f97465d1943826d6884e6aabf0d289b83093.zip -o wrench-localapv.zip
+  - command: curl https://artifactory.prd.it.unity3d.com/artifactory/stevedore-unity-internal/wrench-localapv/1-2-68_53c92d3b34ce3f4b652c9785dd1530bdc5885f6523465d6969c3be91f9ccaaf1.zip -o wrench-localapv.zip
   - command: 7z x -aoa wrench-localapv.zip
   - command: pip install semver requests --index-url https://artifactory-slo.bf.unity3d.com/artifactory/api/pypi/pypi/simple
   - command: python PythonScripts/print_machine_info.py
-  - command: unity-downloader-cli -u 6000.3 -c Editor --fast
+  - command: unity-downloader-cli -u trunk -c Editor --fast
     timeout: 10
     retries: 3
   - command: upm-pvp create-test-project test-cloud.gltfast --packages "upm-ci~/packages/*.tgz" --unity .Editor
@@ -1490,10 +1490,10 @@ validate_-_cloud_gltfast_-_6000_3_-_windows:
   - path: .yamato/wrench/package-pack-jobs.yml#package_pack_-_cloud_gltfast
   variables:
     UPMPVP_ACK_UPMPVP_DOES_NO_API_VALIDATION: 1
-    UPMPVP_CONTEXT_WRENCH: 0.10.48.0
+    UPMPVP_CONTEXT_WRENCH: 0.10.50.0
   metadata:
     Job Maintainers: '#rm-packageworks'
-    Wrench: 0.10.48.0
+    Wrench: 0.10.50.0
   labels:
   - Packages:cloud.gltfast
 
