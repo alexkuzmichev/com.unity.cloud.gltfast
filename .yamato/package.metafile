@@ -7,13 +7,11 @@ test_setups:
   - project_setup: default
     project: glTFast-Test
     # # Use to limit versions
-    # editor_versions: [2020,2021,2022,6000.0,6000.1,trunk]
+    # editor_versions: [2021,2022,6000.0,6000.1,trunk]
     # # Use to limit to platforms
     # platforms: [win,mac,ubuntu]
     utr_timeout: 1200
     pr_test_subset:
-      - platform: win
-        editor: 2020
       - platform: mac
         editor: 6000.0
       - platform: win
@@ -27,7 +25,7 @@ test_setups:
         editor: 2022
   - project_setup: minimalistic
     project: glTFast-Test-minimalistic
-    editor_versions: [2020,2022,6000.0,trunk]
+    editor_versions: [2021,2022,6000.0,trunk]
     platforms: [win]
     utr_timeout: 1200
     pr_test_subset:
@@ -45,15 +43,13 @@ test_setups:
     setup: all_defines
     render_pipeline: URP-Forward
     utr_timeout: 1200
-    editor_versions: [2020,2021,2022,6000.0,trunk]
+    editor_versions: [2021,2022,6000.0,trunk]
     platforms: [win]
     pr_test_subset:
       - platform: win
         editor: 6000.0
       # TODO: Move those to `urp` and `hdrp` test setup at some point
       # For URP/shader graph test all versions
-      - platform: win
-        editor: 2020
       - platform: win
         editor: 2021
       - platform: win
@@ -91,7 +87,7 @@ test_setups:
     render_pipeline: URP-Forward
     test_categories: "!Performance;!Export"
     utr_timeout: 1200
-    editor_versions: [2020]
+    editor_versions: [2021]
     platforms: [win]
   - project_setup: hdrp
     project: glTFast-Test
@@ -111,7 +107,6 @@ test_setups:
         editor: 6000.0
 
 editor_versions:
-  - 2020
   - 2021
   - 2022
   - 6000.0
@@ -148,7 +143,7 @@ test_platforms:
     agent: ubuntu
 
 player_test_editors:
-  - version: 2020
+  - version:2021
   - version: trunk
 
 player_test_platforms:

@@ -42,16 +42,6 @@ test_{{ platform.name }}_{{ editor }}:
       "--ff={ops.upmpvpevidence.enable=true}"
       --category="{{ test_categories }}"
 
-{% if agent.os == "win" -%}
-{% if editor == "2020" -%}
-  after:
-    # To prevent random artifacts zip failures, ensure Unity.Licensing.Client.exe is no longer running. See this slack thread for more information (https://unity.slack.com/archives/C998PJJDD/p1683307400228169)
-    # "ver > nul" ensures the ERRORLEVEL is reset to 0 in case Unity.Licensing.Client.exe is already closed
-    - |
-      taskkill /f /t /im Unity.Licensing.Client.exe
-      ver > nul
-{% endif -%}
-{% endif -%}
   artifacts:
     logs:
       paths:
