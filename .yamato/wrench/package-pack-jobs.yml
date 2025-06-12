@@ -15,8 +15,7 @@ package_pack_-_cloud_gltfast:
   - command: unity-config package add dependency com.unity.formats.gltf.validator@0.2.0-preview.1 --package-path Packages/com.unity.cloud.gltfast.tests
   - command: cp .yamato/ValidationExceptions.json* Packages/com.unity.cloud.gltfast
   - command: upm-ci package pack --package-path Packages/com.unity.cloud.gltfast.tests
-  - command: cp upm-ci~/packages/packages.json upm-ci~/packages/com.unity.cloud.gltfast.tests_packages.json
-  - command: rm upm-ci~/packages/packages.json
+  - command: mv upm-ci~/packages/packages.json upm-ci~/packages/com.unity.cloud.gltfast.tests_packages.json
   - command: mkdir -p upm-ci~/temp/packages
   - command: mv upm-ci~/packages/* upm-ci~/temp/packages
   - command: upm-ci package pack --package-path Packages/com.unity.cloud.gltfast
@@ -36,7 +35,7 @@ package_pack_-_cloud_gltfast:
     UPMCI_ACK_LARGE_PACKAGE: 1
   metadata:
     Job Maintainers: '#rm-packageworks'
-    Wrench: 0.11.2.0
+    Wrench: 0.11.3.0
 
 # Pack Unity glTFast Tests
 package_pack_-_cloud_gltfast_tests:
@@ -61,5 +60,5 @@ package_pack_-_cloud_gltfast_tests:
     UPMCI_ACK_LARGE_PACKAGE: 1
   metadata:
     Job Maintainers: '#rm-packageworks'
-    Wrench: 0.11.2.0
+    Wrench: 0.11.3.0
 
