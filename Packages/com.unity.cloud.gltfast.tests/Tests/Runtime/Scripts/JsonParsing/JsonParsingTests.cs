@@ -1,6 +1,7 @@
 // SPDX-FileCopyrightText: 2023 Unity Technologies and the glTFast authors
 // SPDX-License-Identifier: Apache-2.0
 
+using System;
 using GLTFast.Schema;
 using NUnit.Framework;
 using UnityEngine;
@@ -10,11 +11,8 @@ namespace GLTFast.Tests.JsonParsing
     [Category("JsonParsing")]
     class JsonParsingTests
     {
-        [Test]
-        public void MaterialExtensions()
-        {
-            var jsonParser = new GltfJsonUtilityParser();
-            var gltf = jsonParser.ParseJson(@"
+
+        static readonly string k_MaterialExtensionGltf = @"
 {
     ""materials"" : [
         {
@@ -86,9 +84,244 @@ namespace GLTFast.Tests.JsonParsing
         }
     ]
 }
-"
-            );
+";
 
+        static readonly string k_SparseAccessorsGltf = @"
+{
+    ""accessors"" : [ {
+        ""bufferView"" : 0,
+        ""byteOffset"" : 0,
+        ""componentType"" : 5123,
+        ""count"" : 36,
+        ""type"" : ""SCALAR"",
+        ""max"" : [ 13 ],
+        ""min"" : [ 0 ]
+      }, {
+        ""bufferView"" : 1,
+        ""byteOffset"" : 0,
+        ""componentType"" : 5126,
+        ""count"" : 14,
+        ""type"" : ""VEC3"",
+        ""max"" : [ 6.0, 4.0, 0.0 ],
+        ""min"" : [ 0.0, 0.0, 0.0 ],
+        ""sparse"" : {
+          ""count"" : 3,
+          ""indices"" : {
+            ""bufferView"" : 2,
+            ""byteOffset"" : 0,
+            ""componentType"" : 5123
+          },
+          ""values"" : {
+            ""bufferView"" : 3,
+            ""byteOffset"" : 0
+          }
+        }
+        }, {
+        ""bufferView"" : 1,
+        ""byteOffset"" : 0,
+        ""componentType"" : 5126,
+        ""count"" : 14,
+        ""type"" : ""VEC3"",
+        ""max"" : [ 6.0, 4.0, 0.0 ],
+        ""min"" : [ 0.0, 0.0, 0.0 ],
+        ""sparse"" : {}
+        } ]
+}
+";
+        static readonly string k_MeshTargetNamesGltf = @"
+{
+    ""meshes"": [
+        {
+            ""extras"": {
+                ""targetNames"": [
+                    ""Key 1"",""Key 2""
+                ]
+            }
+        },
+        {
+            ""extras"": {
+                ""different"": ""content""
+            }
+        }
+    ]
+}
+";
+
+        static readonly string k_MinMagFilter = @"
+{
+    ""samplers"": [{
+        },{
+        ""magFilter"": 100,
+        ""minFilter"": 100
+        },{
+        ""magFilter"": 9728,
+        ""minFilter"": 9728
+        },{
+        ""magFilter"": 9729,
+        ""minFilter"": 9729
+        },{
+        ""minFilter"": 9984
+        },{
+        ""minFilter"": 9985
+        },{
+        ""minFilter"": 9986
+        },{
+        ""minFilter"": 9987
+        }
+    ]
+}
+";
+
+        static readonly string k_UnknownNodeExtension = @"
+{
+    ""nodes"": [
+        {
+            ""name"": ""Node0""
+        },
+        {
+            ""extensions"": {},
+            ""name"": ""Node1""
+        },
+        {
+            ""extensions"": {
+                ""MOZ_hubs_components"": {
+                    ""morph-audio-feedback"": {
+                        ""name"": ""mouthOpen"",
+                        ""minValue"": 0.0,
+                        ""maxValue"": 1.0
+                    }
+                }
+            },
+            ""name"": ""Node2""
+        },
+        {
+            ""extensions"": {
+                ""EXT_mesh_gpu_instancing"": {
+                    ""attributes"": {
+                        ""TRANSLATION"": 42
+                    }
+                }
+            },
+            ""name"": ""Node3""
+        },
+        {
+            ""extensions"": {
+                ""KHR_lights_punctual"": {
+                    ""light"": 42
+                }
+            },
+            ""name"": ""Node4""
+        },
+        {
+            ""extensions"": {
+                ""EXT_mesh_gpu_instancing"": {
+                    ""attributes"": {
+                        ""TRANSLATION"": 13
+                    }
+                },
+                ""KHR_lights_punctual"": {
+                    ""light"": 42
+                }
+            },
+            ""name"": ""Node5""
+        }
+    ]
+}
+";
+
+        static readonly string k_UnknownTextureExtension = @"
+{
+    ""textures"": [
+        {
+            ""name"": ""Texture0""
+        },
+        {
+            ""extensions"": {},
+            ""name"": ""Texture1""
+        },
+        {
+            ""extensions"": {
+                ""EXT_texture_webp"": {
+                    ""source"": 42
+                }
+            },
+            ""name"": ""Texture2""
+        },
+        {
+            ""extensions"": {
+                ""KHR_texture_basisu"": {
+                    ""source"": 42
+                }
+            },
+            ""name"": ""Texture3""
+        },
+        {
+            ""extensions"": {
+                ""KHR_texture_basisu"": {
+                    ""source"": 42
+                },
+                ""EXT_texture_webp"": {
+                    ""source"": 43
+                }
+            },
+            ""name"": ""Texture4""
+        }
+    ]
+}
+";
+
+        [Test]
+        public void MaterialExtensions()
+        {
+            ParseWithJsonUtility(k_MaterialExtensionGltf, AssertMaterialExtensionResult);
+        }
+
+        [Test]
+        public void SparseAccessors()
+        {
+            ParseWithJsonUtility(k_SparseAccessorsGltf, AssertSparseAccessorsResult);
+        }
+
+        [Test]
+        public void MeshTargetNames()
+        {
+            ParseWithJsonUtility(k_MeshTargetNamesGltf, AssertMeshTargetNamesResult);
+        }
+
+        [Test]
+        public void MinMagFilter()
+        {
+            ParseWithJsonUtility(k_MinMagFilter, AssertMinMagFilterResult);
+        }
+
+        [Test]
+        public void UnknownNodeExtension()
+        {
+            ParseWithJsonUtility(k_UnknownNodeExtension, AssertUnknownNodeExtensionResult);
+        }
+
+        [Test]
+        public void UnknownTextureExtension()
+        {
+            ParseWithJsonUtility(k_UnknownTextureExtension, AssertUnknownTextureExtensionResult);
+        }
+
+        [Test]
+        public void ParseGarbage()
+        {
+            ParseWithJsonUtility("", Assert.IsNull);
+            ParseWithJsonUtility("garbage", Assert.IsNull);
+        }
+
+        static void ParseWithJsonUtility(string gltf, Action<RootBase> validationCallback)
+        {
+            var jsonParser = new GltfJsonUtilityParser();
+            var root = jsonParser.ParseJson(gltf);
+            validationCallback(root);
+        }
+
+        static void AssertMaterialExtensionResult(RootBase gltf)
+        {
             Assert.NotNull(gltf);
             Assert.NotNull(gltf.Materials, "No materials");
             Assert.AreEqual(10, gltf.Materials.Count, "Invalid material quantity");
@@ -206,54 +439,8 @@ namespace GLTFast.Tests.JsonParsing
             Assert.NotNull(all.Extensions.KHR_materials_transmission);
         }
 
-        [Test]
-        public void SparseAccessors()
+        static void AssertSparseAccessorsResult(RootBase gltf)
         {
-            var jsonParser = new GltfJsonUtilityParser();
-            var gltf = jsonParser.ParseJson(@"
-{
-    ""accessors"" : [ {
-        ""bufferView"" : 0,
-        ""byteOffset"" : 0,
-        ""componentType"" : 5123,
-        ""count"" : 36,
-        ""type"" : ""SCALAR"",
-        ""max"" : [ 13 ],
-        ""min"" : [ 0 ]
-      }, {
-        ""bufferView"" : 1,
-        ""byteOffset"" : 0,
-        ""componentType"" : 5126,
-        ""count"" : 14,
-        ""type"" : ""VEC3"",
-        ""max"" : [ 6.0, 4.0, 0.0 ],
-        ""min"" : [ 0.0, 0.0, 0.0 ],
-        ""sparse"" : {
-          ""count"" : 3,
-          ""indices"" : {
-            ""bufferView"" : 2,
-            ""byteOffset"" : 0,
-            ""componentType"" : 5123
-          },
-          ""values"" : {
-            ""bufferView"" : 3,
-            ""byteOffset"" : 0
-          }
-        }
-        }, {
-        ""bufferView"" : 1,
-        ""byteOffset"" : 0,
-        ""componentType"" : 5126,
-        ""count"" : 14,
-        ""type"" : ""VEC3"",
-        ""max"" : [ 6.0, 4.0, 0.0 ],
-        ""min"" : [ 0.0, 0.0, 0.0 ],
-        ""sparse"" : {}
-        } ]
-}
-"
-            );
-
             Assert.NotNull(gltf);
             Assert.NotNull(gltf.Accessors, "No accessors");
             Assert.AreEqual(3, gltf.Accessors.Count, "Invalid accessor quantity");
@@ -284,30 +471,8 @@ namespace GLTFast.Tests.JsonParsing
 #endif
         }
 
-        [Test]
-        public void MeshTargetNames()
+        static void AssertMeshTargetNamesResult(RootBase gltf)
         {
-            var jsonParser = new GltfJsonUtilityParser();
-            var gltf = jsonParser.ParseJson(@"
-{
-    ""meshes"": [
-        {
-            ""extras"": {
-                ""targetNames"": [
-                    ""Key 1"",""Key 2""
-                ]
-            }
-        },
-        {
-            ""extras"": {
-                ""different"": ""content""
-            }
-        }
-    ]
-}
-"
-            );
-
             Assert.NotNull(gltf);
             Assert.NotNull(gltf.Meshes, "No materials");
             Assert.AreEqual(2, gltf.Meshes.Count, "Invalid materials quantity");
@@ -327,37 +492,8 @@ namespace GLTFast.Tests.JsonParsing
             Assert.IsNull(mat.Extras.targetNames);
         }
 
-        [Test]
-        public void MinMagFilter()
+        static void AssertMinMagFilterResult(RootBase gltf)
         {
-            var jsonParser = new GltfJsonUtilityParser();
-            var gltf = jsonParser.ParseJson(@"
-{
-    ""samplers"": [{
-        },{
-        ""magFilter"": 100,
-        ""minFilter"": 100
-        },{
-        ""magFilter"": 9728,
-        ""minFilter"": 9728
-        },{
-        ""magFilter"": 9729,
-        ""minFilter"": 9729
-        },{
-        ""minFilter"": 9984
-        },{
-        ""minFilter"": 9985
-        },{
-        ""minFilter"": 9986
-        },{
-        ""minFilter"": 9987
-        }
-    ]
-}
-"
-
-            );
-
             Assert.NotNull(gltf);
             Assert.NotNull(gltf.Samplers, "No samplers");
             Assert.AreEqual(8, gltf.Samplers.Count, "Invalid samplers quantity");
@@ -401,71 +537,20 @@ namespace GLTFast.Tests.JsonParsing
             Assert.NotNull(sampler7);
             Assert.AreEqual(Sampler.MagFilterMode.None, sampler7.magFilter);
             Assert.AreEqual(Sampler.MinFilterMode.LinearMipmapLinear, sampler7.minFilter);
-
         }
 
-        [Test]
-        public void UnknownNodeExtension()
+        static void AssertUnknownNodeExtensionResult(RootBase gltf)
         {
-            var jsonParser = new GltfJsonUtilityParser();
-            var gltf = jsonParser.ParseJson(@"
-{
-    ""nodes"": [
-        {
-            ""name"": ""Node0""
-        },
-        {
-            ""extensions"": {},
-            ""name"": ""Node1""
-        },
-        {
-            ""extensions"": {
-                ""MOZ_hubs_components"": {
-                    ""morph-audio-feedback"": {
-                        ""name"": ""mouthOpen"",
-                        ""minValue"": 0.0,
-                        ""maxValue"": 1.0
-                    }
-                }
-            },
-            ""name"": ""Node2""
-        },
-        {
-            ""extensions"": {
-                ""EXT_mesh_gpu_instancing"": {
-                    ""attributes"": {
-                        ""TRANSLATION"": 42
-                    }
-                }
-            },
-            ""name"": ""Node3""
-        },
-        {
-            ""extensions"": {
-                ""KHR_lights_punctual"": {
-                    ""light"": 42
-                }
-            },
-            ""name"": ""Node4""
-        },
-        {
-            ""extensions"": {
-                ""EXT_mesh_gpu_instancing"": {
-                    ""attributes"": {
-                        ""TRANSLATION"": 13
-                    }
-                },
-                ""KHR_lights_punctual"": {
-                    ""light"": 42
-                }
-            },
-            ""name"": ""Node5""
+            AssertUnknownNodeExtensionResult(gltf, true);
         }
-    ]
-}
-"
-            );
 
+        static void AssertUnknownNodeExtensionResultStrict(RootBase gltf)
+        {
+            AssertUnknownNodeExtensionResult(gltf, false);
+        }
+
+        static void AssertUnknownNodeExtensionResult(RootBase gltf, bool discardEmptyExtensions)
+        {
             Assert.NotNull(gltf);
             Assert.NotNull(gltf.Nodes, "No nodes");
             Assert.AreEqual(6, gltf.Nodes.Count, "Invalid nodes quantity");
@@ -476,11 +561,19 @@ namespace GLTFast.Tests.JsonParsing
 
             var node1 = gltf.Nodes[1];
             Assert.NotNull(node1);
-            Assert.IsNull(node1.Extensions);
+            if (discardEmptyExtensions)
+                Assert.IsNull(node1.Extensions);
+            else
+                Assert.NotNull(node1.Extensions);
 
             var node2 = gltf.Nodes[2];
             Assert.NotNull(node2);
-            Assert.IsNull(node2.Extensions);
+            if (discardEmptyExtensions)
+                Assert.IsNull(node2.Extensions);
+            else
+            {
+                Assert.NotNull(node2.Extensions);
+            }
 
             var node3 = gltf.Nodes[3];
             Assert.NotNull(node3);
@@ -507,52 +600,18 @@ namespace GLTFast.Tests.JsonParsing
             Assert.AreEqual(42, node5.Extensions.KHR_lights_punctual.light);
         }
 
-        [Test]
-        public void UnknownTextureExtension()
+        static void AssertUnknownTextureExtensionResult(RootBase gltf)
         {
-            var jsonParser = new GltfJsonUtilityParser();
-            var gltf = jsonParser.ParseJson(@"
-{
-    ""textures"": [
-        {
-            ""name"": ""Texture0""
-        },
-        {
-            ""extensions"": {},
-            ""name"": ""Texture1""
-        },
-        {
-            ""extensions"": {
-                ""EXT_texture_webp"": {
-                    ""source"": 42
-                }
-            },
-            ""name"": ""Texture2""
-        },
-        {
-            ""extensions"": {
-                ""KHR_texture_basisu"": {
-                    ""source"": 42
-                }
-            },
-            ""name"": ""Texture3""
-        },
-        {
-            ""extensions"": {
-                ""KHR_texture_basisu"": {
-                    ""source"": 42
-                },
-                ""EXT_texture_webp"": {
-                    ""source"": 43
-                }
-            },
-            ""name"": ""Texture4""
+            AssertUnknownTextureExtensionResult(gltf, true);
         }
-    ]
-}
-"
-            );
 
+        static void AssertUnknownTextureExtensionResultStrict(RootBase gltf)
+        {
+            AssertUnknownTextureExtensionResult(gltf, false);
+        }
+
+        static void AssertUnknownTextureExtensionResult(RootBase gltf, bool discardEmptyExtensions)
+        {
             Assert.NotNull(gltf);
             Assert.NotNull(gltf.Textures, "No textures");
             Assert.AreEqual(5, gltf.Textures.Count, "Invalid texture quantity");
@@ -563,11 +622,17 @@ namespace GLTFast.Tests.JsonParsing
 
             var texture1 = gltf.Textures[1];
             Assert.NotNull(texture1);
-            Assert.IsNull(texture1.Extensions);
+            if (discardEmptyExtensions)
+                Assert.IsNull(texture1.Extensions);
+            else
+                Assert.NotNull(texture1.Extensions);
 
             var texture2 = gltf.Textures[2];
             Assert.NotNull(texture2);
-            Assert.IsNull(texture2.Extensions);
+            if (discardEmptyExtensions)
+                Assert.IsNull(texture2.Extensions);
+            else
+                Assert.NotNull(texture2.Extensions);
 
             var texture3 = gltf.Textures[3];
             Assert.NotNull(texture3);
@@ -580,17 +645,6 @@ namespace GLTFast.Tests.JsonParsing
             Assert.NotNull(texture4.Extensions);
             Assert.NotNull(texture4.Extensions.KHR_texture_basisu);
             Assert.AreEqual(42, texture4.Extensions.KHR_texture_basisu.source);
-        }
-
-        [Test]
-        public void ParseGarbage()
-        {
-            var jsonParser = new GltfJsonUtilityParser();
-            var gltf = jsonParser.ParseJson(@"");
-            Assert.IsNull(gltf);
-
-            gltf = jsonParser.ParseJson(@"garbage");
-            Assert.IsNull(gltf);
         }
     }
 }
