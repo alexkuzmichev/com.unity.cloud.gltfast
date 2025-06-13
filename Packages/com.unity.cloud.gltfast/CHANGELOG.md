@@ -7,20 +7,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-- (Documentation) Use case for custom [Playables](https://docs.unity3d.com/Manual/Playables.html) animation implementation.
 
 ### Changed
 
 ### Fixed
-- Use XYZ-style normals in shaders even if DXT5nm-style is enabled.
-- (Import) When a node has morph target weights, they are applied properly (instead of the primitive's weights; fixes [#531](https://github.com/atteneder/glTFast/issues/531)).
-- (Import) Specular-Glossiness materials with alpha mode `MASK` are not blended anymore in URP/HDRP (fixes [#757](https://github.com/atteneder/glTFast/issues/757)).
 
 ### Removed
 
 ### Deprecated
 
 ### Security
+
+## [6.13.0] - 2025-06-10
+
+### Added
+- (Documentation) Use case for custom [Playables](https://docs.unity3d.com/Manual/Playables.html) animation implementation.
+
+### Fixed
+- Use XYZ-style normals in shaders even if DXT5nm-style is enabled.
+- (Import) When a node has morph target weights, they are applied properly (instead of the primitive's weights; fixes [#531](https://github.com/atteneder/glTFast/issues/531)).
+- (Import) Specular-Glossiness materials with alpha mode `MASK` are not blended anymore in URP/HDRP (fixes [#757](https://github.com/atteneder/glTFast/issues/757)).
 
 ## [6.12.1] - 2025-04-08
 
