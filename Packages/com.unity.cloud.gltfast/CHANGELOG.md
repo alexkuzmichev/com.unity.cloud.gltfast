@@ -12,7 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Refactored `JsonParsingTests`.
 
 ### Fixed
-- (Import) Prevented `NullReferenceException` on transmissive materials with no transmissive texture (built-in render pipeline).
+- (Import) Prevented `NullReferenceException` on transmissive materials with no transmissive texture.
 
 ### Removed
 
