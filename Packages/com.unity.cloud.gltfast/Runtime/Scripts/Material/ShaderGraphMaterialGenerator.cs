@@ -459,14 +459,16 @@ namespace GLTFast.Materials {
                     ClearcoatRoughnessTextureScaleTransformProperty,
                     ClearcoatRoughnessTextureRotationProperty,
                     ClearcoatRoughnessTextureTexCoordProperty);
-                TrySetTexture(clearcoat.clearcoatNormalTexture,
-                    material,
-                    gltf,
-                    ClearcoatNormalTextureProperty,
-                    ClearcoatNormalTextureScaleTransformProperty,
-                    ClearcoatNormalTextureRotationProperty,
-                    ClearcoatNormalTextureTexCoordProperty);
-                material.SetFloat(ClearcoatNormalTextureScaleProperty, clearcoat.clearcoatNormalTexture.scale);
+                if (TrySetTexture(clearcoat.clearcoatNormalTexture,
+                        material,
+                        gltf,
+                        ClearcoatNormalTextureProperty,
+                        ClearcoatNormalTextureScaleTransformProperty,
+                        ClearcoatNormalTextureRotationProperty,
+                        ClearcoatNormalTextureTexCoordProperty))
+                {
+                    material.SetFloat(ClearcoatNormalTextureScaleProperty, clearcoat.clearcoatNormalTexture.scale);
+                }
             }
 
             return material;

@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - (Import) Prevented `NullReferenceException` on transmissive materials with no transmissive texture.
+- (Import) Potential `NullReferenceException` when clearcoat is applied without a texture.
 
 ### Removed
 
