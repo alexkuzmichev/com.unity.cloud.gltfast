@@ -13,9 +13,7 @@ using System.Threading.Tasks;
 using UnityEditor;
 using UnityEditor.PackageManager;
 using UnityEngine;
-#if USING_SRP
 using UnityEngine.Rendering;
-#endif
 
 namespace GLTFast.Editor.Tests
 {
@@ -45,6 +43,77 @@ namespace GLTFast.Editor.Tests
             ["performance"] = new ProjectSetup(null, new[] { "RUN_PERFORMANCE_TESTS" })
         };
 
+        [MenuItem("Tools/glTFast Test Setup/URP")]
+        static async void ApplySetupUniversal()
+        {
+            await ApplySetup("urp");
+        }
+
+        [MenuItem("Tools/glTFast Test Setup/HDRP")]
+        static async void ApplySetupHighDefinition()
+        {
+            await ApplySetup("hdrp");
+        }
+
+        [MenuItem("Tools/glTFast Test Setup/All Defines")]
+        static async void ApplySetupAllDefines()
+        {
+            await ApplySetup("all_defines");
+        }
+
+        [MenuItem("Tools/glTFast Test Setup/Performance")]
+        static async void ApplySetupPerformance()
+        {
+            await ApplySetup("performance");
+        }
+
+        [MenuItem("Tools/glTFast Test Render Pipeline/Built-In")]
+        static void SetupRenderPipelineBuiltIn()
+        {
+            Debug.Log($"Set default render pipeline to Built-In.");
+            PlayerSettings.colorSpace = ColorSpace.Linear;
+            GraphicsSettings.defaultRenderPipeline = null;
+        }
+
+        [MenuItem("Tools/glTFast Test Render Pipeline/Universal (Forward)")]
+        static void SetupRenderPipelineUniversalForward()
+        {
+            SetRenderPipeline("URP-Forward");
+        }
+
+        [MenuItem("Tools/glTFast Test Render Pipeline/Universal (Forward+)")]
+        static void SetupRenderPipelineUniversalForwardPlus()
+        {
+            SetRenderPipeline("URP-ForwardPlus");
+        }
+
+        [MenuItem("Tools/glTFast Test Render Pipeline/Universal (Forward)", true)]
+        [MenuItem("Tools/glTFast Test Render Pipeline/Universal (Forward+)", true)]
+        static bool SetupRenderPipelineUniversalValidate()
+        {
+#if USING_URP
+            return true;
+#else
+            return false;
+#endif
+        }
+
+        [MenuItem("Tools/glTFast Test Render Pipeline/High Definition (Deferred)")]
+        static void SetupRenderPipelineHighDefinitionDeferred()
+        {
+            SetRenderPipeline("HDRP-Deferred");
+        }
+
+        [MenuItem("Tools/glTFast Test Render Pipeline/High Definition (Deferred)", true)]
+        static bool SetupRenderPipelineHighDefinitionValidate()
+        {
+#if USING_HDRP
+            return true;
+#else
+            return false;
+#endif
+        }
+
         public static async void ApplySetup()
         {
             var args = Environment.GetCommandLineArgs();
@@ -54,16 +123,22 @@ namespace GLTFast.Editor.Tests
                 if (arg.StartsWith(prefix))
                 {
                     var name = arg.Substring(prefix.Length);
-                    if (k_ProjectSetups.TryGetValue(name, out var setup))
-                    {
-                        await setup.Apply();
-                    }
-                    else
-                    {
-                        throw new ArgumentException($"Test Setup {name} not found!");
-                    }
+                    await ApplySetup(name);
                     break;
                 }
+            }
+        }
+
+        static async Task ApplySetup(string name)
+        {
+            if (k_ProjectSetups.TryGetValue(name, out var setup))
+            {
+                Debug.Log($"Applying test setup {name}.");
+                await setup.Apply();
+            }
+            else
+            {
+                throw new ArgumentException($"Test Setup {name} not found!");
             }
         }
 
@@ -76,25 +151,27 @@ namespace GLTFast.Editor.Tests
                 if (arg.StartsWith(prefix))
                 {
                     var subPath = arg.Substring(prefix.Length);
-                    var assetPath = $"{k_RenderPipelineAssetsPath}{subPath}.asset";
-#if USING_SRP
-                    PlayerSettings.colorSpace = ColorSpace.Linear;
-                    var asset = AssetDatabase.LoadAssetAtPath<RenderPipelineAsset>(assetPath);
-                    if (asset == null)
-                    {
-                        throw new InvalidDataException($"Could not find render pipeline asset at {subPath}.");
-                    }
-                    Debug.Log($"Set default render pipeline to {subPath}");
-                    GraphicsSettings.defaultRenderPipeline = asset;
-                    break;
-#else
-                    throw new InvalidOperationException(
-                        $"Could not set render pipeline asset ({subPath}): No SRP package installed");
-#endif
+                    SetRenderPipeline(subPath);
                 }
             }
+        }
 
-
+        static void SetRenderPipeline(string subPath)
+        {
+            var assetPath = $"{k_RenderPipelineAssetsPath}{subPath}.asset";
+#if USING_SRP
+            PlayerSettings.colorSpace = ColorSpace.Linear;
+            var asset = AssetDatabase.LoadAssetAtPath<RenderPipelineAsset>(assetPath);
+            if (asset == null)
+            {
+                throw new InvalidDataException($"Could not find render pipeline asset at {subPath}.");
+            }
+            Debug.Log($"Set default render pipeline to {subPath}");
+            GraphicsSettings.defaultRenderPipeline = asset;
+#else
+            throw new InvalidOperationException(
+                $"Could not set render pipeline asset ({subPath}): No SRP package installed");
+#endif
         }
     }
 
@@ -153,7 +230,6 @@ namespace GLTFast.Editor.Tests
 #else
                 Debug.Log($"Adding scripting define {define} ({group}).");
 #endif
-                Debug.Log($"Adding scripting define {define} ({group}).");
                 defines.Add(define);
             }
 #if UNITY_2021_2_OR_NEWER
