@@ -49,7 +49,7 @@ namespace GLTFast.Tests
             Assert.Ignore("Skipping performance tests (scripting define RUN_PERFORMANCE_TESTS is not set).");
 #endif
             yield return AsyncWrapper.WaitForTask(RunTestFromMemory(
-                    TestGltfGenerator.FlatHierarchyPath), k_Repetitions);
+                    TestGltfGenerator.FlatHierarchyPath));
         }
 
         [UnityTest, Performance]
@@ -86,22 +86,7 @@ namespace GLTFast.Tests
 #if RUN_PERFORMANCE_TESTS
         public async void Setup()
         {
-            try
-            {
-                if (!TestGltfGenerator.CertifyPerformanceTestGltfs())
-                {
-#if UNITY_EDITOR
-                    await TestGltfGenerator.CreatePerformanceTestFilesAsync();
-                    Debug.Log("Created test glTFs");
-#else
-                    throw new InvalidDataException("Performance test glTFs missing!");
-#endif
-                }
-            }
-            catch (Exception e)
-            {
-                Debug.LogException(e);
-            }
+            await TestGltfGenerator.CertifyPerformanceTestGltfs();
         }
 #else
         public void Setup() { }

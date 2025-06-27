@@ -46,20 +46,41 @@ namespace GLTFast.Tests
             if (!Directory.Exists(folder))
                 Directory.CreateDirectory(folder);
 
-            await CreateGltfFlatHierarchy(FlatHierarchyPath, 10_000, GltfFormat.Json);
-            await CreateGltfFlatHierarchy(FlatHierarchyBinaryPath, 10_000, GltfFormat.Binary);
-            await CreateGltfBigCylinderMesh(BigCylinderPath, 1_000_000, GltfFormat.Json);
-            await CreateGltfBigCylinderMesh(BigCylinderBinaryPath, 1_000_000, GltfFormat.Binary);
+            if (!File.Exists(FlatHierarchyPath))
+                await CreateGltfFlatHierarchy(FlatHierarchyPath, 10_000, GltfFormat.Json);
+            if(!File.Exists(FlatHierarchyBinaryPath))
+                await CreateGltfFlatHierarchy(FlatHierarchyBinaryPath, 10_000, GltfFormat.Binary);
+            if(!File.Exists(BigCylinderPath))
+                await CreateGltfBigCylinderMesh(BigCylinderPath, 1_000_000, GltfFormat.Json);
+            if(!File.Exists(BigCylinderBinaryPath))
+                await CreateGltfBigCylinderMesh(BigCylinderBinaryPath, 1_000_000, GltfFormat.Binary);
             AssetDatabase.Refresh();
         }
 #endif
 
-        internal static bool CertifyPerformanceTestGltfs()
+        internal static async Task CertifyPerformanceTestGltfs()
         {
-            return File.Exists(FlatHierarchyPath)
+            var testFilesPresent = File.Exists(FlatHierarchyPath)
                 && File.Exists(FlatHierarchyBinaryPath)
                 && File.Exists(BigCylinderPath)
                 && File.Exists(BigCylinderBinaryPath);
+
+            if (!testFilesPresent)
+            {
+                try
+                {
+#if UNITY_EDITOR
+                    await CreatePerformanceTestFilesAsync();
+                    Debug.Log("Created test glTFs");
+#else
+                    throw new InvalidDataException("Performance test glTFs missing!");
+#endif
+                }
+                catch (Exception e)
+                {
+                    Debug.LogException(e);
+                }
+            }
         }
 
         static async Task CreateGltfFlatHierarchy(string path, int nodeCount, GltfFormat format)

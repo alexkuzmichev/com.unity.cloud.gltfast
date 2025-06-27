@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - (Test) Menu items that make switching test setups and render pipelines more accessible.
+- (Test) JSON parsing performance tests.
 - (Tools) Scripts for resetting test materials and settings.
 
 ### Changed
