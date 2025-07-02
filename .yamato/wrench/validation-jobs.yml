@@ -62,10 +62,10 @@ validate_-_cloud_gltfast_-_2021_3_-_macos:
   - path: .yamato/wrench/package-pack-jobs.yml#package_pack_-_cloud_gltfast
   variables:
     UPMPVP_ACK_UPMPVP_DOES_NO_API_VALIDATION: 1
-    UPMPVP_CONTEXT_WRENCH: 0.12.1.0
+    UPMPVP_CONTEXT_WRENCH: 0.12.2.0
   metadata:
     Job Maintainers: '#rm-packageworks'
-    Wrench: 0.12.1.0
+    Wrench: 0.12.2.0
   labels:
   - Packages:cloud.gltfast
 
@@ -130,10 +130,10 @@ validate_-_cloud_gltfast_-_2021_3_-_ubuntu:
   - path: .yamato/wrench/package-pack-jobs.yml#package_pack_-_cloud_gltfast
   variables:
     UPMPVP_ACK_UPMPVP_DOES_NO_API_VALIDATION: 1
-    UPMPVP_CONTEXT_WRENCH: 0.12.1.0
+    UPMPVP_CONTEXT_WRENCH: 0.12.2.0
   metadata:
     Job Maintainers: '#rm-packageworks'
-    Wrench: 0.12.1.0
+    Wrench: 0.12.2.0
   labels:
   - Packages:cloud.gltfast
 
@@ -198,10 +198,10 @@ validate_-_cloud_gltfast_-_2021_3_-_windows:
   - path: .yamato/wrench/package-pack-jobs.yml#package_pack_-_cloud_gltfast
   variables:
     UPMPVP_ACK_UPMPVP_DOES_NO_API_VALIDATION: 1
-    UPMPVP_CONTEXT_WRENCH: 0.12.1.0
+    UPMPVP_CONTEXT_WRENCH: 0.12.2.0
   metadata:
     Job Maintainers: '#rm-packageworks'
-    Wrench: 0.12.1.0
+    Wrench: 0.12.2.0
   labels:
   - Packages:cloud.gltfast
 
@@ -266,10 +266,10 @@ validate_-_cloud_gltfast_-_2021_3_46f1_-_windows:
   - path: .yamato/wrench/package-pack-jobs.yml#package_pack_-_cloud_gltfast
   variables:
     UPMPVP_ACK_UPMPVP_DOES_NO_API_VALIDATION: 1
-    UPMPVP_CONTEXT_WRENCH: 0.12.1.0
+    UPMPVP_CONTEXT_WRENCH: 0.12.2.0
   metadata:
     Job Maintainers: '#rm-packageworks'
-    Wrench: 0.12.1.0
+    Wrench: 0.12.2.0
   labels:
   - Packages:cloud.gltfast
 
@@ -334,10 +334,10 @@ validate_-_cloud_gltfast_-_2022_3_-_macos:
   - path: .yamato/wrench/package-pack-jobs.yml#package_pack_-_cloud_gltfast
   variables:
     UPMPVP_ACK_UPMPVP_DOES_NO_API_VALIDATION: 1
-    UPMPVP_CONTEXT_WRENCH: 0.12.1.0
+    UPMPVP_CONTEXT_WRENCH: 0.12.2.0
   metadata:
     Job Maintainers: '#rm-packageworks'
-    Wrench: 0.12.1.0
+    Wrench: 0.12.2.0
   labels:
   - Packages:cloud.gltfast
 
@@ -402,10 +402,10 @@ validate_-_cloud_gltfast_-_2022_3_-_ubuntu:
   - path: .yamato/wrench/package-pack-jobs.yml#package_pack_-_cloud_gltfast
   variables:
     UPMPVP_ACK_UPMPVP_DOES_NO_API_VALIDATION: 1
-    UPMPVP_CONTEXT_WRENCH: 0.12.1.0
+    UPMPVP_CONTEXT_WRENCH: 0.12.2.0
   metadata:
     Job Maintainers: '#rm-packageworks'
-    Wrench: 0.12.1.0
+    Wrench: 0.12.2.0
   labels:
   - Packages:cloud.gltfast
 
@@ -470,10 +470,10 @@ validate_-_cloud_gltfast_-_2022_3_-_windows:
   - path: .yamato/wrench/package-pack-jobs.yml#package_pack_-_cloud_gltfast
   variables:
     UPMPVP_ACK_UPMPVP_DOES_NO_API_VALIDATION: 1
-    UPMPVP_CONTEXT_WRENCH: 0.12.1.0
+    UPMPVP_CONTEXT_WRENCH: 0.12.2.0
   metadata:
     Job Maintainers: '#rm-packageworks'
-    Wrench: 0.12.1.0
+    Wrench: 0.12.2.0
   labels:
   - Packages:cloud.gltfast
 
@@ -538,10 +538,10 @@ validate_-_cloud_gltfast_-_6000_0_-_macos:
   - path: .yamato/wrench/package-pack-jobs.yml#package_pack_-_cloud_gltfast
   variables:
     UPMPVP_ACK_UPMPVP_DOES_NO_API_VALIDATION: 1
-    UPMPVP_CONTEXT_WRENCH: 0.12.1.0
+    UPMPVP_CONTEXT_WRENCH: 0.12.2.0
   metadata:
     Job Maintainers: '#rm-packageworks'
-    Wrench: 0.12.1.0
+    Wrench: 0.12.2.0
   labels:
   - Packages:cloud.gltfast
 
@@ -606,10 +606,10 @@ validate_-_cloud_gltfast_-_6000_0_-_ubuntu:
   - path: .yamato/wrench/package-pack-jobs.yml#package_pack_-_cloud_gltfast
   variables:
     UPMPVP_ACK_UPMPVP_DOES_NO_API_VALIDATION: 1
-    UPMPVP_CONTEXT_WRENCH: 0.12.1.0
+    UPMPVP_CONTEXT_WRENCH: 0.12.2.0
   metadata:
     Job Maintainers: '#rm-packageworks'
-    Wrench: 0.12.1.0
+    Wrench: 0.12.2.0
   labels:
   - Packages:cloud.gltfast
 
@@ -674,10 +674,10 @@ validate_-_cloud_gltfast_-_6000_0_-_windows:
   - path: .yamato/wrench/package-pack-jobs.yml#package_pack_-_cloud_gltfast
   variables:
     UPMPVP_ACK_UPMPVP_DOES_NO_API_VALIDATION: 1
-    UPMPVP_CONTEXT_WRENCH: 0.12.1.0
+    UPMPVP_CONTEXT_WRENCH: 0.12.2.0
   metadata:
     Job Maintainers: '#rm-packageworks'
-    Wrench: 0.12.1.0
+    Wrench: 0.12.2.0
   labels:
   - Packages:cloud.gltfast
 
@@ -742,10 +742,10 @@ validate_-_cloud_gltfast_-_6000_1_-_macos:
   - path: .yamato/wrench/package-pack-jobs.yml#package_pack_-_cloud_gltfast
   variables:
     UPMPVP_ACK_UPMPVP_DOES_NO_API_VALIDATION: 1
-    UPMPVP_CONTEXT_WRENCH: 0.12.1.0
+    UPMPVP_CONTEXT_WRENCH: 0.12.2.0
   metadata:
     Job Maintainers: '#rm-packageworks'
-    Wrench: 0.12.1.0
+    Wrench: 0.12.2.0
   labels:
   - Packages:cloud.gltfast
 
@@ -810,10 +810,10 @@ validate_-_cloud_gltfast_-_6000_1_-_ubuntu:
   - path: .yamato/wrench/package-pack-jobs.yml#package_pack_-_cloud_gltfast
   variables:
     UPMPVP_ACK_UPMPVP_DOES_NO_API_VALIDATION: 1
-    UPMPVP_CONTEXT_WRENCH: 0.12.1.0
+    UPMPVP_CONTEXT_WRENCH: 0.12.2.0
   metadata:
     Job Maintainers: '#rm-packageworks'
-    Wrench: 0.12.1.0
+    Wrench: 0.12.2.0
   labels:
   - Packages:cloud.gltfast
 
@@ -878,10 +878,10 @@ validate_-_cloud_gltfast_-_6000_1_-_windows:
   - path: .yamato/wrench/package-pack-jobs.yml#package_pack_-_cloud_gltfast
   variables:
     UPMPVP_ACK_UPMPVP_DOES_NO_API_VALIDATION: 1
-    UPMPVP_CONTEXT_WRENCH: 0.12.1.0
+    UPMPVP_CONTEXT_WRENCH: 0.12.2.0
   metadata:
     Job Maintainers: '#rm-packageworks'
-    Wrench: 0.12.1.0
+    Wrench: 0.12.2.0
   labels:
   - Packages:cloud.gltfast
 
@@ -946,10 +946,10 @@ validate_-_cloud_gltfast_-_6000_2_-_macos:
   - path: .yamato/wrench/package-pack-jobs.yml#package_pack_-_cloud_gltfast
   variables:
     UPMPVP_ACK_UPMPVP_DOES_NO_API_VALIDATION: 1
-    UPMPVP_CONTEXT_WRENCH: 0.12.1.0
+    UPMPVP_CONTEXT_WRENCH: 0.12.2.0
   metadata:
     Job Maintainers: '#rm-packageworks'
-    Wrench: 0.12.1.0
+    Wrench: 0.12.2.0
   labels:
   - Packages:cloud.gltfast
 
@@ -1014,10 +1014,10 @@ validate_-_cloud_gltfast_-_6000_2_-_ubuntu:
   - path: .yamato/wrench/package-pack-jobs.yml#package_pack_-_cloud_gltfast
   variables:
     UPMPVP_ACK_UPMPVP_DOES_NO_API_VALIDATION: 1
-    UPMPVP_CONTEXT_WRENCH: 0.12.1.0
+    UPMPVP_CONTEXT_WRENCH: 0.12.2.0
   metadata:
     Job Maintainers: '#rm-packageworks'
-    Wrench: 0.12.1.0
+    Wrench: 0.12.2.0
   labels:
   - Packages:cloud.gltfast
 
@@ -1082,10 +1082,10 @@ validate_-_cloud_gltfast_-_6000_2_-_windows:
   - path: .yamato/wrench/package-pack-jobs.yml#package_pack_-_cloud_gltfast
   variables:
     UPMPVP_ACK_UPMPVP_DOES_NO_API_VALIDATION: 1
-    UPMPVP_CONTEXT_WRENCH: 0.12.1.0
+    UPMPVP_CONTEXT_WRENCH: 0.12.2.0
   metadata:
     Job Maintainers: '#rm-packageworks'
-    Wrench: 0.12.1.0
+    Wrench: 0.12.2.0
   labels:
   - Packages:cloud.gltfast
 
@@ -1150,10 +1150,10 @@ validate_-_cloud_gltfast_-_6000_3_-_macos:
   - path: .yamato/wrench/package-pack-jobs.yml#package_pack_-_cloud_gltfast
   variables:
     UPMPVP_ACK_UPMPVP_DOES_NO_API_VALIDATION: 1
-    UPMPVP_CONTEXT_WRENCH: 0.12.1.0
+    UPMPVP_CONTEXT_WRENCH: 0.12.2.0
   metadata:
     Job Maintainers: '#rm-packageworks'
-    Wrench: 0.12.1.0
+    Wrench: 0.12.2.0
   labels:
   - Packages:cloud.gltfast
 
@@ -1218,10 +1218,10 @@ validate_-_cloud_gltfast_-_6000_3_-_ubuntu:
   - path: .yamato/wrench/package-pack-jobs.yml#package_pack_-_cloud_gltfast
   variables:
     UPMPVP_ACK_UPMPVP_DOES_NO_API_VALIDATION: 1
-    UPMPVP_CONTEXT_WRENCH: 0.12.1.0
+    UPMPVP_CONTEXT_WRENCH: 0.12.2.0
   metadata:
     Job Maintainers: '#rm-packageworks'
-    Wrench: 0.12.1.0
+    Wrench: 0.12.2.0
   labels:
   - Packages:cloud.gltfast
 
@@ -1286,10 +1286,10 @@ validate_-_cloud_gltfast_-_6000_3_-_windows:
   - path: .yamato/wrench/package-pack-jobs.yml#package_pack_-_cloud_gltfast
   variables:
     UPMPVP_ACK_UPMPVP_DOES_NO_API_VALIDATION: 1
-    UPMPVP_CONTEXT_WRENCH: 0.12.1.0
+    UPMPVP_CONTEXT_WRENCH: 0.12.2.0
   metadata:
     Job Maintainers: '#rm-packageworks'
-    Wrench: 0.12.1.0
+    Wrench: 0.12.2.0
   labels:
   - Packages:cloud.gltfast
 
