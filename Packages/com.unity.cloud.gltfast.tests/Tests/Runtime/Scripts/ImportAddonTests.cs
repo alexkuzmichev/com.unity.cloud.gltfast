@@ -1,6 +1,7 @@
 // SPDX-FileCopyrightText: 2023 Unity Technologies and the glTFast authors
 // SPDX-License-Identifier: Apache-2.0
 
+using GLTFast.Logging;
 using NUnit.Framework;
 using UnityEngine;
 
@@ -13,12 +14,12 @@ namespace GLTFast.Tests
         [Test]
         public static void GetImportAddonInstance()
         {
-            var gltf = new GltfImport();
+            var gltf = new GltfImport(logger: new ConsoleLogger());
             var addonA = gltf.GetImportAddonInstance<AddonInstanceA>();
             Assert.IsNull(addonA);
 
             ImportAddonRegistry.RegisterImportAddon(new AddonB());
-            gltf = new GltfImport();
+            gltf = new GltfImport(logger: new ConsoleLogger());
             addonA = gltf.GetImportAddonInstance<AddonInstanceA>();
             Assert.IsNull(addonA);
             var addonB = gltf.GetImportAddonInstance<AddonInstanceB>();

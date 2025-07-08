@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - Refactored `JsonParsingTests`.
+- Ensured loggers are used in all tests and examples.
 
 ### Fixed
 - (Import) Prevented `NullReferenceException` on transmissive materials with no transmissive texture.

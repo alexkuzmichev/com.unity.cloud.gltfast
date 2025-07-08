@@ -1,6 +1,8 @@
 // SPDX-FileCopyrightText: 2025 Unity Technologies and the glTFast authors
 // SPDX-License-Identifier: Apache-2.0
 
+using GLTFast.Logging;
+
 #if UNITY_ANIMATION
 namespace GLTFast.Documentation.Examples
 {
@@ -16,7 +18,7 @@ namespace GLTFast.Documentation.Examples
         {
             try
             {
-                var gltfImport = new GltfImport();
+                var gltfImport = new GltfImport(logger:new ConsoleLogger());
                 var instantiator = new CustomGameObjectInstantiator(gltfImport, transform);
                 var importSettings = new ImportSettings { AnimationMethod = AnimationMethod.Playables };
 
