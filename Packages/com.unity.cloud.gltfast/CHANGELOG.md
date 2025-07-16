@@ -21,6 +21,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Incorrect version define for the Unity Collections package. glTFast now properly uses older versions (1.4.0) as well.
 
 ### Removed
+- [Playables](https://docs.unity3d.com/Manual/Playables.html) option for runtime animation imports.
+- (Documentation) Use case for custom [Playables](https://docs.unity3d.com/Manual/Playables.html) animation implementation.
 
 ### Deprecated
 

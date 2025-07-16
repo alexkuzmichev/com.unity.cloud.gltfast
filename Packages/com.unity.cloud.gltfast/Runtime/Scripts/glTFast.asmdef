@@ -10,8 +10,7 @@
         "Ktx",
         "Unity.Meshopt.Decompress",
         "Unity.RenderPipelines.Universal.Runtime",
-        "Unity.RenderPipelines.HighDefinition.Runtime",
-        "glTFast.Animation"
+        "Unity.RenderPipelines.HighDefinition.Runtime"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
