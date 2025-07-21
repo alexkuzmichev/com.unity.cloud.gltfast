@@ -23,7 +23,7 @@ namespace GLTFast.Tests.Import
         {
             get
             {
-                var lastSeparatorIndex = relativeUri.LastIndexOf('/');
+                var lastSeparatorIndex = relativeUri.LastIndexOfAny(new[] { '/', '\\' });
                 return lastSeparatorIndex >= 0
                     ? relativeUri.Substring(lastSeparatorIndex + 1)
                     : relativeUri;
@@ -32,7 +32,7 @@ namespace GLTFast.Tests.Import
 
         public override string ToString()
         {
-            return relativeUri;
+            return Filename;
         }
     }
 }

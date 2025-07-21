@@ -1,0 +1,16 @@
+name: Graphics Tests
+agent:
+  type: Unity::VM::GPU
+  image: package-ci/win10:v4
+  flavor: b1.large
+commands:
+  - gsudo choco install unity-downloader-cli -y -s https://artifactory.prd.it.unity3d.com/artifactory/api/nuget/unity-choco-local
+  - unity-downloader-cli -u 6000 -c Editor --wait --fast
+  - UnifiedTestRunner.exe  --editor-location=.Editor --suite=playmode --category=Graphic --testproject="./Projects/glTFast-Test" --artifacts_path=test-results
+triggers:
+  expression: |
+    pull_request.comment eq "gfx"
+artifacts:
+  logs:
+    paths:
+      -  test-results/**

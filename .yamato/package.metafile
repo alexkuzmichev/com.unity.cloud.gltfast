@@ -65,7 +65,7 @@ test_setups:
     project: glTFast-Test-entities
     setup: urp
     render_pipeline: URP-ForwardPlus
-    test_categories: "!Performance;!Export"
+    test_categories: "!Performance;!Export;!Graphics"
     utr_timeout: 1200
     editor_versions: [2022,6000.0,trunk]
     platforms: [win]
@@ -85,7 +85,7 @@ test_setups:
     project: glTFast-Test-entities-legacy
     setup: urp
     render_pipeline: URP-Forward
-    test_categories: "!Performance;!Export"
+    test_categories: "!Performance;!Export;!Graphics"
     utr_timeout: 1200
     editor_versions: [2021]
     platforms: [win]
@@ -231,7 +231,7 @@ registry:
   artifactory: https://artifactory.prd.cds.internal.unity3d.com/artifactory
 
 generic_project_path: Projects/TestProject
-test_categories: "!Performance"
+test_categories: "!Performance;!Graphics"
 
 # Operating system specific variables
 os_variables:

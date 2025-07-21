@@ -9,7 +9,9 @@
         "glTFast.Tests",
         "glTFast.Editor",
         "glTFast.Export",
-        "Unity.RenderPipelines.Universal.Runtime"
+        "Unity.RenderPipelines.Universal.Runtime",
+        "UnityEngine.TestTools.Graphics",
+        "UnityEditor.TestTools.Graphics"
     ],
     "includePlatforms": [
         "Editor"
@@ -29,6 +31,11 @@
             "name": "com.unity.formats.gltf.validator",
             "expression": "0.2.0-preview.1",
             "define": "GLTF_VALIDATOR"
+        },
+        {
+            "name": "com.unity.testframework.graphics",
+            "expression": "",
+            "define": "USING_GRAPHICS_TEST_FRAMEWORK"
         },
         {
             "name": "com.unity.render-pipelines.universal",

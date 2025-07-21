@@ -15,6 +15,7 @@
         "glTFast.Export",
         "glTFast.Newtonsoft",
         "Unity.Meshopt.Decompress",
+        "UnityEngine.TestTools.Graphics",
         "Unity.RenderPipelines.HighDefinition.Runtime"
     ],
     "includePlatforms": [],
@@ -99,6 +100,11 @@
             "name": "com.unity.entities.graphics",
             "expression": "1.0.10",
             "define": "UNITY_ENTITIES_GRAPHICS"
+        },
+        {
+            "name": "com.unity.testframework.graphics",
+            "expression": "",
+            "define": "USING_GRAPHICS_TEST_FRAMEWORK"
         },
         {
             "name": "com.unity.collections",

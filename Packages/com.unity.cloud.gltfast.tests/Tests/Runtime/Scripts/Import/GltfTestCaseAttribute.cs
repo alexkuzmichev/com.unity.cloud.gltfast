@@ -20,10 +20,10 @@ namespace GLTFast.Tests.Import
     {
         readonly GltfTestCaseSet m_TestCases;
         readonly GltfTestCaseFilter m_Filter;
-
+        readonly string m_Prefix;
         readonly NUnitTestCaseBuilder m_Builder = new NUnitTestCaseBuilder();
 
-        public GltfTestCaseAttribute(string testSetName, int testCaseCount, string includeFilter = null)
+        public GltfTestCaseAttribute(string testSetName, int testCaseCount, string includeFilter = null, string testPrefix = "")
         {
 #if UNITY_EDITOR
             var path = $"Packages/{GltfGlobals.GltfPackageName}/Tests/Runtime/TestCaseSets/{testSetName}.asset";
@@ -43,6 +43,7 @@ namespace GLTFast.Tests.Import
             }
 
             m_Filter = includeFilter == null ? null : new GltfTestCaseFilter(new Regex(includeFilter));
+            m_Prefix = testPrefix;
             var actualTestCaseCount = m_TestCases.GetTestCaseCount(m_Filter);
             if (testCaseCount != actualTestCaseCount)
             {
@@ -74,10 +75,13 @@ namespace GLTFast.Tests.Import
                     }
                     else
                     {
-                        name = $"{origName}";
+                        name = origName;
                         nameCounts[origName] = 1;
                     }
-
+                    if (!string.IsNullOrEmpty(m_Prefix))
+                    {
+                        name = $"{m_Prefix}{name}";
+                    }
                     data.SetName($"{method.Name}.{name}");
                     data.ExpectedResult = new UnityEngine.Object();
                     data.HasExpectedResult = true;
