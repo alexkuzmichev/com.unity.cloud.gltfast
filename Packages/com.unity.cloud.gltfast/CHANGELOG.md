@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+
+### Changed
+
+### Fixed
+
+### Removed
+
+### Deprecated
+
+### Security
+
+## [6.13.1] - 2025-07-17
+
+### Added
 - (Test) Menu items that make switching test setups and render pipelines more accessible.
 - (Test) JSON parsing performance tests.
 - (Tools) Scripts for resetting test materials and settings.
@@ -23,10 +37,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 - [Playables](https://docs.unity3d.com/Manual/Playables.html) option for runtime animation imports.
 - (Documentation) Use case for custom [Playables](https://docs.unity3d.com/Manual/Playables.html) animation implementation.
-
-### Deprecated
-
-### Security
 
 ## [6.13.0] - 2025-06-10
 
