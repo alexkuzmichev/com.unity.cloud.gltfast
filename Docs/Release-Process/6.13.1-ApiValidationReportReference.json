@@ -1,13 +1,10 @@
 {
     "missingAssemblies": [],
-    "newAssemblies": [
-        "glTFast.Animation"
-    ],
+    "newAssemblies": [],
     "assemblyChanges": [
         {
             "assemblyName": "glTFast",
             "additions": [
-                "MemberAdded ( -> GLTFast.AnimationMethod GLTFast.AnimationMethod::Playables)",
                 "MemberAdded ( -> System.Void GLTFast.GameObjectInstantiator::AddAnimation(UnityEngine.AnimationClip[]))",
                 "MemberAdded ( -> UnityEngine.Animation GLTFast.GameObjectSceneInstance::LegacyAnimation())",
                 "MemberAdded ( -> System.Nullable`1<UnityEngine.Playables.Playable> GLTFast.GameObjectSceneInstance::Playable())",
@@ -81,6 +78,6 @@
         }
     ],
     "breakingChanges": 2,
-    "additions": 60,
+    "additions": 59,
     "removedAssemblyCount": 0
 }
