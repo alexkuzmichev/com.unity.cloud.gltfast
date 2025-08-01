@@ -50,7 +50,7 @@ test_{{ platform.name }}_{{ editor }}:
         - upm-ci~/test-results/**
         - upm-ci~/upm-ci.log
   dependencies:
-    - .yamato/pack.yml#pack
+    - .yamato/wrench/package-pack-jobs.yml#package_pack_-_cloud_gltfast
 {% endfor -%}
 {% endfor -%}
 

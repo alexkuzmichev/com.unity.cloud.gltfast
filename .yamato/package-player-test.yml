@@ -41,7 +41,7 @@ build_{{ platform.name }}_{{ editor.version }}:
       paths:
         - "player/{{ platform.id }}/**"
   dependencies:
-    - .yamato/pack.yml#pack
+    - .yamato/wrench/package-pack-jobs.yml#package_pack_-_cloud_gltfast
 {% endif -%}
 
 {% assign agent = agents[platform.run] -%}
@@ -78,7 +78,7 @@ run_{{ platform.name }}_{{ editor.version }}:
       paths:
         - "test-results/**"
   dependencies:
-    - .yamato/pack.yml#pack
+    - .yamato/wrench/package-pack-jobs.yml#package_pack_-_cloud_gltfast
 {% if platform.build -%}
     - .yamato/package-player-test.yml#build_{{ platform.name }}_{{ editor.version }}
 {% endif -%}

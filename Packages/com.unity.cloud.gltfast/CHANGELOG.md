@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Graphics Tests
 
 ### Changed
+- (CI) Consolidated multiple redundant packaging and vetting/API validation jobs.
 
 ### Fixed
 
