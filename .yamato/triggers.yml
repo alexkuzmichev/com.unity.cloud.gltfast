@@ -13,7 +13,7 @@ pr_trigger:
     - .yamato/package-test.yml#tests_pr
     - .yamato/project-test.yml#tests_pr
     - .yamato/project-test.yml#run_pr
-    - .yamato/sonar.yml#sonar
+    - .yamato/project-test.yml#coverage_all
     - .yamato/wrench/api-validation-jobs.yml#all_api_validation_jobs
 
 tests_all_trigger:
@@ -48,4 +48,4 @@ post_merge_trigger:
   triggers:
     expression: push.branch eq "develop"
   dependencies:
-    - .yamato/sonar.yml#sonar
+    - .yamato/project-test.yml#coverage_all
