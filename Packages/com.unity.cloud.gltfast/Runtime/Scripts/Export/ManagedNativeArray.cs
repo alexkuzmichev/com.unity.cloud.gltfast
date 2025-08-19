@@ -13,8 +13,9 @@ namespace GLTFast.Export
     /// <summary>
     /// Wraps a managed TIn[] in a NativeArray&lt;TOut&gt;without copying memory.
     /// </summary>
-    /// <typeparam name="TIn">Type of items in input array.</typeparam>
+    /// <typeparam name="TIn">Type of items in the input array.</typeparam>
     /// <typeparam name="TOut">Type of items in output NativeArray (might differ from input type TIn).</typeparam>
+    [Obsolete("This class is going to get sealed or removed from the public API in a future release.")]
     public class ManagedNativeArray<TIn, TOut> : IDisposable
         where TIn : unmanaged
         where TOut : unmanaged

@@ -12,9 +12,12 @@ namespace GLTFast
 
     /// <summary>
     /// Wraps a managed TIn[] in a NativeArray&lt;TOut&gt;without copying memory.
+    /// Use <see cref="ReadOnlyBufferManagedArray{T}"/> for internal development instead.
     /// </summary>
-    /// <typeparam name="TIn">Type of items in input array.</typeparam>
+    /// <typeparam name="TIn">Type of items in an input array.</typeparam>
     /// <typeparam name="TOut">Type of items in output NativeArray (might differ from input type TIn).</typeparam>
+    [Obsolete("This is going to be removed from the public API in a future release. " +
+        "For internal development, refer to ReadOnlyBufferManagedArray<T>.")]
     public sealed class ManagedNativeArray<TIn, TOut> : IDisposable
         where TIn : unmanaged
         where TOut : unmanaged

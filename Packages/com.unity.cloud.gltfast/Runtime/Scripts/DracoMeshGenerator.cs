@@ -140,7 +140,7 @@ namespace GLTFast {
             {
                 var dracoExt = primitive.Extensions.KHR_draco_mesh_compression;
                 var buffer = buffers.GetBufferView(dracoExt.bufferView, out _);
-                mesh = await StartDecode(buffer, dracoExt.attributes);
+                mesh = await StartDecode(buffer.ToSlice(), dracoExt.attributes);
             }
 
             if (mesh is null) {

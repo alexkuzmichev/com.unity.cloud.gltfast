@@ -13,16 +13,16 @@ using Unity.Collections;
 
 namespace GLTFast {
     class KtxLoadNativeContext : KtxLoadContextBase {
-        NativeSlice<byte> m_Slice;
+        ReadOnlyBuffer<byte> m_Data;
 
-        public KtxLoadNativeContext(int index,NativeSlice<byte> slice) {
+        public KtxLoadNativeContext(int index,ReadOnlyBuffer<byte> data) {
             imageIndex = index;
-            m_Slice = slice;
+            m_Data = data;
             m_KtxTexture = new KtxTexture();
         }
 
         public override async Task<TextureResult> LoadTexture2D(bool linear) {
-            var errorCode = m_KtxTexture.Open(m_Slice);
+            var errorCode = m_KtxTexture.Open(m_Data.ToSlice());
             if (errorCode != ErrorCode.Success) {
                 return new TextureResult(errorCode);
             }

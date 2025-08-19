@@ -182,7 +182,7 @@ namespace GLTFast
 
         ImportSettings m_Settings;
 
-        NativeArray<byte>.ReadOnly[] m_Buffers;
+        ReadOnlyBuffer<byte>[] m_Buffers;
         List<IDisposable> m_VolatileDisposables;
 
         GlbBinChunk[] m_BinChunks;
@@ -433,11 +433,11 @@ namespace GLTFast
             CancellationToken cancellationToken = default
         )
         {
-            var managedNativeArray = new ManagedNativeArray<byte, byte>(data);
+            var managedNativeArray = new ReadOnlyBufferManagedArray<byte>(data);
             m_VolatileDisposables ??= new List<IDisposable>();
             m_VolatileDisposables.Add(managedNativeArray);
             return await Load(
-                managedNativeArray.nativeArray.AsReadOnly(),
+                managedNativeArray.Buffer.AsNativeArrayReadOnly(),
                 uri,
                 importSettings,
                 cancellationToken
@@ -1138,15 +1138,15 @@ namespace GLTFast
                 return new NativeSlice<byte>();
             }
             var accessor = Root.Accessors[accessorIndex];
-            return ((IGltfBuffers)this).GetBufferView(accessor.bufferView, out _, accessor.byteOffset, accessor.ByteSize);
+            return ((IGltfBuffers)this).GetBufferView(accessor.bufferView, out _, accessor.byteOffset, accessor.ByteSize).ToSlice();
         }
 
         /// <inheritdoc cref="IGltfBuffers.GetAccessorDataAndByteStride"/>
-        void IGltfBuffers.GetAccessorDataAndByteStride(int index, out NativeSlice<byte> data, out int byteStride)
+        void IGltfBuffers.GetAccessorDataAndByteStride(int index, out ReadOnlyBuffer<byte> data, out int byteStride)
         {
             if (Root?.Accessors == null || index < 0 || index >= Root?.Accessors.Count)
             {
-                data = new NativeSlice<byte>();
+                data = new ReadOnlyBuffer<byte>();
                 byteStride = 0;
             }
             var accessor = Root.Accessors[index];
@@ -1188,9 +1188,9 @@ namespace GLTFast
                     }
                     else
                     {
-                        var managedNativeArray = new ManagedNativeArray<byte, byte>(download.Data);
+                        var managedNativeArray = new ReadOnlyBufferManagedArray<byte>(download.Data);
                         m_VolatileDisposables.Add(managedNativeArray);
-                        data = managedNativeArray.nativeArray.AsReadOnly();
+                        data = managedNativeArray.Buffer.AsNativeArrayReadOnly();
                     }
                     m_VolatileDisposables.Add(download);
                     success = await LoadGltfBinaryBuffer(data, url);
@@ -1305,7 +1305,7 @@ namespace GLTFast
                 var bufferCount = Root.Buffers.Count;
                 if (bufferCount > 0)
                 {
-                    m_Buffers = new NativeArray<byte>.ReadOnly[bufferCount];
+                    m_Buffers = new ReadOnlyBuffer<byte>[bufferCount];
                     m_BinChunks = new GlbBinChunk[bufferCount];
                 }
 
@@ -1325,10 +1325,10 @@ namespace GLTFast
                                 Logger?.Error(LogCode.EmbedBufferLoadFailed);
                                 return false;
                             }
-                            var decodedNativeBuffer = new ManagedNativeArray<byte, byte>(decodedBuffer.Item1);
+                            var decodedNativeBuffer = new ReadOnlyBufferManagedArray<byte>(decodedBuffer.Item1);
                             m_VolatileDisposables ??= new List<IDisposable>();
                             m_VolatileDisposables.Add(decodedNativeBuffer);
-                            m_Buffers[i] = decodedNativeBuffer.nativeArray.AsReadOnly();
+                            m_Buffers[i] = decodedNativeBuffer.Buffer;
                         }
                         else
                         {
@@ -1643,20 +1643,20 @@ namespace GLTFast
                         Profiler.BeginSample("GetData");
 
                         m_VolatileDisposables ??= new List<IDisposable>();
-                        NativeArray<byte>.ReadOnly data;
                         if (download is INativeDownload nativeDownload)
                         {
-                            data = nativeDownload.NativeData;
+                            var wrapper = new ReadOnlyBufferNativeArray(nativeDownload.NativeData);
+                            m_Buffers[downloadPair.Key] = wrapper.Buffer;
                         }
                         else
                         {
-                            var managedNativeArray = new ManagedNativeArray<byte, byte>(download.Data);
-                            m_VolatileDisposables.Add(managedNativeArray);
-                            data = managedNativeArray.nativeArray.AsReadOnly();
+                            var wrapper = new ReadOnlyBufferManagedArray<byte>(download.Data);
+                            m_Buffers[downloadPair.Key] = wrapper.Buffer;
+                            m_VolatileDisposables.Add(wrapper);
                         }
 
                         m_VolatileDisposables.Add(download);
-                        m_Buffers[downloadPair.Key] = data;
+
                         Profiler.EndSample();
                     }
                     else
@@ -1772,10 +1772,10 @@ namespace GLTFast
                 }
                 else
                 {
-                    var managedNativeArray = new ManagedNativeArray<byte,byte>(www.Data);
+                    var managedNativeArray = new ReadOnlyBufferManagedArray<byte>(www.Data);
                     m_VolatileDisposables ??= new List<IDisposable>();
                     m_VolatileDisposables.Add(managedNativeArray);
-                    data = managedNativeArray.nativeArray.AsReadOnly();
+                    data = managedNativeArray.Buffer.AsNativeArrayReadOnly();
                 }
                 var ktxContext = new KtxLoadContext(imageIndex,data);
                 var forceSampleLinear = m_ImageGamma!=null && !m_ImageGamma[imageIndex];
@@ -2006,40 +2006,41 @@ namespace GLTFast
             if (m_GlbBinChunk.HasValue && m_BinChunks != null)
             {
                 m_BinChunks[0] = m_GlbBinChunk.Value;
-                m_Buffers[0] = bytes;
+                var wrapper = new ReadOnlyBufferNativeArray(bytes);
+                m_Buffers[0] = wrapper.Buffer;
             }
             await LoadImages(baseUri);
             return true;
         }
 
-        NativeArray<byte>.ReadOnly GetBuffer(int index)
+        ReadOnlyBuffer<byte> GetBuffer(int index)
         {
             return m_Buffers[index];
         }
 
-        NativeSlice<byte> IGltfBuffers.GetBufferView(int bufferViewIndex, out int byteStride, int offset, int length)
+        ReadOnlyBuffer<byte> IGltfBuffers.GetBufferView(int bufferViewIndex, out int byteStride, int offset, int length)
         {
             var bufferView = Root.BufferViews[bufferViewIndex];
 #if MESHOPT
             if (bufferView.Extensions?.EXT_meshopt_compression != null) {
                 byteStride = bufferView.Extensions.EXT_meshopt_compression.byteStride;
-                var fullSlice = m_MeshoptBufferViews[bufferViewIndex];
+                var entireBuffer = m_MeshoptBufferViews[bufferViewIndex];
                 if (offset == 0 && length <= 0) {
-                    return fullSlice;
+                    return new ReadOnlyBuffer<byte>(entireBuffer);
                 }
                 Assert.IsTrue(offset >= 0);
                 if (length <= 0) {
-                    length = fullSlice.Length - offset;
+                    length = entireBuffer.Length - offset;
                 }
-                Assert.IsTrue(offset+length <= fullSlice.Length);
-                return  new NativeSlice<byte>(fullSlice,offset,length);
+                Assert.IsTrue(offset+length <= entireBuffer.Length);
+                return new ReadOnlyBuffer<byte>(entireBuffer.GetSubArray(offset,length));
             }
 #endif
             byteStride = bufferView.byteStride;
-            return GetBufferViewSlice(bufferView, offset, length);
+            return GetBufferView(bufferView, offset, length);
         }
 
-        NativeSlice<byte> GetBufferViewSlice(
+        ReadOnlyBuffer<byte> GetBufferView(
             IBufferView bufferView,
             int offset = 0,
             int length = 0
@@ -2062,7 +2063,7 @@ namespace GLTFast
             var totalOffset = chunk.Start + bufferView.ByteOffset + offset;
             Assert.IsTrue(bufferView.ByteOffset + offset <= chunk.Length);
             Assert.IsTrue(totalOffset + length <= nativeBuffer.Length);
-            return m_Buffers[bufferIndex].Slice(totalOffset, length);
+            return m_Buffers[bufferIndex].GetSubArray(totalOffset, length);
         }
 
 #if MESHOPT
@@ -2081,14 +2082,14 @@ namespace GLTFast
 
                         var arr = new NativeArray<byte>(meshopt.count * meshopt.byteStride, Allocator.Persistent);
 
-                        var origBufferView = GetBufferViewSlice(meshopt);
+                        var origBufferView = GetBufferView(meshopt);
 
                         var jobHandle = Decode.DecodeGltfBuffer(
                             new NativeSlice<int>(m_MeshoptReturnValues,i,1),
                             arr,
                             meshopt.count,
                             meshopt.byteStride,
-                            origBufferView,
+                            origBufferView.ToSlice(),
                             meshopt.GetMode(),
                             meshopt.GetFilter()
                         );
@@ -3020,35 +3021,6 @@ namespace GLTFast
             return result;
         }
 
-        /// <summary>
-        /// Reinterprets a NativeSlice&lt;byte&gt; to another type of NativeArray.
-        /// TODO: Remove once Unity.Collections supports this for NativeSlice (NativeArray only atm)
-        /// </summary>
-        /// <param name="slice"></param>
-        /// <param name="count">Target type element count</param>
-        /// <param name="offset">Byte offset into the slice</param>
-        /// <typeparam name="T">Target type</typeparam>
-        /// <returns></returns>
-        static unsafe NativeArray<T> Reinterpret<T>(NativeSlice<byte> slice, int count, int offset = 0) where T : struct
-        {
-            var address = (byte*)slice.GetUnsafeReadOnlyPtr();
-            var result = NativeArrayUnsafeUtility.ConvertExistingDataToNativeArray<T>(address + offset, count, Allocator.None);
-#if ENABLE_UNITY_COLLECTIONS_CHECKS
-            var safetyHandle = AtomicSafetyHandle.Create();
-            NativeArrayUnsafeUtility.SetAtomicSafetyHandle(array: ref result, safetyHandle);
-#endif
-            return result;
-        }
-
-        [Conditional("ENABLE_UNITY_COLLECTIONS_CHECKS")]
-        static void ReleaseReinterpret<T>(NativeArray<T> array) where T : struct
-        {
-#if ENABLE_UNITY_COLLECTIONS_CHECKS
-            var safetyHandle = NativeArrayUnsafeUtility.GetAtomicSafetyHandle(array);
-            AtomicSafetyHandle.Release(safetyHandle);
-#endif
-        }
-
 #if KTX
         async Task
 #else
@@ -3129,7 +3101,7 @@ namespace GLTFast
 
         static unsafe MemCopyJob CreateMemCopyJob(
             BufferViewBase bufferView,
-            NativeArray<byte>.ReadOnly buffer,
+            ReadOnlyBuffer<byte> buffer,
             GlbBinChunk chunk,
             ImageCreateContext icc
             )
@@ -3796,7 +3768,7 @@ namespace GLTFast
             scalars = null;
             jobHandle = null;
             var accessor = Root.Accessors[accessorIndex];
-            var buffer = ((IGltfBuffers)this).GetBufferView(accessor.bufferView, out _,accessor.byteOffset);
+            var bufferView = ((IGltfBuffers)this).GetBufferView(accessor.bufferView, out _,accessor.byteOffset);
 
             Assert.AreEqual(accessor.GetAttributeType(), GltfAccessorAttributeType.SCALAR);
             if (accessor.IsSparse) {
@@ -3806,10 +3778,12 @@ namespace GLTFast
             if (accessor.componentType == GltfComponentType.Float) {
                 Profiler.BeginSample("CopyAnimationTimes");
                 // TODO: For long animations with lots of times, threading this just like everything else maybe makes sense.
-                var bufferTimes = Reinterpret<float>(buffer, accessor.count);
+                var bufferTimes = bufferView
+                    .Reinterpret<float>(UnsafeUtility.SizeOf<byte>())
+                    .GetSubArray(0, accessor.count);
                 // Copy values
-                scalars = new NativeArray<float>(bufferTimes, Allocator.Persistent);
-                ReleaseReinterpret(bufferTimes);
+                scalars = new NativeArray<float>(bufferTimes.Length, Allocator.Persistent);
+                bufferTimes.CopyTo(scalars.Value);
                 Profiler.EndSample();
             } else
             if( accessor.normalized ) {
@@ -3820,7 +3794,7 @@ namespace GLTFast
                 switch( accessor.componentType ) {
                     case GltfComponentType.Byte: {
                         var job = new ConvertScalarInt8ToFloatNormalizedJob {
-                            input = (sbyte*)buffer.GetUnsafeReadOnlyPtr(),
+                            input = (sbyte*)bufferView.GetUnsafeReadOnlyPtr(),
                             result = scalars.Value
                         };
                         jobHandle = job.Schedule(accessor.count,DefaultBatchCount);
@@ -3828,7 +3802,7 @@ namespace GLTFast
                     }
                     case GltfComponentType.UnsignedByte: {
                         var job = new ConvertScalarUInt8ToFloatNormalizedJob {
-                            input = (byte*)buffer.GetUnsafeReadOnlyPtr(),
+                            input = (byte*)bufferView.GetUnsafeReadOnlyPtr(),
                             result = scalars.Value
                         };
                         jobHandle = job.Schedule(accessor.count,DefaultBatchCount);
@@ -3836,7 +3810,7 @@ namespace GLTFast
                     }
                     case GltfComponentType.Short: {
                         var job = new ConvertScalarInt16ToFloatNormalizedJob {
-                            input = (short*) ((byte*)buffer.GetUnsafeReadOnlyPtr()),
+                            input = (short*) ((byte*)bufferView.GetUnsafeReadOnlyPtr()),
                             result = scalars.Value
                         };
                         jobHandle = job.Schedule(accessor.count,DefaultBatchCount);
@@ -3844,7 +3818,7 @@ namespace GLTFast
                     }
                     case GltfComponentType.UnsignedShort: {
                         var job = new ConvertScalarUInt16ToFloatNormalizedJob {
-                            input = (ushort*) ((byte*)buffer.GetUnsafeReadOnlyPtr()),
+                            input = (ushort*) ((byte*)bufferView.GetUnsafeReadOnlyPtr()),
                             result = scalars.Value
                         };
                         jobHandle = job.Schedule(accessor.count,DefaultBatchCount);

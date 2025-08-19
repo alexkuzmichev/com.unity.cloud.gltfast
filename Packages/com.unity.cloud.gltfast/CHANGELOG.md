@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - (CI) Consolidated multiple redundant packaging and vetting/API validation jobs.
+- Changed internal buffer representation to custom native collection `ReadOnlyBuffer<byte>` (instead of [NativeArray&lt;byte&gt;.ReadOnly](xref:Unity.Collections.NativeArray`1.ReadOnly)) This enables sub-array slicing, has in-Editor safety checks and prepares for decommissioning misuse of NativeSlice.
 
 ### Fixed
 
@@ -18,6 +19,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - (CI) SonarQube scan job.
 
 ### Deprecated
+- [GLTFast.ManagedNativeArray](xref:GLTFast.ManagedNativeArray`2). It will be removed from public API in a future release. For internal development it's been replaced by `ReadOnlyBufferManagedArray<T>`.
+- [GLTFast.Export.ManagedNativeArray](xref:GLTFast.Export.ManagedNativeArray`2). It will get sealed or removed from public API in a future release.
 
 ### Security
 
