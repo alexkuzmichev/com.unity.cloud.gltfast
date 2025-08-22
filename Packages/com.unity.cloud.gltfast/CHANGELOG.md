@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - (CI) Consolidated multiple redundant packaging and vetting/API validation jobs.
 - Changed internal buffer representation to custom native collection `ReadOnlyBuffer<byte>` (instead of [NativeArray&lt;byte&gt;.ReadOnly](xref:Unity.Collections.NativeArray`1.ReadOnly)) This enables sub-array slicing, has in-Editor safety checks and prepares for decommissioning misuse of NativeSlice.
+- [KTX for Unity] minimum required version was raised to 3.5.0.
 
 ### Fixed
 
@@ -310,7 +311,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - On Apple visionOS, textures are always created readable, so that [PolySpatial visionOS][PolySpatialVisionOS] is able to convert them.
 - Draco compressed tangents import tangents correctly now.
 - Removed invalid attempt to calculate normals or tangents on point or line meshes.
-- Consistent log message when a glTF extension cannot be supported due to a missing Unity package depenency (e.g. [KTX for Unity][KtxForUnity]).
+- Consistent log message when a glTF extension cannot be supported due to a missing Unity package depenency (e.g. [KTX for Unity]).
   - All missing extensions are logged (not just the first one).
   - There's now a single message per missing package.
   - Depending on whether that extension is required the message's type is warning or error.
@@ -372,7 +373,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - CI maintenance
 
 ### Fixed
-- Updated references to [KTX for Unity][KtxForUnity]
+- Updated references to [KTX for Unity]
 
 ## [6.0.1] - 2023-10-11
 
@@ -431,7 +432,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added proper root namespace to all assembly definitions
 - License and copyright notices
 - (Export) Increased performance due to concurrent buffer conversions
-- Support for KTX (Khronos Texture) is now provided by [*KTX for Unity* (com.unity.cloud.ktx)][KtxForUnity], which is a fork of and replaces [*KtxUnity* (com.atteneder.ktx)][KtxUnity].
+- Support for KTX (Khronos Texture) is now provided by [*KTX for Unity* (com.unity.cloud.ktx)][Ktx for Unity], which is a fork of and replaces [*KtxUnity* (com.atteneder.ktx)][KtxUnity].
 
 ## [5.0.4] - 2023-03-30
 
@@ -1421,7 +1422,7 @@ This release contains multiple breaking changes. Please read the [upgrade guide]
 [Collections]: https://docs.unity3d.com/Packages/com.unity.collections@latest/
 [JobsPkg]: https://docs.unity3d.com/Packages/com.unity.jobs@latest/
 [KtxUnity]: https://github.com/atteneder/KtxUnity
-[KtxForUnity]: https://docs.unity3d.com/Packages/com.unity.cloud.ktx@latest/
+[Ktx for Unity]: https://docs.unity3d.com/Packages/com.unity.cloud.ktx@latest/
 [DanDovi]: https://github.com/DanDovi
 [DracoForUnity]: https://docs.unity3d.com/Packages/com.unity.cloud.draco@latest
 [DracoUnity]: https://github.com/atteneder/DracoUnity

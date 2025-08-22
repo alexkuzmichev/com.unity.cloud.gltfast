@@ -1,11 +1,11 @@
 // SPDX-FileCopyrightText: 2023 Unity Technologies and the glTFast authors
 // SPDX-License-Identifier: Apache-2.0
 
-#if KTX_UNITY_2_2_OR_NEWER || (!UNITY_2021_2_OR_NEWER && KTX_UNITY_1_3_OR_NEWER)
-#define KTX
+#if KTX_IS_RECENT
+#define KTX_IS_ENABLED
 #endif
 
-#if KTX
+#if KTX_IS_ENABLED
 
 using System.Threading.Tasks;
 using KtxUnity;
@@ -22,7 +22,7 @@ namespace GLTFast {
         }
 
         public override async Task<TextureResult> LoadTexture2D(bool linear) {
-            var errorCode = m_KtxTexture.Open(m_Data.ToSlice());
+            var errorCode = m_KtxTexture.Open(m_Data.AsNativeArrayReadOnly());
             if (errorCode != ErrorCode.Success) {
                 return new TextureResult(errorCode);
             }
@@ -33,4 +33,4 @@ namespace GLTFast {
         }
     }
 }
-#endif // KTX_UNITY
+#endif // KTX_IS_INSTALLED

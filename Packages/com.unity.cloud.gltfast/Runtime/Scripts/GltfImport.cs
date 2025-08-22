@@ -5,9 +5,9 @@
 #define GLTFAST_THREADS
 #endif
 
-#if KTX_UNITY_2_2_OR_NEWER || (!UNITY_2021_2_OR_NEWER && KTX_UNITY_1_3_OR_NEWER)
-#define KTX
-#elif KTX_UNITY
+#if KTX_IS_RECENT
+#define KTX_IS_ENABLED
+#elif KTX_IS_INSTALLED
 #warning You have to update *KTX for Unity* to enable support for KTX textures in glTFast
 #endif
 
@@ -27,7 +27,7 @@ using GLTFast.Jobs;
 #if MEASURE_TIMINGS
 using GLTFast.Tests;
 #endif
-#if KTX
+#if KTX_IS_ENABLED
 using KtxUnity;
 #endif
 #if MESHOPT
@@ -149,9 +149,9 @@ namespace GLTFast
 #if DRACO_UNITY
             ExtensionName.DracoMeshCompression,
 #endif
-#if KTX
+#if KTX_IS_ENABLED
             ExtensionName.TextureBasisUniversal,
-#endif // KTX_UNITY
+#endif // KTX_IS_ENABLED
 #if MESHOPT
             ExtensionName.MeshoptCompression,
 #endif
@@ -188,7 +188,7 @@ namespace GLTFast
         GlbBinChunk[] m_BinChunks;
 
         Dictionary<int, Task<IDownload>> m_DownloadTasks;
-#if KTX
+#if KTX_IS_ENABLED
         Dictionary<int,Task<IDownload>> m_KtxDownloadTasks;
 #endif
         Dictionary<int, TextureDownloadBase> m_TextureDownloadTasks;
@@ -200,9 +200,9 @@ namespace GLTFast
         List<MeshOrder> m_MeshOrders;
 
         List<ImageCreateContext> m_ImageCreateContexts;
-#if KTX
+#if KTX_IS_ENABLED
         List<KtxLoadContextBase> m_KtxLoadContextsBuffer;
-#endif // KTX_UNITY
+#endif // KTX_IS_ENABLED
 
 
         /// <summary>
@@ -219,7 +219,7 @@ namespace GLTFast
         /// </summary>
         Texture2D[] m_Textures;
 
-#if KTX
+#if KTX_IS_ENABLED
         HashSet<int> m_NonFlippedYTextureIndices;
 #endif
         ImageFormat[] m_ImageFormats;
@@ -920,7 +920,7 @@ namespace GLTFast
         /// <inheritdoc cref="IGltfReadable.IsTextureYFlipped"/>
         public bool IsTextureYFlipped(int index = 0)
         {
-#if KTX
+#if KTX_IS_ENABLED
             return (m_NonFlippedYTextureIndices == null || !m_NonFlippedYTextureIndices.Contains(index)) && GetSourceTexture(index).IsKtx;
 #else
             return false;
@@ -1251,12 +1251,12 @@ namespace GLTFast
                 m_TextureDownloadTasks.Clear();
             }
 
-#if KTX
+#if KTX_IS_ENABLED
             if (m_KtxDownloadTasks != null) {
                 success = success && await WaitForKtxDownloads();
                 m_KtxDownloadTasks.Clear();
             }
-#endif // KTX_UNITY
+#endif // KTX_IS_ENABLED
 
             return success;
         }
@@ -1400,7 +1400,7 @@ namespace GLTFast
                     }
                     else
 #endif
-#if !KTX_UNITY
+#if !KTX_IS_ENABLED
                     if (ext == ExtensionName.TextureBasisUniversal)
                     {
                         Logger?.Log(
@@ -1483,7 +1483,7 @@ namespace GLTFast
                     }
                 }
 
-#if KTX
+#if KTX_IS_ENABLED
                 // Derive image type from texture extension
                 for (int i = 0; i < Root.Textures.Count; i++) {
                     var texture = Root.Textures[i];
@@ -1492,7 +1492,7 @@ namespace GLTFast
                         m_ImageFormats[imgIndex] = ImageFormat.Ktx;
                     }
                 }
-#endif // KTX_UNITY
+#endif // KTX_IS_ENABLED
 
                 // Determine which images need to be readable, because they
                 // are applied using different samplers.
@@ -1747,7 +1747,7 @@ namespace GLTFast
         }
 
 
-#if KTX
+#if KTX_IS_ENABLED
         async Task<bool> WaitForKtxDownloads() {
             var tasks = new Task<bool>[m_KtxDownloadTasks.Count];
             var i = 0;
@@ -1796,7 +1796,7 @@ namespace GLTFast
             www.Dispose();
             return false;
         }
-#endif // KTX_UNITY
+#endif // KTX_IS_ENABLED
 
         void LoadBuffer(int index, Uri url)
         {
@@ -1866,7 +1866,7 @@ namespace GLTFast
 
             if (isKtx)
             {
-#if KTX
+#if KTX_IS_ENABLED
                 var downloadTask = m_DownloadProvider.Request(url);
                 if(m_KtxDownloadTasks==null) {
                     m_KtxDownloadTasks = new Dictionary<int, Task<IDownload>>();
@@ -1876,7 +1876,7 @@ namespace GLTFast
                 Logger?.Error(LogCode.PackageMissing, "KTX for Unity", ExtensionName.TextureBasisUniversal);
                 Profiler.EndSample();
                 return;
-#endif // KTX_UNITY
+#endif // KTX_IS_ENABLED
             }
             else
             {
@@ -2139,7 +2139,7 @@ namespace GLTFast
                     Assert.AreEqual(m_Images.Length, Root.Images.Count);
                 }
                 m_ImageCreateContexts = new List<ImageCreateContext>();
-#if KTX
+#if KTX_IS_ENABLED
                 await
 #endif
                 CreateTexturesFromBuffers(Root.Images, Root.BufferViews, m_ImageCreateContexts);
@@ -2168,11 +2168,11 @@ namespace GLTFast
             }
             if (!success) return success;
 
-#if KTX
+#if KTX_IS_ENABLED
             if(m_KtxLoadContextsBuffer!=null) {
                 await ProcessKtxLoadContexts();
             }
-#endif // KTX_UNITY
+#endif // KTX_IS_ENABLED
 
             if (m_ImageCreateContexts != null)
             {
@@ -3021,7 +3021,7 @@ namespace GLTFast
             return result;
         }
 
-#if KTX
+#if KTX_IS_ENABLED
         async Task
 #else
         void
@@ -3058,7 +3058,7 @@ namespace GLTFast
 
                         if (imgFormat == ImageFormat.Ktx)
                         {
-#if KTX
+#if KTX_IS_ENABLED
                             Profiler.BeginSample("CreateTexturesFromBuffers.KtxLoadNativeContext");
                             if(m_KtxLoadContextsBuffer==null) {
                                 m_KtxLoadContextsBuffer = new List<KtxLoadContextBase>();
@@ -3069,7 +3069,7 @@ namespace GLTFast
                             await DeferAgent.BreakPoint();
 #else
                             Logger?.Error(LogCode.PackageMissing, "KTX for Unity", ExtensionName.TextureBasisUniversal);
-#endif // KTX_UNITY
+#endif // KTX_IS_ENABLED
                         }
                         else
                         {
@@ -3945,7 +3945,7 @@ namespace GLTFast
             }
         }
 
-#if KTX
+#if KTX_IS_ENABLED
         struct KtxTranscodeTaskWrapper {
             public int index;
             public TextureResult result;
@@ -3991,7 +3991,7 @@ namespace GLTFast
 
             m_KtxLoadContextsBuffer.Clear();
         }
-#endif // KTX
+#endif // KTX_IS_ENABLED
 
 #if UNITY_EDITOR
         /// <summary>

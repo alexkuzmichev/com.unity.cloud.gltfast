@@ -64,7 +64,7 @@ namespace GLTFast.Tests.Import
         [GltfTestCase("glTF-test-models", 1, @"FullyTextured\/FullyTextured.gltf$")]
         public IEnumerator KtxMissing(GltfTestCaseSet testCaseSet, GltfTestCase testCase)
         {
-#if KTX_UNITY
+#if KTX_IS_RECENT
             yield return null;
             Assert.Ignore("Requires absence of KTX for Unity package.");
 #else
@@ -211,7 +211,7 @@ namespace GLTFast.Tests.Import
             {
                 switch (extension)
                 {
-#if !KTX_UNITY
+#if !KTX_IS_RECENT
                     case Extension.TextureBasisUniversal:
                         Assert.Ignore("Requires KTX for Unity package to be installed.");
                         break;

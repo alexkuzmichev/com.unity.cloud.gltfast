@@ -69,7 +69,7 @@
         {
             "name": "com.unity.cloud.ktx",
             "expression": "3",
-            "define": "KTX_UNITY"
+            "define": "KTX_IS_RECENT"
         },
         {
             "name": "com.unity.modules.imageconversion",
