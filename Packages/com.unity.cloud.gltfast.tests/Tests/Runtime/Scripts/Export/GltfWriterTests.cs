@@ -68,7 +68,7 @@ namespace GLTFast.Tests.Export
         [UnityTest]
         public IEnumerator DracoUncompressedFallback()
         {
-#if DRACO_UNITY
+#if DRACO_IS_RECENT
             var logger = new CollectingLogger();
             yield return AsyncWrapper.WaitForTask(
                 DracoUncompressedFallback(logger)
@@ -92,7 +92,7 @@ namespace GLTFast.Tests.Export
         [UnityTest]
         public IEnumerator DracoUncompressedFallbackNoLogger()
         {
-#if DRACO_UNITY
+#if DRACO_IS_RECENT
             yield return AsyncWrapper.WaitForTask(
                 DracoUncompressedFallback(null)
             );

@@ -53,7 +53,7 @@ namespace GLTFast.Tests.Import
         [GltfTestCase("glTF-Sample-Assets", 1, @"glTF-Draco\/.*\.gltf$")]
         public IEnumerator KhronosGltfSampleAssetsDraco(GltfTestCaseSet testCaseSet, GltfTestCase testCase)
         {
-#if DRACO_UNITY
+#if DRACO_IS_RECENT
             yield return AsyncWrapper.WaitForTask(RunTestCase(testCaseSet, testCase));
 #else
             Assert.Ignore("Requires Draco for Unity package to be installed.");
@@ -85,7 +85,7 @@ namespace GLTFast.Tests.Import
         [GltfTestCase("glTF-Sample-Assets", 1, @"Box\/glTF-Draco\/Box.gltf$")]
         public IEnumerator DracoMissing(GltfTestCaseSet testCaseSet, GltfTestCase testCase)
         {
-#if DRACO_UNITY
+#if DRACO_IS_RECENT
             yield return null;
             Assert.Ignore("Requires absence of Draco for Unity package.");
 #else
@@ -216,7 +216,7 @@ namespace GLTFast.Tests.Import
                         Assert.Ignore("Requires KTX for Unity package to be installed.");
                         break;
 #endif
-#if !DRACO_UNITY
+#if !DRACO_IS_RECENT
                     case Extension.DracoMeshCompression:
                         Assert.Ignore("Requires Draco for Unity package to be installed.");
                         break;

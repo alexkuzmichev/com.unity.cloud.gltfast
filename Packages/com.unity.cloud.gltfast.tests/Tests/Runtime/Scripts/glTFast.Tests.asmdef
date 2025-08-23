@@ -63,8 +63,8 @@
         },
         {
             "name": "com.unity.cloud.draco",
-            "expression": "5",
-            "define": "DRACO_UNITY"
+            "expression": "5.2.0",
+            "define": "DRACO_IS_RECENT"
         },
         {
             "name": "com.unity.cloud.ktx",

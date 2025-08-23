@@ -11,6 +11,12 @@
 #warning You have to update *KTX for Unity* to enable support for KTX textures in glTFast
 #endif
 
+#if DRACO_IS_RECENT
+#define DRACO_IS_ENABLED
+#elif DRACO_IS_INSTALLED
+#warning You have to update the *Draco for Unity* package to enable support for decompressing Draco meshes in glTFast.
+#endif
+
 // #define MEASURE_TIMINGS
 
 using System.Collections.Generic;
@@ -146,7 +152,7 @@ namespace GLTFast
         const string k_PrimitiveName = "Primitive";
 
         static readonly HashSet<string> k_SupportedExtensions = new HashSet<string> {
-#if DRACO_UNITY
+#if DRACO_IS_ENABLED
             ExtensionName.DracoMeshCompression,
 #endif
 #if KTX_IS_ENABLED
@@ -1376,7 +1382,7 @@ namespace GLTFast
                 }
                 if (!supported)
                 {
-#if !DRACO_UNITY
+#if !DRACO_IS_ENABLED
                     if (ext == ExtensionName.DracoMeshCompression)
                     {
                         Logger?.Log(
@@ -3201,13 +3207,13 @@ namespace GLTFast
                 var mesh = Root.Meshes[meshIndex];
                 // TODO: Optimized path for single primitive meshes!
                 var clusteredPrimitives = new Dictionary<VertexBufferDescriptor, PrimitiveSet>();
-#if DRACO_UNITY
+#if DRACO_IS_ENABLED
                 var singlePrimitives = new List<PrimitiveSingle>();
 #endif
                 for (var primIndex = 0; primIndex < mesh.Primitives.Count; primIndex++)
                 {
                     var primitive = mesh.Primitives[primIndex];
-#if DRACO_UNITY
+#if DRACO_IS_ENABLED
                     var isDraco = primitive.IsDracoCompressed;
                     if (isDraco)
                     {
@@ -3227,7 +3233,7 @@ namespace GLTFast
                     if (primitive.indices >= 0)
                     {
                         AccessorUsage usage;
-#if DRACO_UNITY
+#if DRACO_IS_ENABLED
                         if (isDraco)
                         {
                             usage = AccessorUsage.Ignore;
@@ -3295,7 +3301,7 @@ namespace GLTFast
 
                     meshNumeration++;
                 }
-#if DRACO_UNITY
+#if DRACO_IS_ENABLED
                 foreach (var primitiveSingle in singlePrimitives)
                 {
 #if DEBUG
@@ -3337,7 +3343,7 @@ namespace GLTFast
 
 #endif
                 meshAssignmentCounter += clusteredPrimitives.Count;
-#if DRACO_UNITY
+#if DRACO_IS_ENABLED
                 meshAssignmentCounter += singlePrimitives.Count;
 #endif
                 meshAssignmentIndices[meshIndex + 1] = meshAssignmentCounter;
@@ -3569,7 +3575,7 @@ namespace GLTFast
             MeshGeneratorBase generator;
             primitiveSet.BuildAndDispose(out primIndexArray, out primitives, out var subMeshes);
             var meshSubset = new MeshSubset(meshIndex, meshNumeration, primIndexArray);
-#if DRACO_UNITY
+#if DRACO_IS_ENABLED
             if (primitives[0].IsDracoCompressed)
             {
                 generator = new DracoMeshGenerator(primitives, subMeshes, morphTargetNames, mesh.name, this);

@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - (CI) Consolidated multiple redundant packaging and vetting/API validation jobs.
 - Changed internal buffer representation to custom native collection `ReadOnlyBuffer<byte>` (instead of [NativeArray&lt;byte&gt;.ReadOnly](xref:Unity.Collections.NativeArray`1.ReadOnly)) This enables sub-array slicing, has in-Editor safety checks and prepares for decommissioning misuse of NativeSlice.
 - [KTX for Unity] minimum required version was raised to 3.5.0.
+- [Draco for Unity] minimum required version was raised to 5.2.0.
 
 ### Fixed
 
@@ -353,7 +354,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Deprecated soft-dependency packages are detected and a warning with upgrade instructions is shown in the console.
 
 ### Changed
-- Support for Draco 3D Data Compression is now provided by [*Draco for Unity* (com.unity.cloud.draco)][DracoForUnity], which is a fork of and replaces [*DracoUnity* (com.atteneder.draco)][DracoUnity].
+- Support for Draco 3D Data Compression is now provided by [*Draco for Unity* (com.unity.cloud.draco)][Draco For Unity], which is a fork of and replaces [*DracoUnity* (com.atteneder.draco)][DracoUnity].
 
 ### Fixed
 - Compiler error when Newtonsoft JSON package was not installed.
@@ -1424,7 +1425,7 @@ This release contains multiple breaking changes. Please read the [upgrade guide]
 [KtxUnity]: https://github.com/atteneder/KtxUnity
 [Ktx for Unity]: https://docs.unity3d.com/Packages/com.unity.cloud.ktx@latest/
 [DanDovi]: https://github.com/DanDovi
-[DracoForUnity]: https://docs.unity3d.com/Packages/com.unity.cloud.draco@latest
+[Draco for Unity]: https://docs.unity3d.com/Packages/com.unity.cloud.draco@latest
 [DracoUnity]: https://github.com/atteneder/DracoUnity
 [PolySpatialVisionOS]: https://docs.unity3d.com/Packages/com.unity.polyspatial.visionos@latest/
 [meshoptUnity]: https://docs.unity3d.com/Packages/com.unity.meshopt.decompress@latest/

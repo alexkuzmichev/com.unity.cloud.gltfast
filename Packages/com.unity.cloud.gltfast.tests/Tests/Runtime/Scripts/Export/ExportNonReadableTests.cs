@@ -69,7 +69,7 @@ namespace GLTFast.Tests.Export
         [UnityTest]
         public IEnumerator DracoMixedReadableMesh()
         {
-#if !DRACO_UNITY
+#if !DRACO_IS_RECENT
             Assert.Ignore("Test requires Draco for Unity (com.unity.cloud.draco) to be installed");
 #endif
             Certify();

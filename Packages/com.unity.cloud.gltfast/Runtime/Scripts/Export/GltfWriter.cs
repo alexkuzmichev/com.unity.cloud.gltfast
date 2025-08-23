@@ -12,7 +12,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 
-#if DRACO_UNITY
+#if DRACO_IS_INSTALLED
 using Draco.Encode;
 #endif
 using GLTFast.Schema;
@@ -900,7 +900,7 @@ namespace GLTFast.Export
 
             if ((m_Settings.Compression & Compression.Draco) != 0)
             {
-#if DRACO_UNITY
+#if DRACO_IS_INSTALLED
                 RegisterExtensionUsage(Extension.DracoMeshCompression);
                 if (m_Settings.DracoSettings == null)
                 {
@@ -930,7 +930,7 @@ namespace GLTFast.Export
             for (var meshId = 0; meshId < m_Meshes.Count; meshId++)
             {
                 Task task;
-#if DRACO_UNITY
+#if DRACO_IS_INSTALLED
                 if ((m_Settings.Compression & Compression.Draco) != 0)
                 {
                     task = BakeMeshDraco(meshId);
@@ -1559,7 +1559,7 @@ namespace GLTFast.Export
             return bufferViewId;
         }
 
-#if DRACO_UNITY
+#if DRACO_IS_INSTALLED
         async Task BakeMeshDraco(int meshId)
         {
             var mesh = m_Meshes[meshId];
@@ -1727,7 +1727,7 @@ namespace GLTFast.Export
                     break;
             }
         }
-#endif // DRACO_UNITY
+#endif // DRACO_IS_INSTALLED
 
         int AddAccessor(Accessor accessor)
         {
