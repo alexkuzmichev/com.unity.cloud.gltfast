@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [Draco for Unity] minimum required version was raised to 5.2.0.
 
 ### Fixed
+- (Test) Disabled URP compatibility mode in URP presets as it's obsolete and unsupported from Unity 6.3 onward.
 
 ### Removed
 - (CI) SonarQube scan job.
