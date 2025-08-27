@@ -155,21 +155,21 @@ namespace GLTFast
             switch (inputType)
             {
                 case GltfComponentType.Float:
+                {
+                    var jobUv = new Jobs.ConvertUVsFloatToFloatInterleavedJob
                     {
-                        var jobUv = new Jobs.ConvertUVsFloatToFloatInterleavedJob
-                        {
-                            inputByteStride = (inputByteStride > 0) ? inputByteStride : sizeof(float2),
-                            input = (byte*)input,
-                            outputByteStride = outputByteStride,
-                            result = output
-                        };
+                        inputByteStride = (inputByteStride > 0) ? inputByteStride : sizeof(float2),
+                        input = (byte*)input,
+                        outputByteStride = outputByteStride,
+                        result = output
+                    };
 #if UNITY_COLLECTIONS
                     jobHandle = jobUv.ScheduleBatch(count,GltfImport.DefaultBatchCount);
 #else
-                        jobHandle = jobUv.Schedule(count, GltfImport.DefaultBatchCount);
+                    jobHandle = jobUv.Schedule(count, GltfImport.DefaultBatchCount);
 #endif
-                    }
-                    break;
+                }
+                break;
                 case GltfComponentType.UnsignedByte:
                     if (normalized)
                     {

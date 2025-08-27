@@ -294,55 +294,55 @@ namespace GLTFast
             switch (inputType)
             {
                 case GltfComponentType.Float:
+                {
+                    var jobTangent = new ConvertTangentsFloatToFloatInterleavedJob
                     {
-                        var jobTangent = new ConvertTangentsFloatToFloatInterleavedJob
-                        {
-                            inputByteStride = inputByteStride > 0 ? inputByteStride : 16,
-                            input = (byte*)input,
-                            outputByteStride = outputByteStride,
-                            result = output
-                        };
+                        inputByteStride = inputByteStride > 0 ? inputByteStride : 16,
+                        input = (byte*)input,
+                        outputByteStride = outputByteStride,
+                        result = output
+                    };
 #if UNITY_COLLECTIONS
                     jobHandle = jobTangent.ScheduleBatch(count,GltfImport.DefaultBatchCount);
 #else
-                        jobHandle = jobTangent.Schedule(count, GltfImport.DefaultBatchCount);
+                    jobHandle = jobTangent.Schedule(count, GltfImport.DefaultBatchCount);
 #endif
-                        break;
-                    }
+                    break;
+                }
                 case GltfComponentType.Short:
+                {
+                    Assert.IsTrue(normalized);
+                    var jobTangent = new ConvertTangentsInt16ToFloatInterleavedNormalizedJob
                     {
-                        Assert.IsTrue(normalized);
-                        var jobTangent = new ConvertTangentsInt16ToFloatInterleavedNormalizedJob
-                        {
-                            inputByteStride = inputByteStride > 0 ? inputByteStride : 8,
-                            input = (short*)input,
-                            outputByteStride = outputByteStride,
-                            result = output
-                        };
+                        inputByteStride = inputByteStride > 0 ? inputByteStride : 8,
+                        input = (short*)input,
+                        outputByteStride = outputByteStride,
+                        result = output
+                    };
 #if UNITY_COLLECTIONS
                     jobHandle = jobTangent.ScheduleBatch(count,GltfImport.DefaultBatchCount);
 #else
-                        jobHandle = jobTangent.Schedule(count, GltfImport.DefaultBatchCount);
+                    jobHandle = jobTangent.Schedule(count, GltfImport.DefaultBatchCount);
 #endif
-                        break;
-                    }
+                    break;
+                }
                 case GltfComponentType.Byte:
+                {
+                    Assert.IsTrue(normalized);
+                    var jobTangent = new ConvertTangentsInt8ToFloatInterleavedNormalizedJob
                     {
-                        Assert.IsTrue(normalized);
-                        var jobTangent = new ConvertTangentsInt8ToFloatInterleavedNormalizedJob
-                        {
-                            inputByteStride = inputByteStride > 0 ? inputByteStride : 4,
-                            input = (sbyte*)input,
-                            outputByteStride = outputByteStride,
-                            result = output
-                        };
+                        inputByteStride = inputByteStride > 0 ? inputByteStride : 4,
+                        input = (sbyte*)input,
+                        outputByteStride = outputByteStride,
+                        result = output
+                    };
 #if UNITY_COLLECTIONS
                     jobHandle = jobTangent.ScheduleBatch(count,GltfImport.DefaultBatchCount);
 #else
-                        jobHandle = jobTangent.Schedule(count, GltfImport.DefaultBatchCount);
+                    jobHandle = jobTangent.Schedule(count, GltfImport.DefaultBatchCount);
 #endif
-                        break;
-                    }
+                    break;
+                }
                 default:
                     m_GltfImport.Logger?.Error(LogCode.TypeUnsupported, "Tangent", inputType.ToString());
                     jobHandle = null;

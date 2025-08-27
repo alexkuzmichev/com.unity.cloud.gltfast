@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - Graphics Tests
+- [EditorConfig](https://editorconfig.org/) for keeping a consistent code-style.
 
 ### Changed
 - (CI) Consolidated multiple redundant packaging and vetting/API validation jobs.

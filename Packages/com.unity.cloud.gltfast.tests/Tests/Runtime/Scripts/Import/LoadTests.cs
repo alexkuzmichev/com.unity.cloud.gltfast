@@ -169,17 +169,17 @@ namespace GLTFast.Tests.Import
             switch (loadType)
             {
                 case LoadType.NativeArray:
-                    {
-                        using var data = await ReadNativeArrayAsync(path);
-                        success = await gltf.Load(data.AsReadOnly(), new Uri(path));
-                        break;
-                    }
+                {
+                    using var data = await ReadNativeArrayAsync(path);
+                    success = await gltf.Load(data.AsReadOnly(), new Uri(path));
+                    break;
+                }
                 case LoadType.ManagedByteArray:
-                    {
-                        var data = await ReadAllBytesAsync(path);
-                        success = await gltf.Load(data, new Uri(path));
-                        break;
-                    }
+                {
+                    var data = await ReadAllBytesAsync(path);
+                    success = await gltf.Load(data, new Uri(path));
+                    break;
+                }
                 case LoadType.Path:
                     success = await gltf.Load(path);
                     break;
@@ -191,13 +191,13 @@ namespace GLTFast.Tests.Import
                     success = await gltf.LoadFile(path, new Uri(path));
                     break;
                 case LoadType.Binary:
-                    {
-                        var data = await ReadAllBytesAsync(path);
+                {
+                    var data = await ReadAllBytesAsync(path);
 #pragma warning disable CS0618 // Type or member is obsolete
-                        success = await gltf.LoadGltfBinary(data, new Uri(path));
+                    success = await gltf.LoadGltfBinary(data, new Uri(path));
 #pragma warning restore CS0618 // Type or member is obsolete
-                        break;
-                    }
+                    break;
+                }
                 case LoadType.Stream:
                     var stream = new FileStream(path, FileMode.Open);
                     success = await gltf.LoadStream(stream, new Uri(path));

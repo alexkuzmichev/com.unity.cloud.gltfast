@@ -3445,34 +3445,34 @@ namespace GLTFast
                 switch (acc.GetAttributeType())
                 {
                     case GltfAccessorAttributeType.MAT4 when m_AccessorUsage[i] == AccessorUsage.InverseBindMatrix:
-                        {
-                            // TODO: Maybe use Matrix4x4[], since Mesh.bindposes only accepts C# arrays.
-                            GetMatricesJob(i, out var matrices, out var jh);
-                            tmpList.Add(jh.Value);
-                            m_AccessorData[i] = matrices;
-                            break;
-                        }
+                    {
+                        // TODO: Maybe use Matrix4x4[], since Mesh.bindposes only accepts C# arrays.
+                        GetMatricesJob(i, out var matrices, out var jh);
+                        tmpList.Add(jh.Value);
+                        m_AccessorData[i] = matrices;
+                        break;
+                    }
                     case GltfAccessorAttributeType.VEC3 when (m_AccessorUsage[i] & AccessorUsage.Translation) != 0:
-                        {
-                            GetVector3Job(i, out var data, out var jh, true);
-                            tmpList.Add(jh.Value);
-                            m_AccessorData[i] = data;
-                            break;
-                        }
+                    {
+                        GetVector3Job(i, out var data, out var jh, true);
+                        tmpList.Add(jh.Value);
+                        m_AccessorData[i] = data;
+                        break;
+                    }
                     case GltfAccessorAttributeType.VEC4 when (m_AccessorUsage[i] & AccessorUsage.Rotation) != 0:
-                        {
-                            GetVector4Job(i, out var data, out var jh);
-                            tmpList.Add(jh.Value);
-                            m_AccessorData[i] = data;
-                            break;
-                        }
+                    {
+                        GetVector4Job(i, out var data, out var jh);
+                        tmpList.Add(jh.Value);
+                        m_AccessorData[i] = data;
+                        break;
+                    }
                     case GltfAccessorAttributeType.VEC3 when (m_AccessorUsage[i] & AccessorUsage.Scale) != 0:
-                        {
-                            GetVector3Job(i, out var data, out var jh, false);
-                            tmpList.Add(jh.Value);
-                            m_AccessorData[i] = data;
-                            break;
-                        }
+                    {
+                        GetVector3Job(i, out var data, out var jh, false);
+                        tmpList.Add(jh.Value);
+                        m_AccessorData[i] = data;
+                        break;
+                    }
 #if UNITY_ANIMATION
                     case GltfAccessorAttributeType.SCALAR when m_AccessorUsage[i]==AccessorUsage.AnimationTimes || m_AccessorUsage[i]==AccessorUsage.Weight:
                     {
@@ -3678,28 +3678,28 @@ namespace GLTFast
             switch (accessor.componentType)
             {
                 case GltfComponentType.Float:
+                {
+                    if (flip)
                     {
-                        if (flip)
+                        var job = new ConvertVector3FloatToFloatJob
                         {
-                            var job = new ConvertVector3FloatToFloatJob
-                            {
-                                input = (float3*)bufferView.GetUnsafeReadOnlyPtr(),
-                                result = (float3*)vectors.GetUnsafePtr()
-                            };
-                            jobHandle = job.Schedule(accessor.count, DefaultBatchCount);
-                        }
-                        else
-                        {
-                            var job = new MemCopyJob
-                            {
-                                input = (float*)bufferView.GetUnsafeReadOnlyPtr(),
-                                bufferSize = accessor.count * 12,
-                                result = (float*)vectors.GetUnsafePtr()
-                            };
-                            jobHandle = job.Schedule();
-                        }
-                        break;
+                            input = (float3*)bufferView.GetUnsafeReadOnlyPtr(),
+                            result = (float3*)vectors.GetUnsafePtr()
+                        };
+                        jobHandle = job.Schedule(accessor.count, DefaultBatchCount);
                     }
+                    else
+                    {
+                        var job = new MemCopyJob
+                        {
+                            input = (float*)bufferView.GetUnsafeReadOnlyPtr(),
+                            bufferSize = accessor.count * 12,
+                            result = (float*)vectors.GetUnsafePtr()
+                        };
+                        jobHandle = job.Schedule();
+                    }
+                    break;
+                }
                 default:
                     Logger?.Error(LogCode.IndexFormatInvalid, accessor.componentType.ToString());
                     jobHandle = null;
@@ -3730,35 +3730,35 @@ namespace GLTFast
             switch (accessor.componentType)
             {
                 case GltfComponentType.Float:
+                {
+                    var job = new ConvertRotationsFloatToFloatJob
                     {
-                        var job = new ConvertRotationsFloatToFloatJob
-                        {
-                            input = (float4*)bufferView.GetUnsafeReadOnlyPtr(),
-                            result = (float4*)vectors.GetUnsafePtr()
-                        };
-                        jobHandle = job.Schedule(accessor.count, DefaultBatchCount);
-                        break;
-                    }
+                        input = (float4*)bufferView.GetUnsafeReadOnlyPtr(),
+                        result = (float4*)vectors.GetUnsafePtr()
+                    };
+                    jobHandle = job.Schedule(accessor.count, DefaultBatchCount);
+                    break;
+                }
                 case GltfComponentType.Short:
+                {
+                    var job = new ConvertRotationsInt16ToFloatJob
                     {
-                        var job = new ConvertRotationsInt16ToFloatJob
-                        {
-                            input = (short*)bufferView.GetUnsafeReadOnlyPtr(),
-                            result = (float*)vectors.GetUnsafePtr()
-                        };
-                        jobHandle = job.Schedule(accessor.count, DefaultBatchCount);
-                        break;
-                    }
+                        input = (short*)bufferView.GetUnsafeReadOnlyPtr(),
+                        result = (float*)vectors.GetUnsafePtr()
+                    };
+                    jobHandle = job.Schedule(accessor.count, DefaultBatchCount);
+                    break;
+                }
                 case GltfComponentType.Byte:
+                {
+                    var job = new ConvertRotationsInt8ToFloatJob
                     {
-                        var job = new ConvertRotationsInt8ToFloatJob
-                        {
-                            input = (sbyte*)bufferView.GetUnsafeReadOnlyPtr(),
-                            result = (float*)vectors.GetUnsafePtr()
-                        };
-                        jobHandle = job.Schedule(accessor.count, DefaultBatchCount);
-                        break;
-                    }
+                        input = (sbyte*)bufferView.GetUnsafeReadOnlyPtr(),
+                        result = (float*)vectors.GetUnsafePtr()
+                    };
+                    jobHandle = job.Schedule(accessor.count, DefaultBatchCount);
+                    break;
+                }
                 default:
                     Logger?.Error(LogCode.IndexFormatInvalid, accessor.componentType.ToString());
                     jobHandle = null;
