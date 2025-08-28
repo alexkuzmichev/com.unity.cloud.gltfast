@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - (Export) Spotlight's inner cone angle is exported correctly on HDRP now.
 - (Test) Disabled URP compatibility mode in URP presets as it's obsolete and unsupported from Unity 6.3 onward.
+- (Import) Spotlight's inner cone angle is imported correctly on HDRP now.
 
 ### Removed
 - (CI) SonarQube scan job.
