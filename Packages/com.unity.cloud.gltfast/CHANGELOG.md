@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - (CI) Consolidated multiple redundant packaging and vetting/API validation jobs.
 - Changed internal buffer representation to custom native collection `ReadOnlyBuffer<byte>` (instead of [NativeArray&lt;byte&gt;.ReadOnly](xref:Unity.Collections.NativeArray`1.ReadOnly)) This enables sub-array slicing, has in-Editor safety checks and prepares for decommissioning misuse of NativeSlice.
+- Bumped Burst dependency version to 1.8.24, which is the recommended version in 2021 xLTS.
 - [KTX for Unity] minimum required version was raised to 3.5.0.
 - [Draco for Unity] minimum required version was raised to 5.2.0.
 
