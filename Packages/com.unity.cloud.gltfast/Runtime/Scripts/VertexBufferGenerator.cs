@@ -344,7 +344,7 @@ namespace GLTFast
             m_TexCoords.ScheduleVertexUVJobs(
                 VertexIntervals[i],
                 uvAccessors,
-                handles.Slice(handleIndex, uvAccessors.Length),
+                handles.GetSubArray(handleIndex, uvAccessors.Length),
                 m_GltfImport
             );
             handleIndex += uvAccessors.Length;
@@ -356,7 +356,7 @@ namespace GLTFast
             var success = m_Colors.ScheduleVertexColorJob(
                 att.COLOR_0,
                 VertexIntervals[i],
-                handles.Slice(handleIndex, 1),
+                handles.GetSubArray(handleIndex, 1),
                 m_GltfImport
             );
             if (!success)

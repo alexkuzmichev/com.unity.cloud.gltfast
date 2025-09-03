@@ -38,7 +38,7 @@ namespace GLTFast
         public unsafe bool ScheduleVertexColorJob(
             int colorAccessorIndex,
             int offset,
-            NativeSlice<JobHandle> handles,
+            NativeArray<JobHandle> handles,
             IGltfBuffers buffers
             )
         {

@@ -30,7 +30,7 @@ namespace GLTFast
         public abstract bool ScheduleVertexUVJobs(
             int offset,
             int[] uvAccessorIndices,
-            NativeSlice<JobHandle> handles,
+            NativeArray<JobHandle> handles,
             IGltfBuffers buffers
             );
         public abstract void AddDescriptors(VertexAttributeDescriptor[] dst, ref int offset, int stream);
@@ -66,7 +66,7 @@ namespace GLTFast
         public override unsafe bool ScheduleVertexUVJobs(
             int offset,
             int[] uvAccessorIndices,
-            NativeSlice<JobHandle> handles,
+            NativeArray<JobHandle> handles,
             IGltfBuffers buffers
             )
         {
