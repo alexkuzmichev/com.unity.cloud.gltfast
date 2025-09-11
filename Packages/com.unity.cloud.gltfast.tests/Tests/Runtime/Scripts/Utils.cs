@@ -5,6 +5,8 @@ using System;
 using System.Collections;
 using System.Threading.Tasks;
 using NUnit.Framework;
+using Unity.Collections;
+using Unity.Collections.LowLevel.Unsafe;
 using Unity.Mathematics;
 using UnityEngine;
 
@@ -51,6 +53,11 @@ namespace GLTFast.Tests
             {
                 throw new AssertionException($"float4 not equal. expected {reference} got {value} (delta {maxDelta})");
             }
+        }
+
+        public static void AssertNearOrEqual(quaternion reference, quaternion value, float epsilon = float.Epsilon)
+        {
+            AssertNearOrEqual(reference.value, value.value, epsilon);
         }
 
         public static void AssertNearOrEqual(float3 reference, float3 value, float epsilon = float.Epsilon)
@@ -107,6 +114,25 @@ namespace GLTFast.Tests
             {
                 throw new AssertionException($"float4 not equal. expected {reference} got {value}");
             }
+        }
+
+        internal static ReadOnlyNativeStridedArray<T> GetStridedArray<T>(NativeArray<T> input) where T : unmanaged
+        {
+            return new ReadOnlyNativeArray<T>(input)
+                .ToStrided<T>(0, input.Length, UnsafeUtility.SizeOf<T>());
+        }
+
+        internal static ReadOnlyNativeStridedArray<TOut> GetStridedArray<TIn, TOut>(NativeArray<TIn> input)
+            where TIn : unmanaged
+            where TOut : unmanaged
+        {
+            var inputByteLength = input.Length * UnsafeUtility.SizeOf<TIn>();
+            return new ReadOnlyNativeArray<TIn>(input)
+                .ToStrided<TOut>(
+                    0,
+                    inputByteLength / UnsafeUtility.SizeOf<TOut>(),
+                    UnsafeUtility.SizeOf<TOut>()
+                    );
         }
     }
 }

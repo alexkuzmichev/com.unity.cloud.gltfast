@@ -49,7 +49,7 @@ namespace GLTFast
         protected abstract void Dispose(bool disposing);
     }
 
-    class VertexBufferTexCoords<T> : VertexBufferTexCoordsBase where T : struct
+    class VertexBufferTexCoords<T> : VertexBufferTexCoordsBase where T : unmanaged
     {
         NativeArray<T> m_Data;
 

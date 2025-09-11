@@ -28,6 +28,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Deprecated
 - [GLTFast.ManagedNativeArray](xref:GLTFast.ManagedNativeArray`2). It will be removed from public API in a future release. For internal development it's been replaced by `ReadOnlyBufferManagedArray<T>`.
 - [GLTFast.Export.ManagedNativeArray](xref:GLTFast.Export.ManagedNativeArray`2). It will get sealed or removed from public API in a future release.
+- [IGltfReadable.GetAccessorData](xref:GLTFast.IGltfReadable.GetAccessorData(System.Int32)). Along with [IGltfReadable.GetAccessor](xref:GLTFast.IGltfReadable.GetAccessor(System.Int32)) it is going to be removed and replaced with an improved way to access accessors' data in a future release.
 
 ### Security
 

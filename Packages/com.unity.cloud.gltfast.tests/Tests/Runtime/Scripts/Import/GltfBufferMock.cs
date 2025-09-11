@@ -25,12 +25,7 @@ namespace GLTFast.Tests
             };
         }
 
-        public ReadOnlyBuffer<byte> GetAccessorData(int index)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void GetAccessorDataAndByteStride(int index, out ReadOnlyBuffer<byte> data, out int byteStride)
+        public ReadOnlyNativeArray<byte> GetAccessorData(int index)
         {
             throw new NotImplementedException();
         }
@@ -53,9 +48,20 @@ namespace GLTFast.Tests
             data = null;
         }
 
-        public ReadOnlyBuffer<byte> GetBufferView(int bufferViewIndex, out int byteStride, int offset = 0, int length = 0)
+        public ReadOnlyNativeArray<byte> GetBufferView(int bufferViewIndex, out int byteStride, int offset = 0, int length = 0)
         {
             throw new NotImplementedException();
         }
+
+        public ReadOnlyNativeArray<T> GetAccessorData<T>(int bufferViewIndex, int offset = 0, int length = 0) where T : unmanaged
+        {
+            throw new NotImplementedException();
+        }
+
+        public ReadOnlyNativeStridedArray<T> GetStridedAccessorData<T>(int bufferViewIndex, int count, int offset = 0) where T : unmanaged
+        {
+            throw new NotImplementedException();
+        }
+
     }
 }

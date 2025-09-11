@@ -78,6 +78,7 @@ namespace GLTFast.Export
             if (disposing && m_Pinned)
             {
 #if ENABLE_UNITY_COLLECTIONS_CHECKS
+                AtomicSafetyHandle.CheckDeallocateAndThrow(m_SafetyHandle);
                 AtomicSafetyHandle.Release(m_SafetyHandle);
 #endif
                 m_BufferHandle.Free();

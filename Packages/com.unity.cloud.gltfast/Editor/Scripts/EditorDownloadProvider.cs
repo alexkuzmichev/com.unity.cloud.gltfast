@@ -47,7 +47,7 @@ namespace GLTFast.Editor
 
     class SyncFileLoader : IDownload, INativeDownload
     {
-        ReadOnlyBufferManagedArray<byte> m_ManagedNativeArray;
+        ReadOnlyNativeArrayFromManagedArray<byte> m_ManagedNativeArray;
 
         public SyncFileLoader(Uri url)
         {
@@ -56,8 +56,8 @@ namespace GLTFast.Editor
             {
                 Data = File.ReadAllBytes(path);
                 // TODO: Is there a better way to load a file into a NativeArray, like AsyncReadManager?
-                m_ManagedNativeArray = new ReadOnlyBufferManagedArray<byte>(Data);
-                NativeData = m_ManagedNativeArray.Buffer.AsNativeArrayReadOnly();
+                m_ManagedNativeArray = new ReadOnlyNativeArrayFromManagedArray<byte>(Data);
+                NativeData = m_ManagedNativeArray.Array.AsNativeArrayReadOnly();
             }
             else
             {

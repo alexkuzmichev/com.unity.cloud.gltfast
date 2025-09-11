@@ -8,17 +8,17 @@ using Unity.Collections.LowLevel.Unsafe;
 namespace GLTFast
 {
     /// <summary>
-    /// Wraps a managed array and provides a <see cref="ReadOnlyBuffer{T}"/> for accessing it.
+    /// Wraps a managed array and provides a <see cref="ReadOnlyNativeArray{T}"/> for accessing it.
     /// </summary>
-    sealed class ReadOnlyBufferManagedArray<T> : IDisposable
+    sealed class ReadOnlyNativeArrayFromManagedArray<T> : IDisposable
         where T : unmanaged
     {
-        public ReadOnlyBuffer<T> Buffer { get; }
+        public ReadOnlyNativeArray<T> Array { get; }
 
         GCHandle m_BufferHandle;
         readonly bool m_Pinned;
 
-        public unsafe ReadOnlyBufferManagedArray(T[] original)
+        public unsafe ReadOnlyNativeArrayFromManagedArray(T[] original)
         {
             if (original == null)
                 throw new ArgumentNullException(nameof(original));
@@ -28,9 +28,9 @@ namespace GLTFast
             {
 #if ENABLE_UNITY_COLLECTIONS_CHECKS
                 var safety = AtomicSafetyHandle.Create();
-                Buffer = new ReadOnlyBuffer<T>(bufferAddress, original.Length, ref safety);
+                Array = new ReadOnlyNativeArray<T>(bufferAddress, original.Length, ref safety);
 #else
-                Buffer = new ReadOnlyBuffer<T>(bufferAddress, original.Length);
+                Array = new ReadOnlyNativeArray<T>(bufferAddress, original.Length);
 #endif
             }
 
@@ -38,7 +38,7 @@ namespace GLTFast
         }
 
         /// <summary>
-        /// Disposes the managed <see cref="ReadOnlyBuffer&lt;T&gt;" />.
+        /// Disposes the managed <see cref="ReadOnlyNativeArray{T}" />.
         /// </summary>
         public void Dispose()
         {

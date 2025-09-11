@@ -2265,6 +2265,7 @@ namespace GLTFast.Export
 #endif
                 var bufferViewId = WriteBufferViewToBuffer(nativeData, target, byteStride);
 #if ENABLE_UNITY_COLLECTIONS_CHECKS
+                AtomicSafetyHandle.CheckDeallocateAndThrow(safetyHandle);
                 AtomicSafetyHandle.Release(safetyHandle);
 #endif
                 bufferHandle.Free();

@@ -19,7 +19,7 @@ namespace GLTFast
     [NativeContainer]
     [NativeContainerIsReadOnly]
     [DebuggerDisplay("Length = {Length}")]
-    unsafe struct ReadOnlyBuffer<T> where T : struct
+    unsafe struct ReadOnlyNativeArray<T> where T : unmanaged
     {
         [NativeDisableUnsafePtrRestriction]
         internal void* m_Buffer;
@@ -29,7 +29,7 @@ namespace GLTFast
         internal AtomicSafetyHandle m_Safety;
 #endif
 
-        internal ReadOnlyBuffer(NativeArray<T> nativeArray)
+        internal ReadOnlyNativeArray(NativeArray<T> nativeArray)
         {
             m_Buffer = nativeArray.GetUnsafeReadOnlyPtr();
             m_Length = nativeArray.Length;
@@ -39,14 +39,14 @@ namespace GLTFast
         }
 
 #if ENABLE_UNITY_COLLECTIONS_CHECKS
-        internal ReadOnlyBuffer(void* buffer, int length, ref AtomicSafetyHandle safety)
+        internal ReadOnlyNativeArray(void* buffer, int length, ref AtomicSafetyHandle safety)
         {
             m_Buffer = buffer;
             m_Length = length;
             m_Safety = safety;
         }
 #else
-        internal ReadOnlyBuffer(void* buffer, int length)
+        internal ReadOnlyNativeArray(void* buffer, int length)
         {
             m_Buffer = buffer;
             m_Length = length;
@@ -60,15 +60,15 @@ namespace GLTFast
             get => m_Length;
         }
 
-        public ReadOnlyBuffer<T> GetSubArray(int start, int length)
+        public ReadOnlyNativeArray<T> GetSubArray(int start, int length)
         {
             CheckGetSubArrayArguments(start, length);
 
 #if ENABLE_UNITY_COLLECTIONS_CHECKS
-            return new ReadOnlyBuffer<T>(
+            return new ReadOnlyNativeArray<T>(
                 ((byte*)m_Buffer) + ((long)UnsafeUtility.SizeOf<T>()) * start, length, ref m_Safety);
 #else
-            return new ReadOnlyBuffer<T>(
+            return new ReadOnlyNativeArray<T>(
                 ((byte*)m_Buffer) + ((long)UnsafeUtility.SizeOf<T>()) * start, length);
 #endif
         }
@@ -89,6 +89,20 @@ namespace GLTFast
             NativeArrayUnsafeUtility.SetAtomicSafetyHandle(ref array, m_Safety);
 #endif
             return array.AsReadOnly();
+        }
+
+        public ReadOnlyNativeStridedArray<TTarget> ToStrided<TTarget>(int offset, int count, int byteStride) where TTarget : unmanaged
+        {
+            return new ReadOnlyNativeStridedArray<TTarget>(
+                m_Buffer,
+                Length * UnsafeUtility.SizeOf<T>(),
+                offset,
+                count,
+                byteStride
+#if ENABLE_UNITY_COLLECTIONS_CHECKS
+                ,ref m_Safety
+#endif
+                );
         }
 
         public void* GetUnsafeReadOnlyPtr()
@@ -120,7 +134,7 @@ namespace GLTFast
 
         public void CopyTo(NativeArray<T> array) => Copy(this, array);
 
-        public ReadOnlyBuffer<TTarget> Reinterpret<TTarget>(int expectedTypeSize) where TTarget : struct
+        public ReadOnlyNativeArray<TTarget> Reinterpret<TTarget>() where TTarget : unmanaged
         {
             long tSize = UnsafeUtility.SizeOf<T>();
             long uSize = UnsafeUtility.SizeOf<TTarget>();
@@ -128,22 +142,17 @@ namespace GLTFast
             var byteLen = Length * tSize;
             var uLen = byteLen / uSize;
 
-            CheckReinterpretSize<TTarget>(tSize, uSize, expectedTypeSize, byteLen, uLen);
+            CheckReinterpretSize<TTarget>(uSize, byteLen, uLen);
 #if ENABLE_UNITY_COLLECTIONS_CHECKS
-            return new ReadOnlyBuffer<TTarget>(m_Buffer, (int)uLen, ref m_Safety);
+            return new ReadOnlyNativeArray<TTarget>(m_Buffer, (int)uLen, ref m_Safety);
 #else
-            return new ReadOnlyBuffer<TTarget>(m_Buffer, (int)uLen);
+            return new ReadOnlyNativeArray<TTarget>(m_Buffer, (int)uLen);
 #endif
         }
 
         [Conditional("ENABLE_UNITY_COLLECTIONS_CHECKS")]
-        void CheckReinterpretSize<TTarget>(long tSize, long uSize, int expectedTypeSize, long byteLen, long uLen)
+        void CheckReinterpretSize<TTarget>(long uSize, long byteLen, long uLen)
         {
-            if (tSize != expectedTypeSize)
-            {
-                throw new InvalidOperationException($"Type {typeof(T)} was expected to be {expectedTypeSize} but is {tSize} bytes");
-            }
-
             if (uLen * uSize != byteLen)
             {
                 throw new InvalidOperationException($"Types {typeof(T)} (array length {Length}) and {typeof(TTarget)} cannot be aliased due to size constraints. The size of the types and lengths involved must line up.");
@@ -180,7 +189,7 @@ namespace GLTFast
             get => m_Buffer != null;
         }
 
-        static void Copy(ReadOnlyBuffer<T> src, NativeArray<T> dst)
+        static void Copy(ReadOnlyNativeArray<T> src, NativeArray<T> dst)
         {
             CheckCopyLengths(src.Length, dst.Length);
 

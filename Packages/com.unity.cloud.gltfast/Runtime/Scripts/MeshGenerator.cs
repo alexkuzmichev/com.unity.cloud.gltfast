@@ -186,15 +186,8 @@ namespace GLTFast
 
         async Task<Mesh> GenerateMesh(GltfImportBase gltfImport)
         {
-            var jh = m_VertexData.CreateVertexBuffer();
-            if (!jh.HasValue)
+            if (!await m_VertexData.CreateVertexBuffer())
                 return null;
-
-            while (!jh.Value.IsCompleted)
-            {
-                await Task.Yield();
-            }
-            jh.Value.Complete();
 
             m_Indices = new NativeArray<int>[SubMeshCount];
 
@@ -482,11 +475,22 @@ namespace GLTFast
             }
         }
 
-        static unsafe void GetIndicesJob(GltfImportBase gltfImport, int accessorIndex, out NativeArray<int> indices, out JobHandle? jobHandle, bool flip)
+        static void GetIndicesJob(
+            GltfImportBase gltfImport,
+            int accessorIndex,
+            out NativeArray<int> indices,
+            out JobHandle? jobHandle,
+            bool flip
+            )
         {
             Profiler.BeginSample("PrepareGetIndicesJob");
             var accessor = ((IGltfBuffers)gltfImport).GetAccessor(accessorIndex);
-            var bufferView = ((IGltfBuffers)gltfImport).GetBufferView(accessor.bufferView, out _, accessor.byteOffset);
+            var accessorData = ((IGltfBuffers)gltfImport).GetBufferView(
+                accessor.bufferView,
+                out _,
+                accessor.byteOffset,
+                accessor.ByteSize
+                );
 
             Profiler.BeginSample("Alloc");
             indices = new NativeArray<int>(accessor.count, Allocator.Persistent);
@@ -502,11 +506,12 @@ namespace GLTFast
             switch (accessor.componentType)
             {
                 case GltfComponentType.UnsignedByte:
+                {
                     if (flip)
                     {
                         var job8 = new ConvertIndicesUInt8ToInt32FlippedJob
                         {
-                            input = (byte*)bufferView.GetUnsafeReadOnlyPtr(),
+                            input = accessorData.Reinterpret<byte3>().AsNativeArrayReadOnly(),
                             result = indices.Reinterpret<int3>(sizeof(int))
                         };
                         jobHandle = job8.Schedule(accessor.count / 3, GltfImportBase.DefaultBatchCount);
@@ -515,18 +520,20 @@ namespace GLTFast
                     {
                         var job8 = new ConvertIndicesUInt8ToInt32Job
                         {
-                            input = (byte*)bufferView.GetUnsafeReadOnlyPtr(),
+                            input = accessorData.AsNativeArrayReadOnly(),
                             result = indices
                         };
                         jobHandle = job8.Schedule(accessor.count, GltfImportBase.DefaultBatchCount);
                     }
                     break;
+                }
                 case GltfComponentType.UnsignedShort:
+                {
                     if (flip)
                     {
                         var job16 = new ConvertIndicesUInt16ToInt32FlippedJob
                         {
-                            input = (ushort*)bufferView.GetUnsafeReadOnlyPtr(),
+                            input = accessorData.Reinterpret<ushort3>().AsNativeArrayReadOnly(),
                             result = indices.Reinterpret<int3>(sizeof(int))
                         };
                         jobHandle = job16.Schedule(accessor.count / 3, GltfImportBase.DefaultBatchCount);
@@ -535,18 +542,20 @@ namespace GLTFast
                     {
                         var job16 = new ConvertIndicesUInt16ToInt32Job
                         {
-                            input = (ushort*)bufferView.GetUnsafeReadOnlyPtr(),
+                            input = accessorData.Reinterpret<ushort>().AsNativeArrayReadOnly(),
                             result = indices
                         };
                         jobHandle = job16.Schedule(accessor.count, GltfImportBase.DefaultBatchCount);
                     }
                     break;
+                }
                 case GltfComponentType.UnsignedInt:
+                {
                     if (flip)
                     {
                         var job32 = new ConvertIndicesUInt32ToInt32FlippedJob
                         {
-                            input = (uint*)bufferView.GetUnsafeReadOnlyPtr(),
+                            input = accessorData.Reinterpret<uint3>().AsNativeArrayReadOnly(),
                             result = indices.Reinterpret<int3>(sizeof(int))
                         };
                         jobHandle = job32.Schedule(accessor.count / 3, GltfImportBase.DefaultBatchCount);
@@ -555,12 +564,13 @@ namespace GLTFast
                     {
                         var job32 = new ConvertIndicesUInt32ToInt32Job
                         {
-                            input = (uint*)bufferView.GetUnsafeReadOnlyPtr(),
+                            input = accessorData.Reinterpret<uint>().AsNativeArrayReadOnly(),
                             result = indices
                         };
                         jobHandle = job32.Schedule(accessor.count, GltfImportBase.DefaultBatchCount);
                     }
                     break;
+                }
                 default:
                     gltfImport.Logger?.Error(LogCode.IndexFormatInvalid, accessor.componentType.ToString());
                     jobHandle = null;

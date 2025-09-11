@@ -13,9 +13,9 @@ using Unity.Collections;
 
 namespace GLTFast {
     class KtxLoadNativeContext : KtxLoadContextBase {
-        ReadOnlyBuffer<byte> m_Data;
+        ReadOnlyNativeArray<byte> m_Data;
 
-        public KtxLoadNativeContext(int index,ReadOnlyBuffer<byte> data) {
+        public KtxLoadNativeContext(int index,ReadOnlyNativeArray<byte> data) {
             imageIndex = index;
             m_Data = data;
             m_KtxTexture = new KtxTexture();

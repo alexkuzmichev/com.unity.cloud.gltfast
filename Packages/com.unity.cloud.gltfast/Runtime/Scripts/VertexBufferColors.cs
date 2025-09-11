@@ -106,6 +106,7 @@ namespace GLTFast
             {
                 foreach (var handle in m_SafetyHandles)
                 {
+                    AtomicSafetyHandle.CheckDeallocateAndThrow(handle);
                     AtomicSafetyHandle.Release(handle);
                 }
                 m_SafetyHandles = null;

@@ -8,12 +8,12 @@ using Unity.Collections.LowLevel.Unsafe;
 namespace GLTFast
 {
     /// <summary>
-    /// Wraps a <see cref="NativeArray{T}.ReadOnly"/> and provides a <see cref="ReadOnlyBuffer{T}"/> for accessing it.
+    /// Wraps a <see cref="NativeArray{T}.ReadOnly"/> and provides a <see cref="ReadOnlyNativeArray{T}"/> for accessing it.
     /// </summary>
-    unsafe struct ReadOnlyBufferNativeArray
+    readonly unsafe struct ReadOnlyNativeArrayFromNativeArray<T> where T : unmanaged
     {
-        readonly ReadOnlyBuffer<byte> m_Buffer;
-        public readonly ReadOnlyBuffer<byte> Buffer
+        readonly ReadOnlyNativeArray<T> m_Array;
+        public ReadOnlyNativeArray<T> Array
         {
             get
             {
@@ -23,15 +23,15 @@ namespace GLTFast
                 // `AtomicSafetyHandle.CheckReadAndThrow(m_Source.m_Safety);`
                 m_Source.AsReadOnlySpan();
 #endif
-                return m_Buffer;
+                return m_Array;
             }
         }
 
 #if ENABLE_UNITY_COLLECTIONS_CHECKS && UNITY_2022_2_OR_NEWER
-        NativeArray<byte>.ReadOnly m_Source;
+        readonly NativeArray<T>.ReadOnly m_Source;
 #endif
 
-        public ReadOnlyBufferNativeArray(NativeArray<byte>.ReadOnly data)
+        public ReadOnlyNativeArrayFromNativeArray(NativeArray<T>.ReadOnly data)
         {
             var bufferAddress = data.GetUnsafeReadOnlyPtr();
 #if ENABLE_UNITY_COLLECTIONS_CHECKS
@@ -39,9 +39,9 @@ namespace GLTFast
             m_Source = data;
 #endif
             var safety = AtomicSafetyHandle.Create();
-            m_Buffer = new ReadOnlyBuffer<byte>(bufferAddress, data.Length, ref safety);
+            m_Array = new ReadOnlyNativeArray<T>(bufferAddress, data.Length, ref safety);
 #else
-            m_Buffer = new ReadOnlyBuffer<byte>(bufferAddress, data.Length);
+            m_Array = new ReadOnlyNativeArray<T>(bufferAddress, data.Length);
 #endif
         }
     }
