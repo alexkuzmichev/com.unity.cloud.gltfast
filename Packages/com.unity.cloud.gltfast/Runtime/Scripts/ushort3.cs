@@ -7,7 +7,7 @@ using Unity.Mathematics;
 namespace GLTFast
 {
     /// <summary>A 3 component vector of unsigned 16-bit integers.</summary>
-    public struct ushort3
+    struct ushort3
     {
         /// <summary>x component of the vector.</summary>
         public ushort x;
