@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+
+### Changed
+
+### Fixed
+
+### Removed
+
+### Deprecated
+
+### Security
+
+## [6.14.0] - 2025-09-12
+
+### Added
 - Graphics Tests.
 - [EditorConfig](https://editorconfig.org/) for keeping a consistent code-style.
 - [IBufferView.ByteStride](xref:GLTFast.Schema.IBufferView.ByteStride).

@@ -10,8 +10,10 @@
                 "MemberAdded ( -> System.Nullable`1<UnityEngine.Playables.Playable> GLTFast.GameObjectSceneInstance::Playable())",
                 "MemberAdded ( -> UnityEngine.AnimationClip[] GLTFast.GltfImportBase::GetAnimationClips())",
                 "MemberAdded ( -> System.Void GLTFast.IInstantiator::AddAnimation(UnityEngine.AnimationClip[]))",
+                "MemberAdded ( -> System.Int32 GLTFast.Schema.BufferViewBase::ByteStride())",
                 "MemberAdded ( -> System.Collections.Generic.IReadOnlyList`1<GLTFast.Schema.AnimationChannelBase> GLTFast.Schema.AnimationBase::Channels())",
                 "MemberAdded ( -> System.Collections.Generic.IReadOnlyList`1<GLTFast.Schema.AnimationSampler> GLTFast.Schema.AnimationBase::Samplers())",
+                "MemberAdded ( -> System.Int32 GLTFast.Schema.IBufferView::ByteStride())",
                 "MemberAdded ( -> TAnimation[] GLTFast.Schema.RootBase`15::animations)",
                 "MemberAdded ( -> System.Collections.Generic.IReadOnlyList`1<GLTFast.Schema.AnimationBase> GLTFast.Schema.RootBase::Animations())",
                 "MemberAdded ( -> System.Boolean GLTFast.Schema.RootBase::HasAnimation())",
@@ -78,6 +80,6 @@
         }
     ],
     "breakingChanges": 2,
-    "additions": 59,
+    "additions": 61,
     "removedAssemblyCount": 0
 }
