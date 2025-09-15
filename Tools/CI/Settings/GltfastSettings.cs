@@ -15,7 +15,11 @@ public class GltfastSettings : AnnotatedSettingsBase
     {
         {
             "com.unity.cloud.gltfast",
-            new PackageOptions() { ReleaseOptions = new ReleaseOptions() { IsReleasing = true } }
+            new PackageOptions
+            {
+                ReleaseOptions = new ReleaseOptions { IsReleasing = true },
+                ValidationOptions = new ValidationOptions { UtrTestingYamatoTimeout = 30 },
+            }
         }
     };
 
