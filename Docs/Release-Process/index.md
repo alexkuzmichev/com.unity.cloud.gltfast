@@ -31,7 +31,7 @@
    1. Additions (new entries at the path `$.assemblyChanges[*].additions`) are tolerated but those imply that this release's minor version number is **required** to be increased. If that does not align with the version number chosen, restart the process with the correct version number.
    1. Finally, if there's been any difference in the API validation report, save the `ApiValidationReport.json` file as it is needed in [Update the `develop` branch](#update-the-develop-branch) process later on.
 1. Merge `release/X.Y.Z-working` into `release/X.Y.Z`.
-1. Proceed to creating the STAR checklist and generating the QA artifacts.
+1. Proceed to creating the [STAR checklist](#prepare-star-checklist) and [validating the QA artifacts](#validate-qa-artifacts).
 
 ## Prepare STAR Checklist
 
@@ -87,8 +87,7 @@ owners
 
 ## Publish Internally
 
-1. Go to the [glTFast Package Works portal](
-   https://package-works.prd.cds.internal.unity3d.com/project?id=6135).
+1. Go to the [glTFast Package Works portal].
 1. View the glTFast repository and add the new release branch.
 1. Create a new release stream called `glTFast/X.Y.Z`
 1. In the release stream, add a package to the release stream by selecting the
@@ -96,13 +95,11 @@ owners
 1. Confirm that all badges are green. As of now, certain validation jobs are
    instable due to timeouts, so re-running the *Publish Dry Run* might solve
    the issue.
-1. On the [Yamato glTFast project], look for the `release/X.Y.Z` branch and find the `Publish cloud.gltfast` job.
-1. Run the job and wait for it to complete.
-1. Once completed, validate that the packages are effectively present on
-   [Artifactory](https://artifactory.prd.cds.internal.unity3d.com/ui/packages?name=com.unity.cloud.gltfast%2A&type=packages)
-1. In git, create an annotated tag `git tag -a release/X.Y.Z`. Use the
+1. Press the *Promote* button, enable the *Hold Promotion After Candidates Upload* option in the following dialog and confirm by pressing *Create Promotion Job*.
+1. Press *Start* in the *Promotion Details* view and wait until the *Candidates Upload* is completed.
+1. In Git, create an annotated tag `git tag -a release/X.Y.Z`. Use the
    [following template](./Templates/tag-template.md) for the tag's comment.
-1. In git, push your newly created tag `git push origin tag release/X.Y.Z`.
+1. In Git, push your newly created tag `git push origin tag release/X.Y.Z`. You may have to delete the identically named branch locally first to avoid a refspec conflict.
 1. Use [this template](./Templates/completed-internal-release-message.md) to
    send a post on the Then post it on the
    [shiproom channel] slack channels.
@@ -113,23 +110,8 @@ When packages are on Artifactory, they are accessible to Unity developers only.
 In order to make these packages accessible to the public, they need to be
 promoted to UPM. In order for this to be effective, one of the glTFast release
 managers must promote the package on the Go to the
-[glTFast Package Works portal](
-https://package-works.prd.cds.internal.unity3d.com/project?id=6135).
+[glTFast Package Works portal].
 
-## Legacy Instructions to Promote Package Externally
-
-1. In the [package promotion][promotion] repo update the
-   `promotions/com.unity.cloud-sdk.yml` file with the version to be promoted
-   publicly to UPM.
-1. Confirm that the STAR checklist has been created and has been completed.
-1. Open a PR with the changes above. Use the [following
-   template](./templates/promotion-pr-message.md).
-1. Add `@unity/cloud-sdk-release-management` as a reviewer ; `qa` and
-   `package-release-managers` should also automatically be added as code owners
-1. Once the PR is merged complete [this
-   template](./Templates/completed-promotion-message.md) and post on the
-   [shiproom channel].
-
-[promotion]: https://github.cds.internal.unity3d.com/unity/rm-package-promotion
+[glTFast Package Works portal]: https://package-works.prd.cds.internal.unity3d.com/project?id=6135)
 [shiproom channel]: https://unity.slack.com/archives/C043U33AY3B
 [Yamato glTFast project]: https://unity-ci.cds.internal.unity3d.com/project/2268?nav=branches
