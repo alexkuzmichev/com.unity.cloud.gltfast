@@ -55,6 +55,11 @@ MonoBehaviour:
     expectInstantiationFail: 0
     expectedLogCodes: 
     requiredExtensions: 0a000000
+  - relativeUri: NineTexcoords/NineTexcoords.gltf
+    expectLoadFail: 0
+    expectInstantiationFail: 0
+    expectedLogCodes: 34000000
+    requiredExtensions: 
   - relativeUri: NoScene/NoScene.gltf
     expectLoadFail: 0
     expectInstantiationFail: 0
