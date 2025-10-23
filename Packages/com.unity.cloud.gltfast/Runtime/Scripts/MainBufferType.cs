@@ -15,5 +15,6 @@ namespace GLTFast
 
         PosNorm = 0x3,
         PosNormTan = 0x7,
+        PosTan = 0x5,
     }
 }

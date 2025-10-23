@@ -19,6 +19,13 @@ namespace GLTFast.Vertex
     }
 
     [StructLayout(LayoutKind.Sequential)]
+    struct VPosTan
+    {
+        public float3 position;
+        public float4 tangent;
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
     struct VPosNorm
     {
         public float3 position;

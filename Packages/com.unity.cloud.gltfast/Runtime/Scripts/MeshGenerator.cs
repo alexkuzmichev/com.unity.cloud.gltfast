@@ -75,6 +75,9 @@ namespace GLTFast
                 case MainBufferType.PosNormTan:
                     m_VertexData = new VertexBufferGenerator<Vertex.VPosNormTan>(m_Primitives.Count, gltfImport);
                     break;
+                case MainBufferType.PosTan:
+                    m_VertexData = new VertexBufferGenerator<Vertex.VPosTan>(m_Primitives.Count, gltfImport);
+                    break;
                 default:
                     gltfImport.Logger?.Error(LogCode.BufferMainInvalidType, mainBufferType.ToString());
                     return false;
